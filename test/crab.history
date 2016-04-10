@@ -1,0 +1,86 @@
+121105_072344: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121105_072611: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121105_072702: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121105_074915: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121105_080421: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121105_080440: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121105_080725: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121105_084715: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121105_084932: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121106_025631: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121106_025651: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report
+121106_030027: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report crab_0_121105_072344
+121106_030204: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121105_072344
+121106_032413: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121105_072344
+121106_032707: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121106_032942: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121106_080236: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121106_080409: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121106_133455: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121106_133830: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121107_005215: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -getoutput
+121107_005230: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121107_005240: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -getoutput
+121107_011115: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121107_011256: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121107_011317: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121107_013319: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121107_013419: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121107_025521: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121107_025825: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_014808: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_015025: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_015810: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_015915: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_021548: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_021820: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_024103: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_024229: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_025805: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_030036: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_051412: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_051801: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_052344: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_052547: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_052734: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_080716: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_081115: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_082604: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report crab_0_121108_015810
+121108_082635: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_015810
+121108_083009: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_083107: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_114330: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_114914: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_115050: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_115217: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_150031: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121108_150300: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121108_150429: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121108_150657: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121109_012811: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report crab_0_121108_150031
+121109_012921: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_115050
+121109_012940: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_083009
+121109_013042: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_115050
+121109_013118: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_083009
+121109_013133: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_025805
+121109_013156: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_024103
+121109_013207: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_021548
+121109_013237: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_014808
+121109_013257: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_024103
+121109_013307: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_083009
+121109_013321: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report -c crab_0_121108_021548
+121109_013412: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121109_013603: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121109_014622: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -status
+121109_015104: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121109_015410: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121109_015548: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121109_063044: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -report
+121109_063638: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121109_064022: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121110_105438: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121110_105813: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121111_024424: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121111_024739: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
+121111_154514: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -create
+121111_154827: /uscmst1/prod/grid/CRAB_2_8_3/python/crab.py -submit
