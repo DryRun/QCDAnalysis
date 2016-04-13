@@ -26,7 +26,7 @@ class QCDEvent
       void setGenJets(const std::vector<LorentzVector>& fGenJets);
       void setL1Obj(const std::vector<std::vector<LorentzVector> >& fL1Obj);
       void setHLTObj(const std::vector<std::vector<LorentzVector> >& fHLTObj);
-      void setPrescales(const std::vector<int>& fPreL1, const std::vector<int>& fPreHLT) {L1Prescale_ = fPreL1; HLTPrescale_ = fPreHLT;}
+      void setPrescales(const std::vector<std::vector<std::pair<std::string, int> > >& fPreL1, const std::vector<int>& fPreHLT) {L1Prescale_ = fPreL1; HLTPrescale_ = fPreHLT;}
       void setTrigDecision(const std::vector<int>& fTrigDecision) {TriggerDecision_ = fTrigDecision;}                           
       //------------ Get methods ------------------------------- 
       unsigned int nTriggers()                         const {return TriggerDecision_.size();}
@@ -38,7 +38,7 @@ class QCDEvent
       unsigned int nGenJets()                          const {return GenJets_.size();}
       int nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets);
       int fired(int i)                                 const {return TriggerDecision_[i];}
-      int preL1(int i)                                 const {return L1Prescale_[i];}
+      std::vector<std::pair<std::string, int> > preL1(int i) const {return L1Prescale_[i];}
       int preHLT(int i)                                const {return HLTPrescale_[i];}
       float pfmjj();
       float calomjj();
@@ -69,7 +69,7 @@ class QCDEvent
       //---- trigger decision vector --------------------------------- 
       std::vector<int>                         TriggerDecision_;
       //---- L1 prescale vector --------------------------------------
-      std::vector<int>                         L1Prescale_;
+      std::vector<std::vector<std::pair<std::string, int> > > L1Prescale_;
       //---- HLT prescale vector -------------------------------------
       std::vector<int>                         HLTPrescale_;
       //---- HLT objects ---------------------------------------------  

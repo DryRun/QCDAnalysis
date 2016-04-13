@@ -181,34 +181,38 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		cout << "ProcessedTreeProducer::analyze: Error in getting TriggerEvent product from Event!" << endl;
 		return;
 	}
-	vector<int> L1Prescales,HLTPrescales,Fired;
+	std::vector<std::vector<std::pair<std::string, int> > > L1Prescales;
+	std::vector<int> HLTPrescales;
+	std::vector<int> Fired;
 	vector<vector<LorentzVector> > mL1Objects,mHLTObjects;
 	// sanity check
 	assert(triggerResultsHandle_->size() == hltConfig_.size());
 
 	// Debug: print all triggers
-	//if (debug_counter++ < 100) {
-	//	for (unsigned int i = 0; i < hltConfig_.size(); ++i) {
-	//		bool this_accept = triggerResultsHandle_->accept(i);
-	//		const std::pair<int,int> this_prescales(hltConfig_.prescaleValues(event,iSetup,hltConfig_.triggerName(i)));
-	//		std::cout << "Trigger index " << i << " / name " << hltConfig_.triggerName(i) << ": accept = " << (this_accept ? "true" : "false") << ", prescales = " << this_prescales.first << " * " << this_prescales.second << std::endl;
-	//	}
-	//}
+	if (debug_counter++ < 10) {
+		for (unsigned int i = 0; i < hltConfig_.size(); ++i) {
+			bool this_accept = triggerResultsHandle_->accept(i);
+			const std::pair<int,int> this_prescales(hltConfig_.prescaleValues(event,iSetup,hltConfig_.triggerName(i)));
+			std::cout << "Trigger index " << i << " / name " << hltConfig_.triggerName(i) << ": accept = " << (this_accept ? "true" : "false") << ", prescales = " << this_prescales.first << " * " << this_prescales.second << std::endl;
+		}
+	}
 
 
 	//------ loop over all trigger names ---------
 	for(unsigned itrig=0;itrig<triggerNames_.size() && !mIsMCarlo;itrig++) {
 		bool accept(false);
-		int preL1(-1);
+		//int preL1(-1);
+		std::vector<std::pair<std::string, int> > preL1;
 		int preHLT(-1);
 		int tmpFired(-1); 
 		vector<LorentzVector> vvL1,vvHLT; 
 
 		if (triggerIndex_[itrig] < hltConfig_.size()) {
 			accept = triggerResultsHandle_->accept(triggerIndex_[itrig]);
-			const std::pair<int,int> prescales(hltConfig_.prescaleValues(event,iSetup,triggerNames_[itrig]));
-			preL1    = prescales.first;
-			preHLT   = prescales.second;
+			//const std::pair<int,int> prescales(hltConfig_.prescaleValues(event,iSetup,triggerNames_[itrig]));
+			const std::pair<std::vector<std::pair<std::string,int> >,int> prescales_detailed;
+			preL1  = prescales_detailed.first;
+			preHLT = prescales_detailed.second;
 			if (!accept)
 				tmpFired = 0;
 			else {
@@ -241,8 +245,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 							vvHLT.push_back(qcdhltobj);
 							//cout<<TO.pt()<<endl;
 						}
-					}
-					else { 
+					} else { 
 						for(size_type i=0; i!=n; ++i) {
 							const TriggerObject& TO(TOC[KEYS[i]]);
 							TLorentzVector P4;
