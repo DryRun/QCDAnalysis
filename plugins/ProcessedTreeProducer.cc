@@ -88,6 +88,7 @@ ProcessedTreeProducer::ProcessedTreeProducer(edm::ParameterSet const& cfg)
 	mPFJECUncSrcNames  = cfg.getParameter<std::vector<std::string> > ("jecUncSrcNames");
 	mJetFlavour        = cfg.getUntrackedParameter<std::string>      ("jetFlavourMatching","");
 	mXsec              = cfg.getUntrackedParameter<double>           ("Xsec",0.);
+
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void ProcessedTreeProducer::beginJob() 
@@ -103,6 +104,7 @@ void ProcessedTreeProducer::beginJob()
 	mTriggerPassHisto->SetBit(TH1::kCanRebin);
 	isPFJecUncSet_ = false;
 	isCaloJecUncSet_ = false;
+	debug_counter = 0;
 } 
 //////////////////////////////////////////////////////////////////////////////////////////
 void ProcessedTreeProducer::endJob() 
@@ -183,6 +185,17 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	vector<vector<LorentzVector> > mL1Objects,mHLTObjects;
 	// sanity check
 	assert(triggerResultsHandle_->size() == hltConfig_.size());
+
+	// Debug: print all triggers
+	//if (debug_counter++ < 100) {
+	//	for (unsigned int i = 0; i < hltConfig_.size(); ++i) {
+	//		bool this_accept = triggerResultsHandle_->accept(i);
+	//		const std::pair<int,int> this_prescales(hltConfig_.prescaleValues(event,iSetup,hltConfig_.triggerName(i)));
+	//		std::cout << "Trigger index " << i << " / name " << hltConfig_.triggerName(i) << ": accept = " << (this_accept ? "true" : "false") << ", prescales = " << this_prescales.first << " * " << this_prescales.second << std::endl;
+	//	}
+	//}
+
+
 	//------ loop over all trigger names ---------
 	for(unsigned itrig=0;itrig<triggerNames_.size() && !mIsMCarlo;itrig++) {
 		bool accept(false);
@@ -190,6 +203,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		int preHLT(-1);
 		int tmpFired(-1); 
 		vector<LorentzVector> vvL1,vvHLT; 
+
 		if (triggerIndex_[itrig] < hltConfig_.size()) {
 			accept = triggerResultsHandle_->accept(triggerIndex_[itrig]);
 			const std::pair<int,int> prescales(hltConfig_.prescaleValues(event,iSetup,triggerNames_[itrig]));

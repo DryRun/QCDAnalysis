@@ -86,6 +86,7 @@ class ProcessedTreeProducer : public edm::EDAnalyzer
     TH1F *mTriggerPassHisto,*mTriggerNamesHisto; 
     //---- TREE variables --------
     QCDEvent *mEvent;
+    int debug_counter;
 };
 
 #endif
