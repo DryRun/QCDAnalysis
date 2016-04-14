@@ -1,11 +1,49 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.ParameterSet.VarParsing as VarParsing
+
+#------------------------------------------------------------------------------------
+# Options
+#------------------------------------------------------------------------------------
+
+options = VarParsing.VarParsing()
+
+options.register('maxEvents',
+    -1, #default value
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.int,
+    "Number of events to process"
+)
+
+options.register('outputFile',
+    'file:QCDEventTree.root',
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.string,
+    "Output file"
+)
+
+options.register('globalTag',
+    'START53_V7G::All',
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.string,
+    "Global Tag"
+)
+
+# Dataset.
+options.register('dataset',
+    '/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM', 
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.string,
+    "Global Tag"
+)
+
+options.parseArguments()
 
 process = cms.Process("Ana")
 process.load('FWCore.MessageService.MessageLogger_cfi')
 ##-------------------- Communicate with the DB -----------------------
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.GlobalTag.globaltag = 'START53_V7G::All'
+process.GlobalTag.globaltag = options.globalTag
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.Geometry.GeometryIdeal_cff')
 process.load('RecoJets.Configuration.RecoPFJets_cff')
@@ -16,14 +54,24 @@ process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
 process.load("PhysicsTools.JetMCAlgos.CaloJetsMCFlavour_cfi") 
 #############   Set the number of events #############
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(options.maxEvents)
 )
 #############   Format MessageLogger #################
-process.MessageLogger.cerr.FwkReport.reportEvery = 10
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 #############   Define the source file ###############
+
+if options.dataset == "/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM":
+    input_file_vstring = cms.untracked.vstring('/store/mc/Summer12_DR53X/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v2/00000/00BA1E5C-2008-E211-9F96-002618943951.root')
+elif options.dataset == "/RSGravitonToBBbar_M-700_TuneZ2star_8TeV-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM":
+    input_file_vstring = cms.untracked.vstring('/store/mc/Summer12_DR53X/RSGravitonToBBbar_M-700_TuneZ2star_8TeV-pythia6/AODSIM/PU_S10_START53_V7A-v1/00000/86359ACA-8110-E211-B7C5-BCAEC50971E3.root')
+else:
+    print "Unknown input dataset"
+    sys.exit(1)
+
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(
-        '/store/mc/Summer12_DR53X/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v2/00000/00BA1E5C-2008-E211-9F96-002618943951.root',
+    fileNames = input_file_vstring
+)
+#'/store/mc/Summer12_DR53X/RSGravitonToBBbar_M-700_TuneZ2star_8TeV-pythia6/AODSIM/PU_S10_START53_V7A-v1/00000/16766FED-2C10-E211-8E0E-00259073E438.root',
 ##'file:/uscmst1b_scratch/lpc1/3DayLifetime/sertac/BStarToJJ_PYTHIA8_Tune4C_2000GeV_0.root',  
 ##'file:/uscmst1b_scratch/lpc1/3DayLifetime/sertac/BStarToJJ_PYTHIA8_Tune4C_1000GeV_21.root',  
 ##'file:/uscmst1b_scratch/lpc1/3DayLifetime/sertac/BStarToJJ_PYTHIA8_Tune4C_2000GeV_33.root',  
@@ -74,11 +122,10 @@ process.source = cms.Source("PoolSource",
 #'file:/uscmst1b_scratch/lpc1/3DayLifetime/sertac/BStarToJJ_PYTHIA8_Tune4C_2000GeV_32.root',  
 #'file:/uscmst1b_scratch/lpc1/3DayLifetime/sertac/BStarToJJ_PYTHIA8_Tune4C_2000GeV_44.root',  
 #'file:/uscmst1b_scratch/lpc1/3DayLifetime/sertac/BStarToJJ_PYTHIA8_Tune4C_2000GeV_45.root',
-)
-)
+
 ############# processed tree producer ##################
 #process.TFileService = cms.Service("TFileService",fileName = cms.string('/uscmst1b_scratch/lpc1/3DayLifetime/sertac/ProcessedTree_BStarToJJ_2000GeV_newJEC.root'))
-process.TFileService = cms.Service("TFileService",fileName = cms.string('test_MC.root'))
+process.TFileService = cms.Service("TFileService",fileName = cms.string(options.outputFile))
 
 process.ak7 = cms.EDAnalyzer('ProcessedTreeProducer',
     ## jet collections ###########################

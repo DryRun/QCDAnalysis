@@ -8,8 +8,8 @@ AutoLibraryLoader.enable()
 
 
 def ReadTree():
-	#f_in  = TFile("ProcessedTree_data.root", "READ")
-	f_in  = TFile("test_MC.root", "READ")
+	f_in  = TFile("ProcessedTree_data.root", "READ")
+	#f_in  = TFile("test_MC.root", "READ")
 	f_out = TFile("DemoHistos.root","RECREATE")
 	tree = f_in.Get("ak5/ProcessedTree")
 
