@@ -1,0 +1,5 @@
+SUSYBBHToBB_M-600_8TeV-pythia6-tauola	/SUSYBBHToBB_M-600_8TeV-pythia6-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM
+SUSYBBHToBB_M-700_8TeV-pythia6-tauola	/SUSYBBHToBB_M-700_8TeV-pythia6-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM
+RSGravitonToBBbar_M-500	/RSGravitonToBBbar_M-500_TuneZ2star_8TeV-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM
+RSGravitonToBBbar_M-700	/RSGravitonToBBbar_M-700_TuneZ2star_8TeV-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM
+RSGravitonToBBbar_M-900	/RSGravitonToBBbar_M-900_TuneZ2star_8TeV-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM
