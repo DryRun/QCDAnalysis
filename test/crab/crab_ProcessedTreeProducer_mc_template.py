@@ -4,13 +4,13 @@
 ##________________________________________________________________________________||
 #Configurables
 
-dataset = '/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM'
+dataset = '__DATASET__'
 
 ##________________________________________________________________________________||
 
 jobname = "QCDEvent"
 jobname += dataset[1:].replace('/','_').replace(':','_').replace('AODSIM','')
-jobname += "_vTEST1_0"
+jobname += "_v1_0"
 ##________________________________________________________________________________||
 
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
@@ -30,12 +30,12 @@ config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CM
 
 config.Data.inputDataset = dataset
 config.Data.inputDBS = 'global'
-config.Data.splitting = 'LumiBased'
-config.Data.totalUnits = 20
+config.Data.splitting = 'FileBased'
+#config.Data.totalUnits = 20
 config.Data.unitsPerJob = 10
 #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt'
 config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.publication = True
-config.Data.outputDatasetTag = 'QCDEvent'
+config.Data.outputDatasetTag = 'QCDEventTree___NAME__'
 
 config.Site.storageSite = "T3_US_FNALLPC"

@@ -36,6 +36,6 @@ config.Data.unitsPerJob = 20
 config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt'
 config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.publication = True
-config.Data.outputDatasetTag = 'QCDEvent'
+config.Data.outputDatasetTag = 'QCDEventTree_Run2012A'
 
 config.Site.storageSite = "T3_US_FNALLPC"
