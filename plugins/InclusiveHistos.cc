@@ -9,6 +9,7 @@
 #include <vector>
 #include <cassert>
 #include "TMath.h"
+#include <climits>
 
 #include "CMSDIJET/QCDAnalysis/plugins/InclusiveHistos.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -402,7 +403,17 @@ void InclusiveHistos::analyze(edm::Event const& evt, edm::EventSetup const& iSet
             ihlt = mTrigIndex[itrig][iv];
             if (mEvent->fired(ihlt) > 0) {
               hltPass = true;
-              prescale = mEvent->preL1(ihlt) * mEvent->preHLT(ihlt);
+              // Complicated L1 prescales
+              std::vector<std::pair<std::string, int> > l1_prescales = mEvent->preL1(ihlt);
+              // Choose the lowest one
+              int min_l1_prescale = INT_MAX;
+              for (std::vector<std::pair<std::string, int> >::iterator it_ps = l1_prescales.begin(); it_ps != l1_prescales.end(); ++it_ps) {
+                if ((*it_ps).second < min_l1_prescale) {
+                  min_l1_prescale = (*it_ps).second;
+                }
+              }
+              //prescale = mEvent->preL1(ihlt) * mEvent->preHLT(ihlt);
+              prescale = min_l1_prescale * mEvent->preHLT(ihlt);
               continue;
             }
           }
