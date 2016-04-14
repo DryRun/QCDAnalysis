@@ -29,6 +29,12 @@ def ReadTree():
 	histograms.AddTH1F("METoverSUMET", "METoverSUMET", "MET/#Sigma E_{T}", 100, 0, 1.0001)
 	histograms.AddTH1F("NumberOfVertices", "NumberOfVertices", "N_{vertex}", 30, 0, 30)
 	histograms.AddTH1F("PtDensityRho", "PtDensityRho", "p_{T} density #rho", 50, 0, 50)
+	histograms.AddTH1F("PF_mjj", "PF_mjj", "m_{jj}", 200, 0., 1.e3)
+	histograms.AddTH1F("PF_deta", "PF_deta", "#Delta#eta", 40, -5., 5.)
+	histograms.AddTH2F("PF_mjj_vs_deta", "PF_mjj_vs_deta", "m_{jj}", 200, 0., 1.e3, "#Delta#eta", 40, -5., 5.)
+	histograms.AddTH1F("Calo_mjj", "Calo_mjj", "m_{jj}", 200, 0., 1.e3)
+	histograms.AddTH1F("Calo_deta", "Calo_deta", "#Delta#eta", 40, -5., 5.)
+	histograms.AddTH2F("Calo_mjj_vs_deta", "Calo_mjj_vs_deta", "m_{jj}", 200, 0., 1.e3, "#Delta#eta", 40, -5., 5.)
 	#TProfile *pBetaVsNPV = new TProfile("BetaVsNPV","BetaVsNPV",20,0,20,0,1.000001)
 
 	# Trigger
@@ -109,6 +115,16 @@ def ReadTree():
 							histograms.GetTH1F("Beta").Fill(event.pfjet(j).beta(), prescale)
 							#histograms.GetTH1F("pBetaVsNPV").Fill(event.evtHdr().nVtxGood(),event.pfjet(j).beta(), prescale)
 					# jet loop
+					if event.nPFJets() >= 2:
+						pf_deta = event.pfjet(0).eta() - event.pfjet(1).eta()
+						histograms.GetTH1F("PF_mjj").Fill(event.pfmjj(), prescale)
+						histograms.GetTH1F("PF_deta").Fill(pf_deta, prescale)
+						histograms.GetTH2F("PF_mjj_vs_deta").Fill(event.pfmjj(), pf_deta, prescale)
+					if event.nCaloJets() >= 2:
+						calo_deta = event.calojet(0).eta() - event.calojet(1).eta()
+						histograms.GetTH1F("Calo_mjj").Fill(event.calomjj(), prescale)
+						histograms.GetTH1F("Calo_deta").Fill(calo_deta, prescale)
+						histograms.GetTH2F("Calo_mjj_vs_deta").Fill(event.calomjj(), calo_deta, prescale)
 				# hcal noise filter    
 			# pv cut
 		# hlt
@@ -127,6 +143,7 @@ def ReadTree():
 			print "\t\tWith " + l1_name + " = " + str(prescale)
 
 	#----------------- save the histos to the output file -------
+	histograms.SaveAll(f_out)
 	f_out.Write()
 
 if __name__ == "__main__":
