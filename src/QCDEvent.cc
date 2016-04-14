@@ -68,6 +68,21 @@ void QCDEvent::setHLTObj(const std::vector<std::vector<LorentzVector> >& fHLTObj
   }
 }
 //---------------------------------------------------
+int QCDEvent::minPreL1(int i) {
+  int min_L1_prescale = INT_MAX;
+  for (std::vector<std::pair<std::string, int> >::iterator it_ps = L1Prescale_[i].begin(); it_ps != L1Prescale_[i].end(); ++it_ps) {
+    if ((*it_ps).second < min_L1_prescale && (*it_ps).second > 0) {
+      min_L1_prescale = (*it_ps).second;
+    }
+  }
+  if (min_L1_prescale == INT_MAX) {
+    std::cerr << "[QCDEvent::preL1] WARNING : Failed to find prescale for index " << i << ". Returning -1." << std::endl;
+    min_L1_prescale = -1;
+  }
+  return min_L1_prescale;
+}
+
+//---------------------------------------------------
 int QCDEvent::nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets)
 {
   // unc defines the uncertainty

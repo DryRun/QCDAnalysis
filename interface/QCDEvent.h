@@ -39,6 +39,7 @@ class QCDEvent
       int nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets);
       int fired(int i)                                 const {return TriggerDecision_[i];}
       std::vector<std::pair<std::string, int> > preL1(int i) const {return L1Prescale_[i];}
+      int minPreL1(int i);
       int preHLT(int i)                                const {return HLTPrescale_[i];}
       float pfmjj();
       float calomjj();

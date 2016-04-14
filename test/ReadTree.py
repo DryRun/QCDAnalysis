@@ -57,21 +57,24 @@ def ReadTree():
 	trigger_counts_prescaled = {}
 	for trigger_name, trigger_index in trigger_map.iteritems():
 		trigger_counts_raw[trigger_name] = 0.
-		trigger_counts_prescaled[trigger_name] = 0.
+		trigger_counts_prescaled[trigger_name] = {}
 
 	NEntries = tree.GetEntries()
 	print "Tree has " + str(NEntries) + " entries"
-	for i in xrange(min(NEntries, NeventS)):
-		if i % (TMath.FloorNint(min(NEntries, NeventS) / 10.)) == 0:
-			print "On event " + str(i) + " / " + str(min(NEntries, NeventS))
+	for entry in xrange(min(NEntries, NeventS)):
+		if entry % (TMath.FloorNint(min(NEntries, NeventS) / 10.)) == 0:
+			print "On event " + str(entry) + " / " + str(min(NEntries, NeventS))
 
-		tree.GetEntry(i)
+		tree.GetEntry(entry)
 
 		# Record all passed triggers
 		for trigger_name, trigger_index in trigger_map.iteritems():
 			if event.fired(trigger_index) > 0:
 				trigger_counts_raw[trigger_name] += 1
-				trigger_counts_prescaled[trigger_name] += event.preL1(ihlt) * event.preHLT(ihlt)
+				for it_ps in event.preL1(trigger_index):
+					if not trigger_counts_prescaled[trigger_name].has_key(it_ps.first):
+						trigger_counts_prescaled[trigger_name][it_ps.first] = 0
+					trigger_counts_prescaled[trigger_name][it_ps.first] += it_ps.second * event.preHLT(trigger_index)
 
 		hlt_pass = False 
 		prescale = 1
@@ -80,7 +83,7 @@ def ReadTree():
 		else:
 			if event.fired(ihlt) > 0:
 				hlt_pass = True
-				prescale = event.preL1(ihlt) * event.preHLT(ihlt)
+				prescale = event.minPreL1(ihlt) * event.preHLT(ihlt)
 		if hlt_pass:
 			counter_hlt += 1
 			#-------- check if the primary vertex is good ----
@@ -90,11 +93,11 @@ def ReadTree():
 				if event.evtHdr().hcalNoise():
 					counter_hcal += 1
 					#------- fill the MET/SumET control histo ----------
-					histograms.GetTH1F("METoverSUMET").Fill(event.pfmet().met_o_sumet())
+					histograms.GetTH1F("METoverSUMET").Fill(event.pfmet().met_o_sumet(), prescale)
 					#------- fill the NPV histo ------------------------
-					histograms.GetTH1F("NumberOfVertices").Fill(event.evtHdr().nVtxGood())          
+					histograms.GetTH1F("NumberOfVertices").Fill(event.evtHdr().nVtxGood(), prescale)
 					#------- fill the Rho histo ------------------------
-					histograms.GetTH1F("PtDensityRho").Fill(event.evtHdr().pfRho())
+					histograms.GetTH1F("PtDensityRho").Fill(event.evtHdr().pfRho(), prescale)
 					#------- loop over the PF jets ---------------------
 					for j in xrange(event.nPFJets()):
 						#----- apply the pt and ID cuts ------------------
@@ -117,7 +120,11 @@ def ReadTree():
 	print "Number of jets:                   " + str(counter_jet)
 	print "Trigger summary:"
 	for trigger_name, trigger_index in trigger_map.iteritems():
-		print "Trigger " + trigger_name + " = " + str(trigger_counts_raw[trigger_name]) + "(" + str(trigger_counts_prescaled[trigger_name]) + " with prescale)"
+		print "Trigger " + trigger_name + ":"
+		print "\tRaw counts = " + str(trigger_counts_raw[trigger_name])
+		print "\tPrescaled counts:"
+		for l1_name, prescale in trigger_counts_prescaled[trigger_name].iteritems():
+			print "\t\tWith " + l1_name + " = " + str(prescale)
 
 	#----------------- save the histos to the output file -------
 	f_out.Write()

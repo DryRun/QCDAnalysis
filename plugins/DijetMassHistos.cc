@@ -8,6 +8,7 @@
 #include <functional>
 #include <vector>
 #include <cassert>
+#include <climits>
 #include "TMath.h"
 
 #include "CMSDIJET/QCDAnalysis/plugins/DijetMassHistos.h"
@@ -140,7 +141,16 @@ void DijetMassHistos::analyze(edm::Event const& evt, edm::EventSetup const& iSet
     mTree->GetEntry(i);
     if (mUsePF) {
       if (mEvent->evtHdr().isPVgood() == 1 && mEvent->nPFJets() > 1 ) {   
-        int prescale = mEvent->preL1(0) * mEvent->preHLT(0);
+        // Complex L1 prescales: choose minimum prescale
+        std::vector<std::pair<std::string, int> > l1_prescales = mEvent->preL1(0);
+        int min_l1_prescale = INT_MAX;
+        for (std::vector<std::pair<std::string, int> >::iterator it_ps = l1_prescales.begin(); it_ps != l1_prescales.end(); ++it_ps) {
+          if ((*it_ps).second < min_l1_prescale) {
+            min_l1_prescale = (*it_ps).second;
+          }
+        }
+        //int prescale = mEvent->preL1(0) * mEvent->preHLT(0);
+        int prescale = min_l1_prescale * mEvent->preHLT(0);
         double ymax = TMath::Max(fabs(mEvent->pfjet(0).y()),fabs(mEvent->pfjet(1).y()));
         int ybin = getBin(ymax,mYBND);
         bool cut1 = (mEvent->pfjet(0).looseID() == 1 && mEvent->pfjet(0).ptCor() > mMinPt1);
@@ -169,7 +179,16 @@ void DijetMassHistos::analyze(edm::Event const& evt, edm::EventSetup const& iSet
     }
     else {
       if (mEvent->evtHdr().isPVgood() == 1 && mEvent->nCaloJets() > 1 ) {
-        int prescale = mEvent->preL1(0) * mEvent->preHLT(0);
+        // Complex L1 prescales: choose minimum prescale
+        std::vector<std::pair<std::string, int> > l1_prescales = mEvent->preL1(0);
+        int min_l1_prescale = INT_MAX;
+        for (std::vector<std::pair<std::string, int> >::iterator it_ps = l1_prescales.begin(); it_ps != l1_prescales.end(); ++it_ps) {
+          if ((*it_ps).second < min_l1_prescale) {
+            min_l1_prescale = (*it_ps).second;
+          }
+        }
+        //int prescale = mEvent->preL1(0) * mEvent->preHLT(0);
+        int prescale = min_l1_prescale * mEvent->preHLT(0);
         double ymax = TMath::Max(fabs(mEvent->calojet(0).y()),fabs(mEvent->calojet(1).y()));
         int ybin = getBin(ymax,mYBND);
         bool cut1 = (mEvent->calojet(0).looseID() == 1 && mEvent->calojet(0).ptCor() > mMinPt1);
