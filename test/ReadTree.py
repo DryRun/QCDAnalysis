@@ -8,7 +8,8 @@ AutoLibraryLoader.enable()
 
 
 def ReadTree():
-	f_in  = TFile("ProcessedTree_data.root", "READ")
+	#f_in  = TFile("ProcessedTree_data.root", "READ")
+	f_in  = TFile("test_MC.root", "READ")
 	f_out = TFile("DemoHistos.root","RECREATE")
 	tree = f_in.Get("ak5/ProcessedTree")
 
@@ -42,8 +43,8 @@ def ReadTree():
 		if not name.EqualTo(""):
 			trigger_map[name.Data()] = ibin
 	if ihlt == -1:
-		print "The requested trigger (" + HLT + ") is not found "
-		sys.exit(1)
+		print "The requested trigger (" + HLT + ") is not found (expected if running over MC?)"
+		#sys.exit(1)
 	else:
 		print HLT + " -. " + str(ihlt)
 
