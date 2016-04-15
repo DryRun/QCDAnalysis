@@ -1,0 +1,153 @@
+DEBUG 2016-04-14 09:29:59,930: 	 Executing command: 'submit'
+DEBUG 2016-04-14 09:29:59,939: 	 Found CRAB cache file /uscms/home/dryu/.crab3
+DEBUG 2016-04-14 09:29:59,957: 	 Checking credentials
+DEBUG 2016-04-14 09:29:59,957: 	 Found proxy file /tmp/x509up_u13884
+DEBUG 2016-04-14 09:29:59,957: 	 Getting proxy life time left
+DEBUG 2016-04-14 09:30:00,059: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -timeleft
+ output : 33039
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 09:30:00,161: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -actimeleft
+ output : 33038
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 09:30:00,161: 	 Proxy valid for 09:10:39 hours
+INFO 2016-04-14 09:30:00,162: 	 Will use CRAB configuration file crab_ProcessedTreeProducer_data.py
+DEBUG 2016-04-14 09:30:00,162: 	 Loading CRAB configuration file.
+ERROR 2016-04-14 09:30:00,189: 	 Error while loading CRAB configuration:
+name 'run' is not defined
+Please refer to https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3CommonErrors#Syntax_error_in_CRAB_configurati
+See the ./crab.log file for more details.
+The documentation about the CRAB configuration file can be found in https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3ConfigurationFile
+ERROR 2016-04-14 09:30:00,189: 	 Caught exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 160, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 146, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/submit.py", line 34, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/SubCommand.py", line 295, in __init__
+    self.loadConfig(self.options.config, self.args)
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/SubCommand.py", line 84, in loadConfig
+    raise ConfigurationException(configmsg)
+ConfigurationException: Error while loading CRAB configuration:
+name 'run' is not defined
+Please refer to https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3CommonErrors#Syntax_error_in_CRAB_configurati
+See the ./crab.log file for more details.
+The documentation about the CRAB configuration file can be found in https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3ConfigurationFile
+DEBUG 2016-04-14 09:35:50,482: 	 Executing command: 'submit'
+DEBUG 2016-04-14 09:35:50,482: 	 Found CRAB cache file /uscms/home/dryu/.crab3
+DEBUG 2016-04-14 09:35:50,492: 	 Checking credentials
+DEBUG 2016-04-14 09:35:50,492: 	 Found proxy file /tmp/x509up_u13884
+DEBUG 2016-04-14 09:35:50,492: 	 Getting proxy life time left
+DEBUG 2016-04-14 09:35:50,594: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -timeleft
+ output : 32688
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 09:35:50,697: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -actimeleft
+ output : 32688
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 09:35:50,697: 	 Proxy valid for 09:04:48 hours
+INFO 2016-04-14 09:35:50,697: 	 Will use CRAB configuration file crab_ProcessedTreeProducer_data.py
+DEBUG 2016-04-14 09:35:50,697: 	 Loading CRAB configuration file.
+DEBUG 2016-04-14 09:35:51,967: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2016-04-14 09:35:51,969: 	 Working area '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/crab/crab_workarea/crab_QCDEventJetHT_Run2012C-22Jan2013-v1__vTEST1' already exists 
+Please change the requestName in the config file
+ERROR 2016-04-14 09:35:51,969: 	 Caught exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 160, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 146, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/submit.py", line 34, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/SubCommand.py", line 299, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/ClientUtilities.py", line 394, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/crab/crab_workarea/crab_QCDEventJetHT_Run2012C-22Jan2013-v1__vTEST1' already exists 
+Please change the requestName in the config file
+DEBUG 2016-04-14 09:54:15,343: 	 Executing command: 'submit'
+DEBUG 2016-04-14 09:54:15,344: 	 Found CRAB cache file /uscms/home/dryu/.crab3
+DEBUG 2016-04-14 09:54:15,348: 	 Checking credentials
+DEBUG 2016-04-14 09:54:15,348: 	 Found proxy file /tmp/x509up_u13884
+DEBUG 2016-04-14 09:54:15,348: 	 Getting proxy life time left
+DEBUG 2016-04-14 09:54:15,450: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -timeleft
+ output : 31583
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 09:54:15,553: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -actimeleft
+ output : 31583
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 09:54:15,553: 	 Proxy valid for 08:46:23 hours
+INFO 2016-04-14 09:54:15,553: 	 Will use CRAB configuration file crab_ProcessedTreeProducer_data.py
+DEBUG 2016-04-14 09:54:15,553: 	 Loading CRAB configuration file.
+DEBUG 2016-04-14 09:54:16,827: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2016-04-14 09:54:16,827: 	 Working area '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/crab/crab_workarea/crab_QCDEventJetHT_Run2012C-22Jan2013-v1__vTEST1' already exists 
+Please change the requestName in the config file
+ERROR 2016-04-14 09:54:16,827: 	 Caught exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 160, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 146, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/submit.py", line 34, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/SubCommand.py", line 299, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/ClientUtilities.py", line 394, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/crab/crab_workarea/crab_QCDEventJetHT_Run2012C-22Jan2013-v1__vTEST1' already exists 
+Please change the requestName in the config file
+DEBUG 2016-04-14 12:02:15,026: 	 Executing command: 'submit'
+DEBUG 2016-04-14 12:02:15,027: 	 Found CRAB cache file /uscms/home/dryu/.crab3
+DEBUG 2016-04-14 12:02:15,040: 	 Checking credentials
+DEBUG 2016-04-14 12:02:15,041: 	 Found proxy file /tmp/x509up_u13884
+DEBUG 2016-04-14 12:02:15,041: 	 Getting proxy life time left
+DEBUG 2016-04-14 12:02:15,143: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -timeleft
+ output : 23903
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 12:02:15,247: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u13884 -actimeleft
+ output : 23903
+
+ error: 
+ retcode : 0
+DEBUG 2016-04-14 12:02:15,247: 	 Proxy valid for 06:38:23 hours
+INFO 2016-04-14 12:02:15,248: 	 Will use CRAB configuration file crab_ProcessedTreeProducer_data.py
+DEBUG 2016-04-14 12:02:15,248: 	 Loading CRAB configuration file.
+DEBUG 2016-04-14 12:02:16,857: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2016-04-14 12:02:16,858: 	 Working area '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/crab/crab_workarea/crab_QCDEventJetHT_Run2012C-22Jan2013-v1__vTEST1_1' already exists 
+Please change the requestName in the config file
+ERROR 2016-04-14 12:02:16,858: 	 Caught exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 160, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/bin/crab", line 146, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/submit.py", line 34, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/Commands/SubCommand.py", line 299, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/crab3/slc6_amd64_gcc493/cms/crabclient/3.3.1604/lib/python2.7/site-packages/CRABClient/ClientUtilities.py", line 394, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/crab/crab_workarea/crab_QCDEventJetHT_Run2012C-22Jan2013-v1__vTEST1_1' already exists 
+Please change the requestName in the config file
