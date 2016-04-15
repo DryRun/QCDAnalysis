@@ -29,12 +29,12 @@ def ReadTree():
 	histograms.AddTH1F("METoverSUMET", "METoverSUMET", "MET/#Sigma E_{T}", 100, 0, 1.0001)
 	histograms.AddTH1F("NumberOfVertices", "NumberOfVertices", "N_{vertex}", 30, 0, 30)
 	histograms.AddTH1F("PtDensityRho", "PtDensityRho", "p_{T} density #rho", 50, 0, 50)
-	histograms.AddTH1F("PF_mjj", "PF_mjj", "m_{jj}", 200, 0., 1.e3)
+	histograms.AddTH1F("PF_mjj", "PF_mjj", "m_{jj}", 200, 0., 2.e3)
 	histograms.AddTH1F("PF_deta", "PF_deta", "#Delta#eta", 40, -5., 5.)
-	histograms.AddTH2F("PF_mjj_vs_deta", "PF_mjj_vs_deta", "m_{jj}", 200, 0., 1.e3, "#Delta#eta", 40, -5., 5.)
-	histograms.AddTH1F("Calo_mjj", "Calo_mjj", "m_{jj}", 200, 0., 1.e3)
+	histograms.AddTH2F("PF_mjj_vs_deta", "PF_mjj_vs_deta", "m_{jj}", 200, 0., 2.e3, "#Delta#eta", 40, -5., 5.)
+	histograms.AddTH1F("Calo_mjj", "Calo_mjj", "m_{jj}", 200, 0., 2.e3)
 	histograms.AddTH1F("Calo_deta", "Calo_deta", "#Delta#eta", 40, -5., 5.)
-	histograms.AddTH2F("Calo_mjj_vs_deta", "Calo_mjj_vs_deta", "m_{jj}", 200, 0., 1.e3, "#Delta#eta", 40, -5., 5.)
+	histograms.AddTH2F("Calo_mjj_vs_deta", "Calo_mjj_vs_deta", "m_{jj}", 200, 0., 2.e3, "#Delta#eta", 40, -5., 5.)
 	#TProfile *pBetaVsNPV = new TProfile("BetaVsNPV","BetaVsNPV",20,0,20,0,1.000001)
 
 	# Trigger
