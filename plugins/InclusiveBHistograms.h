@@ -1,5 +1,9 @@
-#ifndef TriggerEfficiency_h
-#define TriggerEfficiency_h
+#ifndef InclusiveBHistograms_h
+#define InclusiveBHistograms_h
+
+#include "TTree.h"
+#include "TH1F.h"
+#include "TFile.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -12,41 +16,36 @@
 #include "CMSDIJET/QCDAnalysis/interface/QCDMET.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
-#include "TTree.h"
-#include "TH1F.h"
-#include "TFile.h"
+#include "MyTools/RootUtils/interface/HistogramManager.h"
+#include "MyTools/AnalysisTools/interface/Cutflow.h"
 
-class TriggerEfficiency : public edm::EDAnalyzer 
+class InclusiveBHistograms : public edm::EDAnalyzer, public Cutflow 
 {
   public:
-    explicit TriggerEfficiency(edm::ParameterSet const& cfg);
+    explicit InclusiveBHistograms(edm::ParameterSet const& cfg);
     virtual void beginJob();
     virtual void analyze(edm::Event const& evt, edm::EventSetup const& iSetup);
     virtual void endJob();
-    virtual ~TriggerEfficiency();
+    virtual ~InclusiveBHistograms() {}
 
   private:  
     int getBin(double x, const std::vector<double>& boundaries); 
     //---- configurable parameters --------   
-    int mJetID,mHCALNoise,mNEvents;   
-    double mMinPt;
-    std::vector<int> mRefTrigIndex;
-    std::vector<double> mPTBND,mYBND,mL1Pt,mHLTPt;
-    std::vector<std::string> mRefTrigger; 
-    std::string mTreeName,mDirName;
-    std::vector<std::string> mFileNames;
-
-    edm::Service<TFileService> fs;
-    TTree *mTree; 
-    TFile *mInf;
-    TDirectoryFile *mDir;
-    TH1F *mPFPt[30][10],*mPFRefPt[30][10],*mCaloPt[30][10],*mCaloRefPt[30][10];
+    double mMinPt1,mMinPt2;
+    std::string input_file_name_,
+    std::string tree_name_;
+    std::vector<double> mjj_bins_;
+    
+    edm::Service<TFileService> fs_;
+    TTree *tree_; 
+    TFile *input_file_;
+    std::vector<TH1F*> mhMETovSUMET,mhM,mhNormM,mhTruncM,mhNormTruncM,mhPt,mhY,mhYmax;
+    std::vector<TH1F*> mhCHF,mhNHF,mhPHF,mhN90hits,mhEMF,mhNTrkCalo,mhNTrkVtx,mhfHPD;
     //---- TREE variable --------
     QCDEvent *mEvent;
-
-    std::map<TString, std::map<TString, unsigned int> > trigger_counts_raw_;
-    std::map<TString, std::map<TString, unsigned int> > trigger_counts_prescaled_;
+    Root::HistogramManager* histograms_;
     
 };
+
 
 #endif

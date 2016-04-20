@@ -9,7 +9,7 @@ namespace QCDEventCutFunctions {
 	}
 	
 	bool MaxNPFJets(QCDEvent& p_data, Cutflow* p_cutflow) {
-		return p_data.nPFJets() <= (unsigned int)(p_cutflow->GetCutParameters("MinNPFJets")[0]);
+		return p_data.nPFJets() <= (unsigned int)(p_cutflow->GetCutParameters("MaxNPFJets")[0]);
 	}
 
 	bool MinNCaloJets(QCDEvent& p_data, Cutflow* p_cutflow) {
@@ -17,7 +17,87 @@ namespace QCDEventCutFunctions {
 	}
 	
 	bool MaxNCaloJets(QCDEvent& p_data, Cutflow* p_cutflow) {
-		return p_data.nCaloJets() <= (unsigned int)(p_cutflow->GetCutParameters("MinNCaloJets")[0]);
+		return p_data.nCaloJets() <= (unsigned int)(p_cutflow->GetCutParameters("MaxNCaloJets")[0]);
+	}
+
+	bool MinLeadingPFJetPt(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nPFJets() < 1) {
+			pass = false;
+		} else {
+			pass = p_data.calojet(0).ptCor() > p_cutflow->GetCutParameters("MinLeadingPFJetPt")[0];
+		}
+		return pass;
+	}
+
+	bool MinSubleadingPFJetPt(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nPFJets() < 2) {
+			pass = false;
+		} else {
+			pass = p_data.calojet(1).ptCor() > p_cutflow->GetCutParameters("MinSubleadingPFJetPt")[0];
+		}
+		return pass;
+	}
+
+	bool MaxLeadingPFJetEta(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nPFJets() < 1) {
+			pass = false;
+		} else {
+			pass = TMath::Abs(p_data.calojet(0).eta()) < p_cutflow->GetCutParameters("MaxLeadingPFJetEta")[0];
+		}
+		return pass;
+	}
+
+	bool MaxSubleadingPFJetEta(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nPFJets() < 2) {
+			pass = false;
+		} else {
+			pass = TMath::Abs(p_data.calojet(1).eta()) < p_cutflow->GetCutParameters("MaxSubleadingPFJetEta")[0];
+		}
+		return pass;
+	}
+
+	bool MinLeadingCaloJetPt(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nCaloJets() < 1) {
+			pass = false;
+		} else {
+			pass = p_data.calojet(0).ptCor() > p_cutflow->GetCutParameters("MinLeadingCaloJetPt")[0];
+		}
+		return pass;
+	}
+
+	bool MinSubleadingCaloJetPt(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nCaloJets() < 2) {
+			pass = false;
+		} else {
+			pass = p_data.calojet(1).ptCor() > p_cutflow->GetCutParameters("MinSubleadingCaloJetPt")[0];
+		}
+		return pass;
+	}
+
+	bool MaxLeadingCaloJetEta(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nCaloJets() < 1) {
+			pass = false;
+		} else {
+			pass = TMath::Abs(p_data.calojet(0).eta()) < p_cutflow->GetCutParameters("MaxLeadingCaloJetEta")[0];
+		}
+		return pass;
+	}
+
+	bool MaxSubleadingCaloJetEta(QCDEvent& p_data, Cutflow* p_cutflow) {
+		bool pass = true;
+		if (p_data.nCaloJets() < 2) {
+			pass = false;
+		} else {
+			pass = TMath::Abs(p_data.calojet(1).eta()) < p_cutflow->GetCutParameters("MaxSubleadingCaloJetEta")[0];
+		}
+		return pass;
 	}
 
 	bool MinPFMjj(QCDEvent& p_data, Cutflow* p_cutflow) {

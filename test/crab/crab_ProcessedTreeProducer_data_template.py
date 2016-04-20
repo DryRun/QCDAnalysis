@@ -31,10 +31,10 @@ config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CM
 
 config.Data.inputDataset = dataset
 config.Data.inputDBS = 'global'
-config.Data.splitting = 'FileBased'
+config.Data.splitting = 'LumiBased'
 #config.Data.totalUnits = 20
-config.Data.unitsPerJob = 2
-#config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt'
+config.Data.unitsPerJob = 20
+config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt'
 config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.publication = True
 config.Data.outputDatasetTag = 'QCDBEventTree___NAME___' + tag

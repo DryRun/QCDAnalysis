@@ -20,6 +20,14 @@ namespace QCDEventCutFunctions {
 	bool MaxNPFJets(QCDEvent& p_data, Cutflow* p_cutflow);
 	bool MinNCaloJets(QCDEvent& p_data, Cutflow* p_cutflow);
 	bool MaxNCaloJets(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MinLeadingPFJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MinSubleadingPFJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MaxLeadingPFJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MaxSubleadingPFJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MinLeadingCaloJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MinSubleadingCaloJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MaxLeadingCaloJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
+	bool MaxSubleadingCaloJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
 	bool MinPFMjj(QCDEvent& p_data, Cutflow* p_cutflow);
 	bool MaxPFMjj(QCDEvent& p_data, Cutflow* p_cutflow);
 	bool MinCaloMjj(QCDEvent& p_data, Cutflow* p_cutflow);
