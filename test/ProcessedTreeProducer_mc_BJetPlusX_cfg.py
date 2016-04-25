@@ -15,7 +15,7 @@ options.register('maxEvents',
 )
 
 options.register('outputFile',
-    'file:QCDEventTree.root',
+    'file:QCDBEventTree.root',
     VarParsing.VarParsing.multiplicity.singleton,
     VarParsing.VarParsing.varType.string,
     "Output file"

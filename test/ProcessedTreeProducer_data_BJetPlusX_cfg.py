@@ -39,10 +39,35 @@ options.register('dataset',
 	#'/BJetPlusX/Run2012D-22Jan2013-v1/AOD'
 	VarParsing.VarParsing.multiplicity.singleton,
 	VarParsing.VarParsing.varType.string,
-	"Global Tag"
+	"Run over a few files from specific (known) datasets"
+)
+
+#options.register('inputFilesTxt', '', VarParsing.VarParsing.multiplicity.singleto, VarParsing.VarParsing.varType.string, 'Text file of inputs')
+options.register('inputFiles', 
+	'', 
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.string,
+	"List of input files"
 )
 
 options.parseArguments()
+
+# Make list of input files
+# If inputFiles exists, use it. Otherwise, go by dataset
+input_files_vstring = cms.untracked.vstring("")
+if options.inputFiles != '':
+	input_files_vstring = cms.untracked.vstring(options.inputFiles)
+else:
+	if options.dataset == '/BJetPlusX/Run2012C-22Jan2013-v1/AOD':
+		input_files_vstring = cms.untracked.vstring('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0013B80A-088E-E211-BCA9-002590596468.root',
+		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00628EC1-2B8E-E211-A57B-00261894383E.root')
+		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00709065-3B8E-E211-A069-002590596486.root')
+		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0097E4DA-868E-E211-8381-00304867918E.root')
+		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00E60307-478E-E211-8F70-00261894390B.root')
+		)
+	else:
+		print "Unknown dataset: " + options.dataset
+		sys.exit(1)
 
 
 process = cms.Process("Ana")
@@ -71,17 +96,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 if options.dataset == '/BJetPlusX/Run2012C-22Jan2013-v1/AOD':
 	process.source = cms.Source("PoolSource",
-		fileNames = cms.untracked.vstring(
-			'/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0013B80A-088E-E211-BCA9-002590596468.root',
-			#'/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00628EC1-2B8E-E211-A57B-00261894383E.root',
-			#'/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00709065-3B8E-E211-A069-002590596486.root',
-			#'/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0097E4DA-868E-E211-8381-00304867918E.root',
-			#'/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00E60307-478E-E211-8F70-00261894390B.root',
-		),
+		fileNames = input_files_vstring,
 	)
-else:
-	print "Unknown dataset: " + options.dataset
-	sys.exit(1)
 
 trigger_list_btag_dijet = cms.vstring(
 	'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v5', 
