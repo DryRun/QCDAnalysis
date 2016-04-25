@@ -83,7 +83,7 @@ int QCDEvent::minPreL1(int i) {
 }
 
 //---------------------------------------------------
-int QCDEvent::nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets)
+int QCDEvent::nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets) const
 {
   // unc defines the uncertainty
   // id defines the jet id
@@ -108,7 +108,7 @@ int QCDEvent::nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QC
   return counter;
 }
 //---------------------------------------------------
-float QCDEvent::genmjj()
+float QCDEvent::genmjj() const
 {
   if (GenJets_.size() < 2)
     return 0.0;
@@ -117,7 +117,7 @@ float QCDEvent::genmjj()
   }
 }
 //---------------------------------------------------
-float QCDEvent::pfmjj()
+float QCDEvent::pfmjj() const
 {
   if (PFJets_.size() < 2)
     return 0.0;
@@ -128,7 +128,7 @@ float QCDEvent::pfmjj()
   }
 }
 //---------------------------------------------------
-float QCDEvent::pfmjjcor(int k)
+float QCDEvent::pfmjjcor(int k) const
 {
   int sign(0);
   if (PFJets_.size() < 2)
@@ -148,7 +148,7 @@ float QCDEvent::pfmjjcor(int k)
   }
 }
 //---------------------------------------------------
-float QCDEvent::pfmjjcor(int k,int src)
+float QCDEvent::pfmjjcor(int k,int src) const
 {
   int sign(0);
   if (PFJets_.size() < 2)
@@ -168,7 +168,7 @@ float QCDEvent::pfmjjcor(int k,int src)
   }
 }
 //---------------------------------------------------
-float QCDEvent::fatmjjcor(int k)
+float QCDEvent::fatmjjcor(int k) const
 {
   int sign(0);
   if (FatJets_.size() < 2)
@@ -188,7 +188,7 @@ float QCDEvent::fatmjjcor(int k)
   }
 }
 //---------------------------------------------------
-float QCDEvent::calomjj()
+float QCDEvent::calomjj() const
 {
   if (CaloJets_.size() < 2)
     return 0.0;
@@ -199,7 +199,7 @@ float QCDEvent::calomjj()
   }
 }
 //---------------------------------------------------
-float QCDEvent::calomjjcor(int k)
+float QCDEvent::calomjjcor(int k) const
 {
   int sign(0);
   if (CaloJets_.size() < 2)
@@ -219,7 +219,7 @@ float QCDEvent::calomjjcor(int k)
   }
 }
 //---------------------------------------------------
-float QCDEvent::pfmjjgen()
+float QCDEvent::pfmjjgen() const
 {
   if (PFJets_.size() < 2)
     return 0.0;
@@ -230,7 +230,7 @@ float QCDEvent::pfmjjgen()
   }
 }
 //---------------------------------------------------
-float QCDEvent::calomjjgen()
+float QCDEvent::calomjjgen() const
 {
   if (CaloJets_.size() < 2)
     return 0.0;

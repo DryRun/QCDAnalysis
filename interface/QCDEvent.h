@@ -36,20 +36,20 @@ class QCDEvent
       unsigned int nFatJets()                          const {return FatJets_.size();}
       unsigned int nCaloJets()                         const {return CaloJets_.size();}
       unsigned int nGenJets()                          const {return GenJets_.size();}
-      int nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets);
+      int nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets) const;
       int fired(int i)                                 const {return TriggerDecision_[i];}
       std::vector<std::pair<std::string, int> > preL1(int i) const {return L1Prescale_[i];}
       int minPreL1(int i);
       int preHLT(int i)                                const {return HLTPrescale_[i];}
-      float pfmjj();
-      float calomjj();
-      float genmjj(); 
-      float pfmjjcor(int unc);
-      float pfmjjcor(int unc,int src);
-      float fatmjjcor(int unc);
-      float calomjjcor(int unc);
-      float pfmjjgen();
-      float calomjjgen();
+      float pfmjj() const;
+      float calomjj() const;
+      float genmjj() const; 
+      float pfmjjcor(int unc) const;
+      float pfmjjcor(int unc,int src) const;
+      float fatmjjcor(int unc) const;
+      float calomjjcor(int unc) const;
+      float pfmjjgen() const;
+      float calomjjgen() const;
       const QCDMET&        calomet()                   const {return CaloMet_;}
       const QCDMET&        pfmet()                     const {return PFMet_;} 
       const LorentzVector& hltobj(int itrig, int iobj) const {return (HLTObj_[itrig])[iobj];}  

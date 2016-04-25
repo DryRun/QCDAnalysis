@@ -12,37 +12,39 @@
 #include "TPython.h"
 
 #include "MyTools/RootUtils/interface/Constants.h"
-#include "MyTools/AnalysisTools/interface/Cutflow.h"
+#include "MyTools/AnalysisTools/interface/EventSelector.h"
 #include "CMSDIJET/QCDAnalysis/interface/QCDEvent.h"
 
 namespace QCDEventCutFunctions {
-	bool MinNPFJets(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxNPFJets(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinNCaloJets(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxNCaloJets(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinLeadingPFJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinSubleadingPFJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxLeadingPFJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxSubleadingPFJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinLeadingCaloJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinSubleadingCaloJetPt(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxLeadingCaloJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxSubleadingCaloJetEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinPFMjj(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxPFMjj(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinCaloMjj(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxCaloMjj(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinPFDeltaEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxPFDeltaEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MinCaloDeltaEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool MaxCaloDeltaEta(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool LeadingBTagPF(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool LeadingBTagCalo(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool SubleadingBTagPF(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool SubleadingBTagCalo(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool LeadingBVetoPF(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool LeadingBVetoCalo(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool SubleadingBVetoPF(QCDEvent& p_data, Cutflow* p_cutflow);
-	bool SubleadingBVetoCalo(QCDEvent& p_data, Cutflow* p_cutflow) ;
+	bool MinNPFJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxNPFJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinNCaloJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxNCaloJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinLeadingPFJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinSubleadingPFJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxLeadingPFJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxSubleadingPFJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinLeadingCaloJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinSubleadingCaloJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxLeadingCaloJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxSubleadingCaloJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinPFMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxPFMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinCaloMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxCaloMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinPFDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxPFDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinCaloDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxCaloDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool LeadingBTagPF(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool LeadingBTagCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool SubleadingBTagPF(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool SubleadingBTagCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool LeadingBVetoPF(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool LeadingBVetoCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool SubleadingBVetoPF(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool SubleadingBVetoCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+
+	void Configure(EventSelector(QCDEvent>* p_event_selector);
 }
 #endif
