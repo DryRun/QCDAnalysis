@@ -32,14 +32,32 @@ void InclusiveBHistograms::beginJob()
 	mEvent = new QCDEvent();
 	TBranch *branch = tree_->GetBranch("event");
 	branch->SetAddress(&mEvent);
+
+	// Cuts
+	std::vector<TString> jet_cuts;
+	std::map<TString, std::vector<double> > jet_cut_parameters;
+	std::map<TString, std::vector<TString> > jet_cut_descriptors;
+	jet_cuts.push_back("MinPt");
+	jet_cut_parameters["MinPt"] = std::vector<double>{25.};
+	jet_cut_descriptors["MinPt"] = std::vector<TString>();
+	jet_cuts.push_back("MaxAbsEta");
+	jet_cut_parameters["MaxAbsEta"] = std::vector<double>{2.5};
+	jet_cut_descriptors["MaxAbsEta"] = std::vector<TString>();
+
+	jet_selector_ = new ObjectSelector<QCDJet>;
+	JetCutFunctions::Configure(jet_selector_);
+	for (auto& it_cut : jet_cuts) {
+		jet_selector_->RegisterCut(it_cut, jet_cut_descriptors[it_cut], jet_cut_parameters[it_cut]);
+	}
+
 	//--------- book histos -----------------------
 	histograms_ = new Root::HistogramManager();
 	histograms_->AddPrefix("h_");
-	histograms_->AddTFileService(fs_);
+	histograms_->AddTFileService(&fs_);
 
 	histograms_->AddTH1D("pf_mjj", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
 	histograms_->AddTH1D("pf_deltaeta", "#Delta#eta", 100., -5., 5.);
-	histograms_->AddTH2F("pf_mjj_deltaeta", "m_{jj} [GeV]" 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
+	histograms_->AddTH2F("pf_mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
 	histograms_->AddTH2F("pf_btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
 }
 //////////////////////////////////////////////////////////////////////////////////////////
