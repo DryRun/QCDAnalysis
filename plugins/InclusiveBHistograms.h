@@ -14,7 +14,8 @@
 #include "CMSDIJET/QCDAnalysis/interface/QCDCaloJet.h"
 #include "CMSDIJET/QCDAnalysis/interface/QCDPFJet.h"
 #include "CMSDIJET/QCDAnalysis/interface/QCDMET.h"
-#include "CMSDIJET/QCDAnalysis/interface/JetCutFunctions.h"
+#include "CMSDIJET/QCDAnalysis/interface/PFJetCutFunctions.h"
+#include "CMSDIJET/QCDAnalysis/interface/CaloJetCutFunctions.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "MyTools/RootUtils/interface/HistogramManager.h"
@@ -32,11 +33,12 @@ class InclusiveBHistograms : public edm::EDAnalyzer
 
   private:  
     int getBin(double x, const std::vector<double>& boundaries); 
+
     //---- configurable parameters --------   
-    double mMinPt1,mMinPt2;
     std::string input_file_name_;
     std::string input_tree_name_;
     std::vector<double> mjj_bins_;
+    std::pair<std::string, std::string> trigger_;
     
     edm::Service<TFileService> fs_;
     TTree *tree_; 
@@ -44,10 +46,12 @@ class InclusiveBHistograms : public edm::EDAnalyzer
     std::vector<TH1F*> mhMETovSUMET,mhM,mhNormM,mhTruncM,mhNormTruncM,mhPt,mhY,mhYmax;
     std::vector<TH1F*> mhCHF,mhNHF,mhPHF,mhN90hits,mhEMF,mhNTrkCalo,mhNTrkVtx,mhfHPD;
     //---- TREE variable --------
-    QCDEvent *mEvent;
-    ObjectSelector<QCDJet> *jet_selector_;
+    QCDEvent *event_;
+    ObjectSelector<QCDPFJet> *pfjet_selector_;
     EventSelector<QCDEvent> *event_selector_;
-    Root::HistogramManager* histograms_;
+    Root::HistogramManager* global_histograms_;
+    Root::HistogramManager* pfjet_histograms_;
+    Root::HistogramManager* calojet_histograms_;
     
 };
 

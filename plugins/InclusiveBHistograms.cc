@@ -23,42 +23,93 @@ InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg)
 	mjj_bins_ = cfg.getParameter<std::vector<double> >("mjj_bins");
 	input_file_name_  = cfg.getParameter<std::string> ("filename");
 	input_tree_name_  = cfg.getParameter<std::string> ("treename");
+	trigger_ = std::make_pair<std::string, std::string>(cfg.getParameter<std::string>("HLT"), cfg.getParameter<std::string>("L1"));
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void InclusiveBHistograms::beginJob() 
 {
 	input_file_ = TFile::Open(input_file_name_.c_str());
 	tree_ = (TTree*)input_file_->Get(input_tree_name_.c_str());
-	mEvent = new QCDEvent();
+	event_ = new QCDEvent();
 	TBranch *branch = tree_->GetBranch("event");
-	branch->SetAddress(&mEvent);
+	branch->SetAddress(&event_);
 
 	// Cuts
-	std::vector<TString> jet_cuts;
-	std::map<TString, std::vector<double> > jet_cut_parameters;
-	std::map<TString, std::vector<TString> > jet_cut_descriptors;
-	jet_cuts.push_back("MinPt");
-	jet_cut_parameters["MinPt"] = std::vector<double>{25.};
-	jet_cut_descriptors["MinPt"] = std::vector<TString>();
-	jet_cuts.push_back("MaxAbsEta");
-	jet_cut_parameters["MaxAbsEta"] = std::vector<double>{2.5};
-	jet_cut_descriptors["MaxAbsEta"] = std::vector<TString>();
+	std::vector<TString> pfjet_cuts;
+	std::map<TString, std::vector<double> > pfjet_cut_parameters;
+	std::map<TString, std::vector<TString> > pfjet_cut_descriptors;
+	pfjet_cuts.push_back("MinPt");
+	pfjet_cut_parameters["MinPt"] = std::vector<double>{25.};
+	pfjet_cut_descriptors["MinPt"] = std::vector<TString>();
+	pfjet_cuts.push_back("MaxAbsEta");
+	pfjet_cut_parameters["MaxAbsEta"] = std::vector<double>{2.5};
+	pfjet_cut_descriptors["MaxAbsEta"] = std::vector<TString>();
+	pfjet_cuts.push_back("IsLooseID");
+	pfjet_cut_parameters["IsLooseID"] = std::vector<double>();
+	pfjet_cut_descriptors["IsLooseID"] = std::vector<TString>();
 
-	jet_selector_ = new ObjectSelector<QCDJet>;
-	JetCutFunctions::Configure(jet_selector_);
-	for (auto& it_cut : jet_cuts) {
-		jet_selector_->RegisterCut(it_cut, jet_cut_descriptors[it_cut], jet_cut_parameters[it_cut]);
+	pfjet_selector_ = new ObjectSelector<QCDPFJet>;
+	PFJetCutFunctions::Configure(pfjet_selector_);
+	for (auto& it_cut : pfjet_cuts) {
+		pfjet_selector_->RegisterCut(it_cut, pfjet_cut_descriptors[it_cut], pfjet_cut_parameters[it_cut]);
 	}
 
-	//--------- book histos -----------------------
-	histograms_ = new Root::HistogramManager();
-	histograms_->AddPrefix("h_");
-	histograms_->AddTFileService(&fs_);
+	std::vector<TString> calojet_cuts;
+	std::map<TString, std::vector<double> > calojet_cut_parameters;
+	std::map<TString, std::vector<TString> > calojet_cut_descriptors;
+	calojet_cuts.push_back("MinPt");
+	calojet_cut_parameters["MinPt"] = std::vector<double>{30.};
+	calojet_cut_descriptors["MinPt"] = std::vector<TString>();
 
-	histograms_->AddTH1D("pf_mjj", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
-	histograms_->AddTH1D("pf_deltaeta", "#Delta#eta", 100., -5., 5.);
-	histograms_->AddTH2F("pf_mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
-	histograms_->AddTH2F("pf_btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+	calojet_selector_ = new ObjectSelector<QCDCaloJet>;
+	CaloJetCutFunctions::Configure(calojet_selector_);
+	for (auto& it_cut : calojet_cuts) {
+		calojet_selector_->RegisterCut(it_cut, calojet_cut_descriptors[it_cut], calojet_cut_parameters[it_cut]);
+	}
+
+	std::vector<TString> event_cuts;
+	std::map<TString, std::vector<double> > event_cut_parameters;
+	std::map<TString, std::vector<TString> > event_cut_descriptors;
+	event_cuts.push_back("LeadingJetPt");
+	event_cut_parameters["LeadingJetPt"] = std::vector<double>{25.};
+	event_cut_descriptors["LeadingJetPt"] = std::vector<TString>();
+	event_cuts.push_back("SubleadingJetPt");
+	event_cut_parameters["SubleadingJetPt"] = std::vector<double>{25.};
+	event_cut_descriptors["SubleadingJetPt"] = std::vector<TString>();
+	event_cuts.push_back("DijetTightID");
+	event_cut_parameters["DijetTightID"] = std::vector<double>();
+	event_cut_descriptors["DijetTightID"] = std::vector<TString>();
+	event_cuts.push_back("DijetMaxAbsEta");
+	event_cut_parameters["DijetMaxAbsEta"] = std::vector<double>{2.5};
+	event_cut_descriptors["DijetMaxAbsEta"] = std::vector<TString>();
+	event_cut_parameters["DijetMaxMuonEnergyFraction"] = std::vector<double>{0.8};
+	event_cut_descriptors["DijetMaxMuonEnergyFraction"] = std::vector<TString>();
+	event_cut_parameters["DijetMaxDeltaEta"] = std::vector<double>{1.3};
+	event_cut_descriptors["DijetMaxDeltaEta"] = std::vector<TString>();
+	event_cut_parameters["MaxMetOverSumEt"] = std::vector<double>{0.5};
+	event_cut_descriptors["MaxMetOverSumEt"] = std::vector<TString>();
+
+	//--------- book histos -----------------------
+	global_histograms_ = new Root::HistogramManager();
+	global_histograms_->AddPrefix("h_");
+	global_histograms_->AddTFileService(&fs_);
+
+	pfjet_histograms_ = new Root::HistogramManager();
+	pfjet_histograms_->AddPrefix("h_pfjet_");
+	pfjet_histograms_->AddTFileService(&fs_);
+	pfjet_histograms_->AddTH1D("mjj", "mjj", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	pfjet_histograms_->AddTH1D("deltaeta", "deltaeta", "#Delta#eta", 100., -5., 5.);
+	pfjet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+
+	calojet_histograms_ = new Root::HistogramManager();
+	calojet_histograms_->AddPrefix("h_calojet_");
+	calojet_histograms_->AddTFileService(&fs_);
+	calojet_histograms_->AddTH1D("calo_mjj", "calo_mjj", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	calojet_histograms_->AddTH1D("calo_deltaeta", "calo_deltaeta", "#Delta#eta", 100., -5., 5.);
+	calojet_histograms_->AddTH2F("calo_mjj_deltaeta", "calo_mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
+	calojet_histograms_->AddTH2F("calo_btag_csv", "calo_btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void InclusiveBHistograms::endJob() 
@@ -86,90 +137,32 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 	//cout<<"File: "<<mFileName<<endl;
 	//cout<<"Reading TREE: "<<NEntries<<" events"<<endl;
 	int decade = 0;
-	for(unsigned i=0;i<NEntries;i++) {
-		double progress = 10.0*i/(1.0*NEntries);
+	for (unsigned int i = 0; i < n_entries; i++) {
+		double progress = 10.0 * i / (1.0 * n_entries);
 		int k = TMath::FloorNint(progress); 
-		if (k > decade) 
-			cout<<10*k<<" %"<<endl;
+		if (k > decade) {
+			std::cout << 10*k << " %" << std::endl;
+		}
 		decade = k;          
 		tree_->GetEntry(i);
-		if (mUsePF) {
-			if (mEvent->evtHdr().isPVgood() == 1 && mEvent->nPFJets() > 1 ) {   
-				// Complex L1 prescales: choose minimum prescale
-				std::vector<std::pair<std::string, int> > l1_prescales = mEvent->preL1(0);
-				int min_l1_prescale = INT_MAX;
-				for (std::vector<std::pair<std::string, int> >::iterator it_ps = l1_prescales.begin(); it_ps != l1_prescales.end(); ++it_ps) {
-					if ((*it_ps).second < min_l1_prescale) {
-						min_l1_prescale = (*it_ps).second;
-					}
-				}
-				//int prescale = mEvent->preL1(0) * mEvent->preHLT(0);
-				int prescale = min_l1_prescale * mEvent->preHLT(0);
-				double ymax = TMath::Max(fabs(mEvent->pfjet(0).y()),fabs(mEvent->pfjet(1).y()));
-				int ybin = getBin(ymax,mYBND);
-				bool cut1 = (mEvent->pfjet(0).looseID() == 1 && mEvent->pfjet(0).ptCor() > mMinPt1);
-				bool cut2 = (mEvent->pfjet(1).looseID() == 1 && mEvent->pfjet(1).ptCor() > mMinPt2);
-				if (cut1 && cut2 && ybin > -1) {
-					double mjj = mEvent->pfmjjcor(0);
-					if (mjj >= mMinMass[ybin]) {
-						mhM[ybin]->Fill(mjj);
-						mhNormM[ybin]->Fill(mjj,prescale);
-						if (mjj < mMaxMass[ybin]) {
-							mhMETovSUMET[ybin]->Fill(mEvent->pfmet().met_o_sumet());
-							mhTruncM[ybin]->Fill(mjj);
-							mhNormTruncM[ybin]->Fill(mjj,prescale);
-							mhYmax[ybin]->Fill(ymax);             
-							for(unsigned j=0;j<2;j++) {
-								mhPt[ybin]->Fill((mEvent->pfjet(j)).ptCor());
-								mhY[ybin]->Fill((mEvent->pfjet(j)).y());
-								mhCHF[ybin]->Fill((mEvent->pfjet(j)).chf());
-								mhNHF[ybin]->Fill((mEvent->pfjet(j)).nhf());
-								mhPHF[ybin]->Fill((mEvent->pfjet(j)).phf());
-							}
-						}
-					}
-				}
-			}  
-		}
-		else {
-			if (mEvent->evtHdr().isPVgood() == 1 && mEvent->nCaloJets() > 1 ) {
-				// Complex L1 prescales: choose minimum prescale
-				std::vector<std::pair<std::string, int> > l1_prescales = mEvent->preL1(0);
-				int min_l1_prescale = INT_MAX;
-				for (std::vector<std::pair<std::string, int> >::iterator it_ps = l1_prescales.begin(); it_ps != l1_prescales.end(); ++it_ps) {
-					if ((*it_ps).second < min_l1_prescale) {
-						min_l1_prescale = (*it_ps).second;
-					}
-				}
-				//int prescale = mEvent->preL1(0) * mEvent->preHLT(0);
-				int prescale = min_l1_prescale * mEvent->preHLT(0);
-				double ymax = TMath::Max(fabs(mEvent->calojet(0).y()),fabs(mEvent->calojet(1).y()));
-				int ybin = getBin(ymax,mYBND);
-				bool cut1 = (mEvent->calojet(0).looseID() == 1 && mEvent->calojet(0).ptCor() > mMinPt1);
-				bool cut2 = (mEvent->calojet(1).looseID() == 1 && mEvent->calojet(1).ptCor() > mMinPt2);
-				if (cut1 && cut2 && ybin > -1) {
-					double mjj = mEvent->calomjjcor(0);
-					if (mjj >= mMinMass[ybin]) {
-						mhM[ybin]->Fill(mjj);
-						mhNormM[ybin]->Fill(mjj,prescale);
-						if (mjj < mMaxMass[ybin]) {
-							mhTruncM[ybin]->Fill(mjj);
-							mhNormTruncM[ybin]->Fill(mjj,prescale);
-							mhYmax[ybin]->Fill(ymax);
-							mhMETovSUMET[ybin]->Fill(mEvent->calomet().met_o_sumet());
-							for(unsigned j=0;j<2;j++) {
-								mhPt[ybin]->Fill((mEvent->calojet(j)).ptCor());
-								mhY[ybin]->Fill((mEvent->calojet(j)).y());
-								mhEMF[ybin] ->Fill((mEvent->calojet(j)).emf());
-								mhN90hits[ybin]->Fill((mEvent->calojet(j)).n90hits());
-								mhfHPD[ybin]->Fill((mEvent->calojet(j)).fHPD());
-								mhNTrkCalo[ybin]->Fill((mEvent->calojet(j)).nTrkCalo());
-								mhNTrkVtx[ybin]->Fill((mEvent->calojet(j)).nTrkVtx());
-							}
-						}
-					}
-				}
+
+		// Complex L1 prescales: choose minimum prescale
+		std::vector<std::pair<std::string, int> > l1_prescales = event_->preL1(0);
+		int min_l1_prescale = INT_MAX;
+		for (std::vector<std::pair<std::string, int> >::iterator it_ps = l1_prescales.begin(); it_ps != l1_prescales.end(); ++it_ps) {
+			if ((*it_ps).second < min_l1_prescale) {
+				min_l1_prescale = (*it_ps).second;
 			}
+		}
+		//int prescale = event_->preL1(0) * event_->preHLT(0);
+		//int prescale = min_l1_prescale * event_->preHLT(0);
+
+		// PF jets
+		if (event_->evtHdr().isPVgood() == 1 && event_->nPFJets() > 1 ) { 
+		}  
+
+		// Calo jets
+		if (event_->evtHdr().isPVgood() == 1 && event_->nCaloJets() > 1 ) {
 		}
 	}
 }
