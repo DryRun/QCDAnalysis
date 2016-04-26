@@ -96,9 +96,9 @@ int QCDEvent::nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QC
     sign = -1;
   for(unsigned i=0;i<jets.size();i++) {
     bool passID(true);
-    if (id == 1 && !jets[i].looseID())
+    if (id == 1 && !jets[i].looseIDFlag())
       passID = false;
-    if (id == 2 && !jets[i].tightID()) 
+    if (id == 2 && !jets[i].tightIDFlag()) 
       passID = false;
     if (passID) {
       if (fabs(jets[i].y()) <= ymax && jets[i].ptCor()*(1+sign*jets[i].unc()) >= ptmin)

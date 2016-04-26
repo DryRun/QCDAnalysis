@@ -17,8 +17,6 @@ class QCDJet
      void setUnc(float fUnc)                     {unc_  = fUnc;} 
      void setUncSrc(std::vector<float> fUncSrc)  {uncSrc_ = fUncSrc;}
      void setArea(float fArea)                   {area_ = fArea;}
-     void setLooseID(bool fLooseID)              {looseID_ = fLooseID;} 
-     void setTightID(bool fTightID)              {tightID_ = fTightID;}
      void setBtag_tche(float fbtag_tche)         {btag_tche_ = fbtag_tche;}
      void setBtag_tchp(float fbtag_tchp)         {btag_tchp_ = fbtag_tchp;}
      void setBtag_csv(float fbtag_csv)           {btag_csv_ = fbtag_csv;}
@@ -28,6 +26,8 @@ class QCDJet
      void setFlavor(float fFlavor)               {flavor_ = fFlavor;}
      void setBstatus(float fStatus3, float fStatus2) {status3_ = fStatus3; status2_ = fStatus2;}
      void setPartonId(float fPartonId)           {PartonId_ = fPartonId;};
+     void setLooseIDFlag(bool p_looseIDFlag) {looseIDFlag_ = p_looseIDFlag;}
+     void setTightIDFlag(bool p_tightIDFlag) {tightIDFlag_ = p_tightIDFlag;}
      //------------ Get methods ------------------------------
      const LorentzVector& p4()    const {return P4_;}
      const LorentzVector& genp4() const {return genP4_;}
@@ -46,8 +46,8 @@ class QCDJet
      float unc()                  const {return unc_;} 
      float uncSrc(int i)          const {return uncSrc_[i];}
      float area()                 const {return area_;} 
-     bool  looseID()              const {return looseID_;}
-     bool  tightID()              const {return tightID_;}
+     bool  looseIDFlag()              const {return looseIDFlag_;}
+     bool  tightIDFlag()              const {return tightIDFlag_;}
      float btag_tche()            const {return btag_tche_;}
      float btag_tchp()            const {return btag_tchp_;}
      float btag_csv()             const {return btag_csv_;}  
@@ -73,10 +73,6 @@ class QCDJet
      std::vector<float> uncSrc_;
      //------ jet area ------------------------------
      float area_;
-     //------ loose ID flag -------------------------
-     bool  looseID_;
-     //------ tight ID flag -------------------------
-     bool  tightID_;
      //------ Discriminator of TCHE -----------------
      float btag_tche_;
      //------ Discriminator of TCHP -----------------
@@ -97,6 +93,10 @@ class QCDJet
      float status2_;
      // ---- Hard scattering parton Id --------------
      float PartonId_;
+     // ---- Loose ID flag
+     bool looseIDFlag_;
+     // ---- Tight ID flag
+     bool tightIDFlag_;
 
 };
 #endif

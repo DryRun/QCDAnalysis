@@ -469,29 +469,43 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		qcdpfjet.setUnc(unc);
 		qcdpfjet.setUncSrc(uncSrc);
 		qcdpfjet.setArea(i_pfjet->jetArea());
-		double chf   = i_pfjet->chargedHadronEnergyFraction();
-		double nhf   = (i_pfjet->neutralHadronEnergy() + i_pfjet->HFHadronEnergy())/i_pfjet->energy();
-		double phf   = i_pfjet->photonEnergyFraction();
-		double elf   = i_pfjet->electronEnergyFraction();
-		double muf   = i_pfjet->muonEnergyFraction();
-		double hf_hf = i_pfjet->HFHadronEnergyFraction();
-		double hf_phf= i_pfjet->HFEMEnergyFraction();
-		int hf_hm    = i_pfjet->HFHadronMultiplicity();
-		int hf_phm   = i_pfjet->HFEMMultiplicity();
-		int chm      = i_pfjet->chargedHadronMultiplicity();
-		int nhm      = i_pfjet->neutralHadronMultiplicity();
-		int phm      = i_pfjet->photonMultiplicity();
-		int elm      = i_pfjet->electronMultiplicity();
-		int mum      = i_pfjet->muonMultiplicity();
-		int npr      = i_pfjet->chargedMultiplicity() + i_pfjet->neutralMultiplicity();
-		bool looseID  = (npr>1 && phf<0.99 && nhf<0.99 && ((fabs(i_pfjet->eta())<=2.4 && elf<0.99 && chf>0 && chm>0) || fabs(i_pfjet->eta())>2.4));
-		bool tightID  = (npr>1 && phf<0.99 && nhf<0.99 && ((fabs(i_pfjet->eta())<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && chf>0 && chm>0) || fabs(i_pfjet->eta())>2.4));
-		qcdpfjet.setLooseID(looseID);
-		qcdpfjet.setTightID(tightID);
-		qcdpfjet.setFrac(chf,nhf,phf,elf,muf);
-		qcdpfjet.setMulti(npr,chm,nhm,phm,elm,mum);
-		qcdpfjet.setHFFrac(hf_hf,hf_phf);
-		qcdpfjet.setHFMulti(hf_hm,hf_phm);
+		//double chf   = i_pfjet->chargedHadronEnergyFraction();
+		//double nhf   = (i_pfjet->neutralHadronEnergy() + i_pfjet->HFHadronEnergy())/i_pfjet->energy();
+		//double phf   = i_pfjet->photonEnergyFraction();
+		//double elf   = i_pfjet->electronEnergyFraction();
+		//double muf   = i_pfjet->muonEnergyFraction();
+		//double hf_hf = i_pfjet->HFHadronEnergyFraction();
+		//double hf_phf= i_pfjet->HFEMEnergyFraction();
+		//int hf_hm    = i_pfjet->HFHadronMultiplicity();
+		//int hf_phm   = i_pfjet->HFEMMultiplicity();
+		//int chm      = i_pfjet->chargedHadronMultiplicity();
+		//int nhm      = i_pfjet->neutralHadronMultiplicity();
+		//int phm      = i_pfjet->photonMultiplicity();
+		//int elm      = i_pfjet->electronMultiplicity();
+		//int mum      = i_pfjet->muonMultiplicity();
+		//int npr      = i_pfjet->chargedMultiplicity() + i_pfjet->neutralMultiplicity();
+		qcdpfjet.setChargedHadronEnergy(i_pfjet->chargedHadronEnergy());
+		qcdpfjet.setNeutralHadronEnergy(i_pfjet->neutralHadronEnergy());
+		qcdpfjet.setPhotonEnergy(i_pfjet->photonEnergy());
+		qcdpfjet.setElectronEnergy(i_pfjet->electronEnergy());
+		qcdpfjet.setMuonEnergy(i_pfjet->muonEnergy());
+		qcdpfjet.setHFHadronEnergy(i_pfjet->HFHadronEnergy());
+		qcdpfjet.setHFEMEnergy(i_pfjet->HFEMEnergy());
+		qcdpfjet.setChargedHadronMultiplicity(i_pfjet->chargedHadronMultiplicity());
+		qcdpfjet.setNeutralHadronMultiplicity(i_pfjet->neutralHadronMultiplicity());
+		qcdpfjet.setPhotonMultiplicity(i_pfjet->photonMultiplicity());
+		qcdpfjet.setElectronMultiplicity(i_pfjet->electronMultiplicity());
+		qcdpfjet.setMuonMultiplicity(i_pfjet->muonMultiplicity());
+		qcdpfjet.setHFHadronMultiplicity(i_pfjet->HFHadronMultiplicity());
+		qcdpfjet.setHFEMMultiplicity(i_pfjet->HFEMMultiplicity());
+		qcdpfjet.setChargedEmEnergy(i_pfjet->chargedEmEnergy());
+		qcdpfjet.setChargedMuEnergy(i_pfjet->chargedMuEnergy());
+		qcdpfjet.setNeutralEmEnergy(i_pfjet->neutralEmEnergy());
+		qcdpfjet.setChargedMultiplicity(i_pfjet->chargedMultiplicity());
+		qcdpfjet.setNeutralMultiplicity(i_pfjet->neutralMultiplicity());
+		qcdpfjet.setLooseIDFlag(qcdpfjet.isLooseID());
+		qcdpfjet.setTightIDFlag(qcdpfjet.isTightID());
+
 		if (mIsMCarlo) {
 			GenJetCollection::const_iterator i_matched;
 			JetFlavourMatchingCollection::const_iterator i_flavour_matched;
@@ -628,7 +642,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	//
 		if (qcdpfjet.ptCor() >= mMinPFPt)
 			mPFJets.push_back(qcdpfjet);
-		if (qcdpfjet.ptCor() >= mMinPFFatPt && fabs(qcdpfjet.eta()) < mMaxPFFatEta && qcdpfjet.looseID())
+		if (qcdpfjet.ptCor() >= mMinPFFatPt && fabs(qcdpfjet.eta()) < mMaxPFFatEta && qcdpfjet.isLooseID())
 			tmpPFJets.push_back(qcdpfjet);
 	}
 	//----------- PFFatJets ----------------------
@@ -662,8 +676,8 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		vector<float> uncSrc(0);
 		for(unsigned i = 0; i<2; i++) { 
 			fatJet[i].setP4(fat[i]);
-			fatJet[i].setLooseID(tmpPFJets[i].looseID());
-			fatJet[i].setTightID(tmpPFJets[i].tightID());
+			fatJet[i].setLooseIDFlag(tmpPFJets[i].isLooseID());
+			fatJet[i].setTightIDFlag(tmpPFJets[i].isTightID());
 			fatJet[i].setCor(1.0);
 			fatJet[i].setArea(0.0);
 			fatJet[i].setUncSrc(uncSrc); 
@@ -722,8 +736,8 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		bool looseID  = ((emf>0.01 || fabs(i_calojet->eta())>2.6) && (n90hits>1) && (fHPD<0.98));
 		bool tightID  = ((emf>0.01 || fabs(i_calojet->eta())>2.6) && (n90hits>1) && ((fHPD<0.98 && i_calojet->pt()<=25) || (fHPD<0.95 && i_calojet->pt()>25)));
 		qcdcalojet.setVar(emf,fHPD,fRBX,n90hits,nTrkCalo,nTrkVtx);
-		qcdcalojet.setLooseID(looseID);
-		qcdcalojet.setTightID(tightID);
+		qcdcalojet.setLooseIDFlag(looseID);
+		qcdcalojet.setTightIDFlag(tightID);
 		if (mIsMCarlo) {
 			GenJetCollection::const_iterator i_matched;
 			JetFlavourMatchingCollection::const_iterator i_flavour_matched;
