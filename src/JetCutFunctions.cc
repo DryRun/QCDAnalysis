@@ -17,6 +17,7 @@ namespace JetCutFunctions {
 		return TMath::Abs(p_data[n].eta()) <= p_object_selector->GetCutParameters("MaxAbsEta")[0];
 	}
 
+
 	void Configure(ObjectSelector<QCDJet>* p_selector) {
 		p_selector->AddCutFunction("MinPt", &MinPt);
 		p_selector->AddCutFunction("MaxPt", &MaxPt);
