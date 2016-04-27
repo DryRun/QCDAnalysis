@@ -46,6 +46,7 @@ namespace QCDEventCutFunctions {
 	bool LeadingBVetoCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool SubleadingBVetoPF(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool SubleadingBVetoCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool IsGoodPV(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 
 	void Configure(EventSelector<QCDEvent>* p_event_selector);
 }

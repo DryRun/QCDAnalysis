@@ -299,6 +299,10 @@ namespace QCDEventCutFunctions {
 		} 
 		return btag < p_event_selector->GetCutParameters("SubleadingBVetoCalo")[0];
 	}
+	bool IsGoodPV(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		return p_data.evtHdr().isPVgood();
+	}
+
 
 	void Configure(EventSelector<QCDEvent>* p_event_selector) {
 		p_event_selector->AddCutFunction("MinNPFJets", &MinNPFJets);
@@ -329,6 +333,7 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddCutFunction("LeadingBVetoCalo", &LeadingBVetoCalo);
 		p_event_selector->AddCutFunction("SubleadingBVetoPF", &SubleadingBVetoPF);
 		p_event_selector->AddCutFunction("SubleadingBVetoCalo", &SubleadingBVetoCalo);
+		p_event_selector->AddCutFunction("IsGoodPV", &IsGoodPV);
 
 		p_event_selector->SetObjectName("Event");
 	}

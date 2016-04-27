@@ -59,7 +59,10 @@ class QCDEvent
       const QCDJet&        fatjet(int i)               const {return FatJets_[i];}
       const QCDCaloJet&    calojet(int i)              const {return CaloJets_[i];}
       const QCDEventHdr&   evtHdr()                    const {return EvtHdr_;}
- 
+      std::vector<QCDCaloJet>& calojets()   const {return CaloJets_;}
+      std::vector<QCDPFJet>& pfjets()   const {return PFJets_;}
+      std::vector<QCDJet>& fatjets()   const {return FatJets_;}
+
     private:
       //---- event header (contains all the event info) --------------
       QCDEventHdr                              EvtHdr_;

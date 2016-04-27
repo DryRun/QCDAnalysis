@@ -39,10 +39,10 @@ void InclusiveBHistograms::beginJob()
 	std::map<TString, std::vector<double> > pfjet_cut_parameters;
 	std::map<TString, std::vector<TString> > pfjet_cut_descriptors;
 	pfjet_cuts.push_back("MinPt");
-	pfjet_cut_parameters["MinPt"] = std::vector<double>{25.};
+	pfjet_cut_parameters["MinPt"] = std::vector<double>{30.};
 	pfjet_cut_descriptors["MinPt"] = std::vector<TString>();
 	pfjet_cuts.push_back("MaxAbsEta");
-	pfjet_cut_parameters["MaxAbsEta"] = std::vector<double>{2.5};
+	pfjet_cut_parameters["MaxAbsEta"] = std::vector<double>{5};
 	pfjet_cut_descriptors["MaxAbsEta"] = std::vector<TString>();
 	pfjet_cuts.push_back("IsLooseID");
 	pfjet_cut_parameters["IsLooseID"] = std::vector<double>();
@@ -89,7 +89,15 @@ void InclusiveBHistograms::beginJob()
 	event_cut_parameters["MaxMetOverSumEt"] = std::vector<double>{0.5};
 	event_cut_descriptors["MaxMetOverSumEt"] = std::vector<TString>();
 
-	//--------- book histos -----------------------
+	event_selector_ = new EventSelector<QCDEvent>;
+	QCDEventCutFunctions::Configure(event_selector_);
+	for (auto& it_cut : event_cuts) {
+		event_selector_->RegisterCut(it_cut, event_cut_descriptors[it_cut], event_cut_parameters[it_cut]);
+	}
+	event_selector_->AddObjectSelector(ObjectIdentifiers::kJet, pfjet_selector_);
+
+
+	//--------- Histograms -----------------------
 	global_histograms_ = new Root::HistogramManager();
 	global_histograms_->AddPrefix("h_");
 	global_histograms_->AddTFileService(&fs_);
@@ -145,6 +153,18 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 		}
 		decade = k;          
 		tree_->GetEntry(i);
+
+		// Correct objects?
+
+		// Object selection
+		pfjet_selector_->ClassifyObjects(event_->pfjets());
+
+		// Event selection
+		event_selector_->ProcessEvent(event_);
+
+		if (event_selector_->Pass()) {
+			
+		}
 
 		// Complex L1 prescales: choose minimum prescale
 		std::vector<std::pair<std::string, int> > l1_prescales = event_->preL1(0);
