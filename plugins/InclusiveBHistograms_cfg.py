@@ -12,7 +12,7 @@ process.source = cms.Source("EmptySource")
 ##-------------------- User analyzer  --------------------------------
 process.inclusive    = cms.EDAnalyzer('InclusiveHistos',
     filenames = cms.vstring(
-    '/uscms_data/d2/kkousour/7TeV/2011/Jets/data/Mar3rd/Run2011A_ProcessedTree_data.root',
+    '/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012D_v1_2/160428_005903/0000/',
     '/uscms_data/d2/kkousour/7TeV/2011/Jets/data/Mar3rd/Run2011B_ProcessedTree_data.root' 
     ),
     treename         = cms.string('ProcessedTree'),
