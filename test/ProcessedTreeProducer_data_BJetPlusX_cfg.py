@@ -99,34 +99,56 @@ if options.dataset == '/BJetPlusX/Run2012C-22Jan2013-v1/AOD':
 		fileNames = input_files_vstring,
 	)
 
-trigger_list_btag_dijet = cms.vstring(
-	'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v5', 
-	'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v5', 
-	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v5', 
-	'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v5', 
-	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v5', 
+#trigger_list_btag_dijet = cms.vstring(
+	'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v1', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v2', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v3', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v4', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v5', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v6', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v7', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v8',
+	'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v1', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v2', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v3', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v4', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v5', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v6', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v7', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v8',
+	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v1', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v2', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v3', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v4', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v5', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v6', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v7', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v8',
+	'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v1', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v2', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v3', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v4', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v5', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v6', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v7', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v8',
+	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v1', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v2', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v3', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v4', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v5', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v6', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v7', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v8',
 	
 	)
+#trigger_list_btag_quadjet = cms.vstring(
+	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v1', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v2', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v3', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v4', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v5',
+	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v1', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v2', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v3', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v4', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v5',
+	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v1', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v2', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v3', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v4', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v5',
+	'HLT_QuadJet75_55_35_20_BTagIP_VBF_v1', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v2', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v3', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v4', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v5', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v6', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v7',
+	'HLT_QuadJet75_55_38_20_BTagIP_VBF_v1', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v2', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v3', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v4', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v5', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v6', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v7',
+	'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v1', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v2', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v3', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v4', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v5', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v6',
+	'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v1', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v2', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v3', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v4', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v5', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v6',
+	)
+trigger_list_btag_dijet = cms.vstring(
+	'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v*',
+	'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v*',
+	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v*',
+	'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v*',
+	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v*',
+	
+	)
+trigger_list_btag_quadjet = cms.vstring(
+	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v*',
+	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v*',
+	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v*',
+	'HLT_QuadJet75_55_35_20_BTagIP_VBF_v*',
+	'HLT_QuadJet75_55_38_20_BTagIP_VBF_v*',
+	'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v*',
+	'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v*',
+	)
+trigger_list_btag_all = cms.vstring()
+trigger_list_btag_all.extend(trigger_list_btag_dijet)
+trigger_list_btag_all.extend(trigger_list_btag_quadjet)
+
+
+# Not found triggers:
 # HLT_DiJet80Eta2p6_BTagIP3DLoose : not in BJetX
 # HLT_DiJet40Eta2p6_BTagIP3D_v5 : not in BJetX
 # HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3D : not in BJetX (HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v5 is, though)
 # HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3D : not in BJetX (HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v5 is, though)
 # HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DLoose : only in MultiJet
-trigger_list_btag_quadjet = cms.vstring(
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v2',
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v2',
-	#'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_PFDiJetPt120', # Not in BJetX
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v2',
-	'HLT_QuadJet75_55_35_20_BTagIP_VBF_v4',
-	'HLT_QuadJet75_55_38_20_BTagIP_VBF_v4',
-	'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v2',
-	'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v2',
-	#'HLT_QuadPFJet75_55_35_20_BTagCSV_VBF_v2',
-	#'HLT_QuadPFJet75_55_38_20_BTagCSV_VBF_v2'
-	)
-trigger_list_btag_all = cms.vstring()
-trigger_list_btag_all.extend(trigger_list_btag_dijet)
-trigger_list_btag_all.extend(trigger_list_btag_quadjet)
+#'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_PFDiJetPt120', # Not in BJetX
+#'HLT_QuadPFJet75_55_35_20_BTagCSV_VBF_v2',
+#'HLT_QuadPFJet75_55_38_20_BTagCSV_VBF_v2'
+
+
 
 ############# processed tree producer ##################
 process.TFileService = cms.Service("TFileService",fileName = cms.string(options.outputFile))
