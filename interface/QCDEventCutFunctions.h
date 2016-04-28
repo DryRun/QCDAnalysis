@@ -18,6 +18,7 @@
 template class EventSelector<QCDEvent>;
 
 namespace QCDEventCutFunctions {
+	bool Trigger(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool MinNPFJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool MaxNPFJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool MinNCaloJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);

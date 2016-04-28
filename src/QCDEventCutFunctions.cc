@@ -4,6 +4,10 @@
 #include "CMSDIJET/QCDAnalysis/interface/QCDEventCutFunctions.h"
 
 namespace QCDEventCutFunctions {
+	bool Trigger(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		return (p_data.fired(p_event_selector->GetCutParameters("Trigger")[0]));
+	}
+
 	bool MinNPFJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		return (p_data.nPFJets() >= (unsigned int)(p_event_selector->GetCutParameters("MinNPFJets")[0]));
 	}
@@ -305,6 +309,7 @@ namespace QCDEventCutFunctions {
 
 
 	void Configure(EventSelector<QCDEvent>* p_event_selector) {
+		p_event_selector->AddCutFunction("Trigger", &Trigger);
 		p_event_selector->AddCutFunction("MinNPFJets", &MinNPFJets);
 		p_event_selector->AddCutFunction("MaxNPFJets", &MaxNPFJets);
 		p_event_selector->AddCutFunction("MinNCaloJets", &MinNCaloJets);
