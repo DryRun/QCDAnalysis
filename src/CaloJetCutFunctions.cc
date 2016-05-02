@@ -31,7 +31,7 @@ namespace CaloJetCutFunctions {
 		p_selector->AddCutFunction("MaxAbsEta", &MaxAbsEta);
 
 		p_selector->SetObjectName("CaloJet");
-		p_selector->SetObjectType(ObjectIdentifiers::kJet);
+		p_selector->SetObjectType(ObjectIdentifiers::kCaloJet);
 	}
 
 }

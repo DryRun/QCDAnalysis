@@ -5,12 +5,12 @@
 #Configurables
 
 dataset = '__DATASET__'
-tag = "v1_2"
+tag = "v1_4"
 
 ##________________________________________________________________________________||
 
 jobname = "QCDBEvent"
-jobname += dataset[1:].replace('/','_').replace(':','_').replace('AODSIM','')
+jobname += dataset[1:].replace('/','_').replace(':','_').replace('AODSIM','').replace('-evtgen','').replace('__','_')
 jobname += "_" + tag
 ##________________________________________________________________________________||
 

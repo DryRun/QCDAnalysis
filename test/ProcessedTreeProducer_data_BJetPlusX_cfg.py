@@ -36,7 +36,7 @@ options.register('dataset',
 	#'/MultiJet/Run2012A-22Jan2013-v1/AOD',
 	#'/BJetPlusX/Run2012B-22Jan2013-v1/AOD',
 	'/BJetPlusX/Run2012C-22Jan2013-v1/AOD',
-	#'/BJetPlusX/Run2012D-22Jan2013-v1/AOD'
+	#'/BJetPlusX/Run2012D-22Jan2013-v1/AOD',
 	VarParsing.VarParsing.multiplicity.singleton,
 	VarParsing.VarParsing.varType.string,
 	"Run over a few files from specific (known) datasets"
@@ -59,16 +59,35 @@ if options.inputFiles != '':
 	input_files_vstring = cms.untracked.vstring(options.inputFiles)
 else:
 	if options.dataset == '/BJetPlusX/Run2012C-22Jan2013-v1/AOD':
-		input_files_vstring = cms.untracked.vstring('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0013B80A-088E-E211-BCA9-002590596468.root',
-		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00628EC1-2B8E-E211-A57B-00261894383E.root')
-		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00709065-3B8E-E211-A069-002590596486.root')
-		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0097E4DA-868E-E211-8381-00304867918E.root')
-		#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00E60307-478E-E211-8F70-00261894390B.root')
+		input_files_vstring = cms.untracked.vstring(
+			'/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0013B80A-088E-E211-BCA9-002590596468.root',
+			#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00628EC1-2B8E-E211-A57B-00261894383E.root')
+			#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00709065-3B8E-E211-A069-002590596486.root')
+			#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0097E4DA-868E-E211-8381-00304867918E.root')
+			#input_files_vstring.append('/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/00E60307-478E-E211-8F70-00261894390B.root')
+		)
+	elif options.dataset == '/BJetPlusX/Run2012D-22Jan2013-v1/AOD':
+		input_files_vstring = cms.untracked.vstring(
+			'/store/data/Run2012C/BJetPlusX/AOD/22Jan2013-v1/20000/0013B80A-088E-E211-BCA9-002590596468.root',
 		)
 	else:
 		print "Unknown dataset: " + options.dataset
 		sys.exit(1)
 
+# All 2012 triggers requiring 2 jets and a b tag.
+trigger_list = cms.vstring(
+	'HLT_DiJet40Eta2p6_BTagIP3D_v2', 'HLT_DiJet40Eta2p6_BTagIP3D_v3', 
+	'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v2', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v3', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v4', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v5', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v7', 
+	'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v2', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v3', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v4', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v5', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v7', 
+	'HLT_DiJet80Eta2p6_BTagIP3DLoose_v2', 'HLT_DiJet80Eta2p6_BTagIP3DLoose_v3', 
+	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v2', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v3', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v4', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v5', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v7', 
+	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DLoose_v2', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DLoose_v3', 
+	'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3D_v2', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3D_v3', 
+	'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v2', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v3', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v4', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v5', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v7', 
+	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3D_v2', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3D_v3', 
+	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v2', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v3', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v4', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v5', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v7',
+	'HLT_L1DoubleJet36Central_v6', 'HLT_L1DoubleJet36Central_v7'
+)
 
 process = cms.Process("Ana")
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -94,59 +113,9 @@ process.maxEvents = cms.untracked.PSet(
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 #############   Define the source file ###############
 
-if options.dataset == '/BJetPlusX/Run2012C-22Jan2013-v1/AOD':
-	process.source = cms.Source("PoolSource",
-		fileNames = input_files_vstring,
-	)
-
-#trigger_list_btag_dijet = cms.vstring(
-	'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v1', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v2', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v3', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v4', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v5', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v6', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v7', 'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v8',
-	'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v1', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v2', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v3', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v4', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v5', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v6', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v7', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v8',
-	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v1', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v2', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v3', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v4', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v5', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v6', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v7', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v8',
-	'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v1', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v2', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v3', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v4', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v5', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v6', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v7', 'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v8',
-	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v1', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v2', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v3', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v4', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v5', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v6', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v7', 'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v8',
-	
-	)
-#trigger_list_btag_quadjet = cms.vstring(
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v1', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v2', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v3', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v4', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v5',
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v1', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v2', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v3', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v4', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v5',
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v1', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v2', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v3', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v4', 'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v5',
-	'HLT_QuadJet75_55_35_20_BTagIP_VBF_v1', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v2', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v3', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v4', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v5', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v6', 'HLT_QuadJet75_55_35_20_BTagIP_VBF_v7',
-	'HLT_QuadJet75_55_38_20_BTagIP_VBF_v1', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v2', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v3', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v4', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v5', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v6', 'HLT_QuadJet75_55_38_20_BTagIP_VBF_v7',
-	'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v1', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v2', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v3', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v4', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v5', 'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v6',
-	'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v1', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v2', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v3', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v4', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v5', 'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v6',
-	)
-trigger_list_btag_dijet = cms.vstring(
-	'HLT_DiJet40Eta2p6_BTagIP3DFastPV_v*',
-	'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v*',
-	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v*',
-	'HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v*',
-	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v*',
-	
-	)
-trigger_list_btag_quadjet = cms.vstring(
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05_v*',
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_v*',
-	'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d05_v*',
-	'HLT_QuadJet75_55_35_20_BTagIP_VBF_v*',
-	'HLT_QuadJet75_55_38_20_BTagIP_VBF_v*',
-	'HLT_QuadPFJet78_61_44_31_BTagCSV_VBF_v*',
-	'HLT_QuadPFJet82_65_48_35_BTagCSV_VBF_v*',
-	)
-trigger_list_btag_all = cms.vstring()
-trigger_list_btag_all.extend(trigger_list_btag_dijet)
-trigger_list_btag_all.extend(trigger_list_btag_quadjet)
-
-
-# Not found triggers:
-# HLT_DiJet80Eta2p6_BTagIP3DLoose : not in BJetX
-# HLT_DiJet40Eta2p6_BTagIP3D_v5 : not in BJetX
-# HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3D : not in BJetX (HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV_v5 is, though)
-# HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3D : not in BJetX (HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV_v5 is, though)
-# HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DLoose : only in MultiJet
-#'HLT_DiPFJet80_DiPFJet30_BTagCSVd07d05d03_PFDiJetPt120', # Not in BJetX
-#'HLT_QuadPFJet75_55_35_20_BTagCSV_VBF_v2',
-#'HLT_QuadPFJet75_55_38_20_BTagCSV_VBF_v2'
+process.source = cms.Source("PoolSource",
+	fileNames = input_files_vstring,
+)
 
 
 
@@ -189,7 +158,7 @@ process.ak7 = cms.EDAnalyzer('ProcessedTreeProducer',
 		## trigger ###################################
 		printTriggerMenu = cms.untracked.bool(True),
 		processName     = cms.string('HLT'),
-		triggerName     = trigger_list_btag_all,
+		triggerName     = trigger_list,
 		triggerResults  = cms.InputTag("TriggerResults","","HLT"),
 		triggerEvent    = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
 		## jec services ##############################
@@ -214,7 +183,7 @@ process.ak5 = process.ak7.clone(
 ############# hlt filter #########################
 process.hltFilter = cms.EDFilter('HLTHighLevel',
 		TriggerResultsTag  = cms.InputTag('TriggerResults','','HLT'),
-		HLTPaths           = trigger_list_btag_all,
+		HLTPaths           = trigger_list,
 		eventSetupPathsKey = cms.string(''),
 		andOr              = cms.bool(True), #----- True = OR, False = AND between the HLTPaths
 		throw              = cms.bool(False)

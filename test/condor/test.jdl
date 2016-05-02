@@ -1,0 +1,23 @@
+universe = vanilla
+Executable = /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/python/cmsRunWrapper.sh
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
+request_disk = 1000000
+request_memory = 199
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+#Transfer_Input_Files = SUB_INPUT_FILES
+Output = test_$(Cluster)_$(Process).stdout
+Error = test_$(Cluster)_$(Process).stderr
+Log = test_$(Cluster)_$(Process).log
+notify_user = david_yu@brown.edu
+#x509userproxy = $ENV(X509_USER_PROXY)
+#Arguments = SUB_ARGUMENTS
+#Queue SUB_QUEUE
+
+Arguments = "inputFiles=/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_425.root,/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_834.root"
+Transfer_Input_Files=/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_425.root,/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_834.root
+Queue
+
+Arguments = "inputFiles=/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_612.root,/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_834.root"
+Transfer_Input_Files=/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_949.root,/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_834.root
+Queue

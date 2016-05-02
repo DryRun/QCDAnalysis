@@ -177,7 +177,7 @@ namespace PFJetCutFunctions {
 		p_selector->AddCutFunction("IsTightID", &IsTightID);
 		
 		p_selector->SetObjectName("PFJet");
-		p_selector->SetObjectType(ObjectIdentifiers::kJet);
+		p_selector->SetObjectType(ObjectIdentifiers::kPFJet);
 	}
 
 }

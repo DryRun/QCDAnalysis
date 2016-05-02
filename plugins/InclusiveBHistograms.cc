@@ -20,40 +20,67 @@ using namespace std;
 
 InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg) 
 {
-	mjj_bins_ = cfg.getParameter<std::vector<double> >("mjj_bins");
-	input_file_name_  = cfg.getParameter<std::string> ("filename");
-	input_directory_name_  = cfg.getParameter<std::string> ("directoryname");
-	input_tree_name_  = cfg.getParameter<std::string> ("treename");
-	trigger_ = std::make_pair<TString, TString>(cfg.getParameter<std::string>("HLT"), cfg.getParameter<std::string>("L1"));
+	input_file_names_  = cfg.getParameter<std::vector<std::string> > ("file_names");
+	input_tree_name_  = cfg.getParameter<std::string> ("tree_name");
+	trigger_histogram_name_  = cfg.getParameter<std::string> ("trigger_histogram_name");
+	trigger_list_unparsed_ = cfg.getParameter<std::vector<std::string> >("triggers");
+	current_file_ = 0;
+	n_total_ = 0;
+	n_pass_ = 0;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 void InclusiveBHistograms::beginJob() 
 {
-	// Load inputs
-	input_file_ = TFile::Open(input_file_name_);
-	input_directory_ = (TDirectoryFile*)input_file_->Get(input_directory_name_);
-	tree_ = (TTree*)input_directory_->Get(input_tree_name_);
-	event_ = new QCDEvent();
-	TBranch *branch = tree_->GetBranch("event");
-	branch->SetAddress(&event_);
+	// Parse HLT and L1 names from trigger list, and look up indices from histogram named trigger_histogram_name_
+	for (auto& it_trig : trigger_list_unparsed_) {
+		std::cout << "[InclusiveBHistograms::beginJob] DEBUG : Parsing " << it_trig << std::endl;
+		std::vector<std::string> tokens;
+		std::size_t start = 0, end = 0;
+		while ((end = it_trig.find(':', start)) != std::string::npos) {
+    		tokens.push_back(it_trig.substr(start, end - start));
+			start = end + 1;
+		}
+		tokens.push_back(it_trig.substr(start));
+		if (tokens.size() != 2) {
+			throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : Failed to parse two words out of string ") << it_trig << std::endl;
+		}
+		triggers_.push_back(std::make_pair<TString, TString>(tokens[0], tokens[1]));
+		hlt_triggers_.push_back(tokens[0]);
+		l1_triggers_.push_back(tokens[1]);
+	}
 
-	// Get trigger index
-	TH1F *h_trigger_names = (TH1F*)input_directory_->Get("TriggerNames");
+	TFile *f = new TFile(TString(input_file_names_[0]), "READ");
+	TH1F *h_trigger_names = (TH1F*)f->Get(trigger_histogram_name_);
 	if (!h_trigger_names) {
-		throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : ") << "TriggerNames not found in input file " << input_file_name_ << std::endl;
+		throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : ") << "Trigger name histogram (" << trigger_histogram_name_ << ") not found in input file." << std::endl;
 	}
 	std::cout << "Finding HLT trigger index" << std::endl;
-	hlt_index_ = -1;
-	for(int bin = 1; bin <= h_trigger_names->GetNbinsX(); ++bin) {
-		string ss = h_trigger_names->GetXaxis()->GetBinLabel(bin);
-		if (ss == trigger_.first) {
-			hlt_index_ = bin - 1; // Bins start from 1, while index starts from 0
+	for (auto& it_trig : triggers_) {
+		int hlt_index = -1;
+		for(int bin = 1; bin <= h_trigger_names->GetNbinsX(); ++bin) {
+			string ss = h_trigger_names->GetXaxis()->GetBinLabel(bin);
+			if (it_trig.first.EqualTo(ss)) {
+				hlt_index = bin - 1; // Bins start from 1, while index starts from 0
+				break;
+			}
+		}
+		if (hlt_index == -1) {
+			throw cms::Exception("]InclusiveBHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << it_trig.first << " in TriggerNames." << std::endl;
+		} else {
+			hlt_indices_.push_back(hlt_index);
+			hlt_index_to_hlt_name_[hlt_index] = it_trig.first;
+			hlt_index_to_l1_name_[hlt_index] = it_trig.second; // Record L1 name corresponding to the HLT index
 		}
 	}
-	if (hlt_index_ == -1) {
-		throw cms::Exception("]InclusiveBHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << trigger_.first << " in TriggerNames." << std::endl;
-	}
 
+	std::cout << "List of triggers and indices:" << std::endl;
+	for (auto& it_index_name : hlt_index_to_hlt_name_) {
+		std::cout << "\t" << it_index_name.first << " = " << it_index_name.second << std::endl;
+	}
+	f->Close();
+	delete f;
+	f = 0;
 
 	// Cuts
 	std::vector<TString> pfjet_cuts;
@@ -91,34 +118,40 @@ void InclusiveBHistograms::beginJob()
 	std::vector<TString> event_cuts;
 	std::map<TString, std::vector<double> > event_cut_parameters;
 	std::map<TString, std::vector<TString> > event_cut_descriptors;
-	event_cuts.push_back("Trigger");
-	event_cut_parameters["Trigger"] = std::vector<double>{hlt_index_};
-	event_cut_descriptors["Trigger"] = std::vector<TString>();
-	event_cuts.push_back("LeadingJetPt");
-	event_cut_parameters["LeadingJetPt"] = std::vector<double>{25.};
-	event_cut_descriptors["LeadingJetPt"] = std::vector<TString>();
-	event_cuts.push_back("SubleadingJetPt");
-	event_cut_parameters["SubleadingJetPt"] = std::vector<double>{25.};
-	event_cut_descriptors["SubleadingJetPt"] = std::vector<TString>();
-	event_cuts.push_back("DijetTightID");
-	event_cut_parameters["DijetTightID"] = std::vector<double>();
-	event_cut_descriptors["DijetTightID"] = std::vector<TString>();
-	event_cuts.push_back("DijetMaxAbsEta");
-	event_cut_parameters["DijetMaxAbsEta"] = std::vector<double>{2.5};
-	event_cut_descriptors["DijetMaxAbsEta"] = std::vector<TString>();
-	event_cut_parameters["DijetMaxMuonEnergyFraction"] = std::vector<double>{0.8};
-	event_cut_descriptors["DijetMaxMuonEnergyFraction"] = std::vector<TString>();
-	event_cut_parameters["DijetMaxDeltaEta"] = std::vector<double>{1.3};
-	event_cut_descriptors["DijetMaxDeltaEta"] = std::vector<TString>();
+	event_cuts.push_back("TriggerXOR");
+	event_cut_parameters["TriggerXOR"] = std::vector<double>();
+	for (auto& it_trig_index : hlt_indices_) {
+		event_cut_parameters["TriggerXOR"].push_back((double)it_trig_index);
+	}
+	event_cut_descriptors["TriggerXOR"] = std::vector<TString>();
+	event_cuts.push_back("MaxMetOverSumEt");
 	event_cut_parameters["MaxMetOverSumEt"] = std::vector<double>{0.5};
 	event_cut_descriptors["MaxMetOverSumEt"] = std::vector<TString>();
+	event_cuts.push_back("MinLeadingPFJetPt");
+	event_cut_parameters["MinLeadingPFJetPt"] = std::vector<double>{25.};
+	event_cut_descriptors["MinLeadingPFJetPt"] = std::vector<TString>();
+	event_cuts.push_back("MinSubleadingPFJetPt");
+	event_cut_parameters["MinSubleadingPFJetPt"] = std::vector<double>{25.};
+	event_cut_descriptors["MinSubleadingPFJetPt"] = std::vector<TString>();
+	event_cuts.push_back("PFDijetTightID");
+	event_cut_parameters["PFDijetTightID"] = std::vector<double>();
+	event_cut_descriptors["PFDijetTightID"] = std::vector<TString>();
+	event_cuts.push_back("PFDijetMaxAbsEta");
+	event_cut_parameters["PFDijetMaxAbsEta"] = std::vector<double>{2.5};
+	event_cut_descriptors["PFDijetMaxAbsEta"] = std::vector<TString>();
+	event_cuts.push_back("PFDijetMaxMuonEnergyFraction");
+	event_cut_parameters["PFDijetMaxMuonEnergyFraction"] = std::vector<double>{0.8};
+	event_cut_descriptors["PFDijetMaxMuonEnergyFraction"] = std::vector<TString>();
+	event_cuts.push_back("PFDijetMaxDeltaEta");
+	event_cut_parameters["PFDijetMaxDeltaEta"] = std::vector<double>{1.3};
+	event_cut_descriptors["PFDijetMaxDeltaEta"] = std::vector<TString>();
 
 	event_selector_ = new EventSelector<QCDEvent>;
 	QCDEventCutFunctions::Configure(event_selector_);
 	for (auto& it_cut : event_cuts) {
 		event_selector_->RegisterCut(it_cut, event_cut_descriptors[it_cut], event_cut_parameters[it_cut]);
 	}
-	event_selector_->AddObjectSelector(ObjectIdentifiers::kJet, pfjet_selector_);
+	event_selector_->AddObjectSelector(ObjectIdentifiers::kPFJet, pfjet_selector_);
 
 
 	//--------- Histograms -----------------------
@@ -140,17 +173,21 @@ void InclusiveBHistograms::beginJob()
 	calojet_histograms_ = new Root::HistogramManager();
 	calojet_histograms_->AddPrefix("h_calojet_");
 	calojet_histograms_->AddTFileService(&fs_);
-	calojet_histograms_->AddTH1D("calo_mjj", "calo_mjj", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
-	calojet_histograms_->AddTH1D("calo_deltaeta", "calo_deltaeta", "#Delta#eta", 100., -5., 5.);
-	calojet_histograms_->AddTH2F("calo_mjj_deltaeta", "calo_mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
-	calojet_histograms_->AddTH2F("calo_btag_csv", "calo_btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+	calojet_histograms_->AddTH1D("mjj", "mjj", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	calojet_histograms_->AddTH1D("deltaeta", "deltaeta", "#Delta#eta", 100., -5., 5.);
+	calojet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
+	calojet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void InclusiveBHistograms::endJob() 
 {
-	input_file_->Close();
+	event_selector_->MakeCutflowHistograms(&*fs_);
+	event_selector_->SaveNMinusOneHistogram(&*fs_);
+	//delete event_;
+	//event_ = 0;
+	std::cout << "[InclusiveBHistograms::endJob] INFO : Pass / Total = " << n_pass_ << " / " << n_total_ << std::endl;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 int InclusiveBHistograms::getBin(double x, const std::vector<double>& boundaries)
@@ -169,63 +206,80 @@ int InclusiveBHistograms::getBin(double x, const std::vector<double>& boundaries
 //////////////////////////////////////////////////////////////////////////////////////////
 void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup) 
 { 
-	unsigned int n_entries = tree_->GetEntries();
-	//cout<<"File: "<<mFileName<<endl;
-	//cout<<"Reading TREE: "<<NEntries<<" events"<<endl;
-	int decade = 0;
-	for (unsigned int i = 0; i < n_entries; i++) {
-		global_histograms_->GetTH1F("input_nevents")->Fill(1);
-		double progress = 10.0 * i / (1.0 * n_entries);
-		int k = TMath::FloorNint(progress); 
-		if (k > decade) {
-			std::cout << 10*k << " %" << std::endl;
-		}
-		decade = k;          
-		tree_->GetEntry(i);
+	for (auto& it_filename : input_file_names_) {
+		TFile *f = new TFile(TString(it_filename), "READ");
+		tree_ = (TTree*)f->Get(input_tree_name_);
+		event_ = new QCDEvent();
+		tree_->SetBranchStatus("*", 1);
+		tree_->SetBranchAddress("events", &event_);
 
-		// Correct objects?
+		unsigned int n_entries = tree_->GetEntries();
+		//cout<<"File: "<<mFileName<<endl;
+		//cout<<"Reading TREE: "<<NEntries<<" events"<<endl;
+		int decade = 0;
+		for (unsigned int entry = 0; entry < n_entries; ++entry) {
+			++n_total_;
+			global_histograms_->GetTH1F("input_nevents")->Fill(1);
+			double progress = 10.0 * entry / (1.0 * n_entries);
+			int k = TMath::FloorNint(progress); 
+			if (k > decade) {
+				std::cout << 10*k << " %" << std::endl;
+			}
+			decade = k;          
+			tree_->GetEntry(entry);
 
-		// Object selection
-		pfjet_selector_->ClassifyObjects(event_->pfjets());
+			// Correct objects?
 
-		// Event selection
-		event_selector_->ProcessEvent(event_);
+			// Object selection
+			pfjet_selector_->ClassifyObjects(event_->pfjets());
 
-		if (event_selector_->Pass()) {
-			// Get prescale
-			double prescale_L1 = -10;
-			for (auto& it_l1 : event_->preL1(hlt_index_)) {
-				if (it_l1.first == trigger_.second) {
-					prescale_L1 = it_l1.second;
+			// Event selection
+			event_selector_->ProcessEvent(event_);
+
+			if (event_selector_->Pass()) {
+				++n_pass_;
+				// Get prescale
+				int hlt_index = (int)event_selector_->GetReturnData("TriggerXOR");
+				TString L1_name = hlt_index_to_l1_name_[hlt_index];
+				double prescale_L1 = -10;
+				for (auto& it_l1 : event_->preL1(hlt_index)) {
+					if (L1_name.EqualTo(it_l1.first)) {
+						prescale_L1 = it_l1.second;
+					}
 				}
+				if (prescale_L1 == -10) {
+					throw cms::Exception("[InclusiveBHistograms::analyze] ERROR : Couldn't find L1 prescale for HLT trigger name ") << hlt_index_to_hlt_name_[hlt_index] << " / L1 name " << hlt_index_to_l1_name_[hlt_index] << std::endl;
+				}
+				double prescale = event_->preHLT(hlt_index) * prescale_L1;
+				global_histograms_->GetTH1F("pass_nevents")->Fill(1);
+				global_histograms_->GetTH1F("pass_nevents_weighted")->Fill(1, prescale);
+
+				double pf_mjj = (event_->pfjet(0).p4() + event_->pfjet(1).p4()).mass();
+				double pf_deltaeta = event_->pfjet(0).eta() - event_->pfjet(1).eta();
+				double pf_btag_csv1 = event_->pfjet(0).btag_csv();
+				double pf_btag_csv2 = event_->pfjet(1).btag_csv();
+				pfjet_histograms_->GetTH1D("mjj")->Fill(pf_mjj, prescale);
+				pfjet_histograms_->GetTH1D("deltaeta")->Fill(pf_deltaeta, prescale);
+				pfjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(pf_mjj, pf_deltaeta, prescale);
+				pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, prescale);
+
+				double calo_mjj = (event_->calojet(0).p4() + event_->calojet(1).p4()).mass();
+				double calo_deltaeta = event_->calojet(0).eta() - event_->calojet(1).eta();
+				double calo_btag_csv1 = event_->calojet(0).btag_csv();
+				double calo_btag_csv2 = event_->calojet(1).btag_csv();
+				calojet_histograms_->GetTH1D("mjj")->Fill(calo_mjj, prescale);
+				calojet_histograms_->GetTH1D("deltaeta")->Fill(calo_deltaeta, prescale);
+				calojet_histograms_->GetTH2F("mjj_deltaeta")->Fill(calo_mjj, calo_deltaeta, prescale);
+				calojet_histograms_->GetTH2F("btag_csv")->Fill(calo_btag_csv1, calo_btag_csv2, prescale);
+
 			}
-			if (prescale_L1 == -10) {
-				throw cms::Exception("[InclusiveBHistograms::analyze] ERROR : Couldn't find L1 prescale for trigger name ") << trigger_.second << std::endl;
-			}
-			double prescale = event_->preHLT(hlt_index_) * prescale_L1;
-			global_histograms_->GetTH1F("pass_nevents")->Fill(1);
-			global_histograms_->GetTH1F("pass_nevents_weighted")->Fill(1, prescale);
-
-			double pf_mjj = (event_->pfjet(0).p4() + event_->pfjet(1).p4()).mass();
-			double pf_deltaeta = event_->pfjet(0).eta() - event_->pfjet(1).eta();
-			double pf_btag_csv1 = event_->pfjet(0).btag_csv();
-			double pf_btag_csv2 = event_->pfjet(1).btag_csv();
-			pfjet_histograms_->GetTH1D("mjj")->Fill(pf_mjj, prescale);
-			pfjet_histograms_->GetTH1D("deltaeta")->Fill(pf_deltaeta, prescale);
-			pfjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(pf_mjj, pf_deltaeta, prescale);
-			pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, prescale);
-
-			double calo_mjj = (event_->calojet(0).p4() + event_->calojet(1).p4()).mass();
-			double calo_deltaeta = event_->calojet(0).eta() - event_->calojet(1).eta();
-			double calo_btag_csv1 = event_->calojet(0).btag_csv();
-			double calo_btag_csv2 = event_->calojet(1).btag_csv();
-			calojet_histograms_->GetTH1D("mjj")->Fill(calo_mjj, prescale);
-			calojet_histograms_->GetTH1D("deltaeta")->Fill(calo_deltaeta, prescale);
-			calojet_histograms_->GetTH2F("mjj_deltaeta")->Fill(calo_mjj, calo_deltaeta, prescale);
-			calojet_histograms_->GetTH2F("btag_csv")->Fill(calo_btag_csv1, calo_btag_csv2, prescale);
-
 		}
-	}
+		f->Close();
+		delete f;
+		f = 0;
+		delete event_;
+		event_ = 0;
+	} // End loop over input files
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 

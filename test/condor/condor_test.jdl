@@ -1,0 +1,18 @@
+executable = cmsRun_discard_output.sh
+transfer_executable = false
+notification = never
+getenv = true
+should_transfer_files = yes
+when_to_transfer_output = on_exit
+output = job_$(Cluster).$(Process)_stdout
+error = job_$(Cluster).$(Process)_stderr
+log = job_$(Cluster).$(Process)_condor_log
+
+arguments = InclusiveBHistograms_cfg.py inputFiles=/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_425.root outputFile=output_$(Cluster).$(Process).root
+transfer_input_files = ./cmsRun_discard_output.sh,/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/InclusiveBHistograms_cfg.py,/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_425.root
+queue
+
+arguments = InclusiveBHistograms_cfg.py inputFiles=/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_834.root outputFile=output_$(Cluster).$(Process).root
+transfer_input_files = ./cmsRun_discard_output.sh,/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/InclusiveBHistograms_cfg.py,/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012C_v1_3/160501_233054/0000/QCDBEventTree_834.root
+queue
+

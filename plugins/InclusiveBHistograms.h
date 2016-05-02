@@ -36,16 +36,21 @@ class InclusiveBHistograms : public edm::EDAnalyzer
     int getBin(double x, const std::vector<double>& boundaries); 
 
     //---- configurable parameters --------   
-    TString input_file_name_;
-    TString input_directory_name_;
+    std::vector<std::string> input_file_names_;
     TString input_tree_name_;
-    std::vector<double> mjj_bins_;
-    std::pair<TString, TString> trigger_;
-    int hlt_index_;
+    TString trigger_histogram_name_;
+    std::vector<std::string> trigger_list_unparsed_;
+    std::vector<std::pair<TString, TString> > triggers_;
+    std::vector<TString> hlt_triggers_;
+    std::vector<TString> l1_triggers_;
+    std::vector<int> hlt_indices_;
+    std::map<int, TString> hlt_index_to_l1_name_;
+    std::map<int, TString> hlt_index_to_hlt_name_;
     
     edm::Service<TFileService> fs_;
-    TTree *tree_; 
-    TFile *input_file_;
+    TTree* tree_; 
+    TFile* current_file_;
+    //TFile* input_file_;
     TDirectoryFile *input_directory_;
     std::vector<TH1F*> mhMETovSUMET,mhM,mhNormM,mhTruncM,mhNormTruncM,mhPt,mhY,mhYmax;
     std::vector<TH1F*> mhCHF,mhNHF,mhPHF,mhN90hits,mhEMF,mhNTrkCalo,mhNTrkVtx,mhfHPD;
@@ -58,6 +63,8 @@ class InclusiveBHistograms : public edm::EDAnalyzer
     Root::HistogramManager* pfjet_histograms_;
     Root::HistogramManager* calojet_histograms_;
     
+    int n_total_;
+    int n_pass_;
 };
 
 
