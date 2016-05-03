@@ -29,6 +29,7 @@ class QCDEvent
       void setPrescales(const std::vector<std::vector<std::pair<std::string, int> > >& fPreL1, const std::vector<int>& fPreHLT) {L1Prescale_ = fPreL1; HLTPrescale_ = fPreHLT;}
       void setTrigDecision(const std::vector<int>& fTrigDecision) {TriggerDecision_ = fTrigDecision;}                           
       //------------ Get methods ------------------------------- 
+      std::vector<int>& TriggerDecision() { return TriggerDecision_; }
       unsigned int nTriggers()                         const {return TriggerDecision_.size();}
       unsigned int nL1Obj(int i)                       const {return L1Obj_[i].size();}
       unsigned int nHLTObj(int i)                      const {return HLTObj_[i].size();}
