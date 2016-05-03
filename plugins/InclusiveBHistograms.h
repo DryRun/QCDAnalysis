@@ -56,7 +56,8 @@ class InclusiveBHistograms : public edm::EDAnalyzer
     std::vector<TH1F*> mhCHF,mhNHF,mhPHF,mhN90hits,mhEMF,mhNTrkCalo,mhNTrkVtx,mhfHPD;
     //---- TREE variable --------
     QCDEvent *event_;
-    ObjectSelector<QCDPFJet> *pfjet_selector_;
+    ObjectSelector<QCDPFJet> *dijet_selector_; // Selection for the leading two jets
+    ObjectSelector<QCDPFJet> *pfjet_selector_; // Selection for remaining jets
     ObjectSelector<QCDCaloJet> *calojet_selector_;
     EventSelector<QCDEvent> *event_selector_;
     Root::HistogramManager* global_histograms_;

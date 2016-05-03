@@ -83,6 +83,27 @@ void InclusiveBHistograms::beginJob()
 	f = 0;
 
 	// Cuts
+	std::vector<TString> dijet_cuts;
+	std::map<TString, std::vector<double> > dijet_cut_parameters;
+	std::map<TString, std::vector<TString> > dijet_cut_descriptors;
+	dijet_cuts.push_back("MinPt");
+	dijet_cut_parameters["MinPt"] = std::vector<double>{30.};
+	dijet_cut_descriptors["MinPt"] = std::vector<TString>();
+	dijet_cuts.push_back("MaxAbsEta");
+	dijet_cut_parameters["MaxAbsEta"] = std::vector<double>{2.5};
+	dijet_cut_descriptors["MaxAbsEta"] = std::vector<TString>();
+	dijet_cuts.push_back("IsTightID");
+	dijet_cut_parameters["IsTightID"] = std::vector<double>();
+	dijet_cut_descriptors["IsTightID"] = std::vector<TString>();
+	dijet_cuts.push_back("MaxMuonEnergyFraction");
+	dijet_cut_parameters["MaxMuonEnergyFraction"] = std::vector<double>{0.8};
+	dijet_cut_descriptors["MaxMuonEnergyFraction"] = std::vector<TString>();
+	dijet_selector_ = new ObjectSelector<QCDPFJet>;
+	PFJetCutFunctions::Configure(dijet_selector_);
+	for (auto& it_cut : dijet_cuts) {
+		dijet_selector_->RegisterCut(it_cut, dijet_cut_descriptors[it_cut], dijet_cut_parameters[it_cut]);
+	}
+
 	std::vector<TString> pfjet_cuts;
 	std::map<TString, std::vector<double> > pfjet_cut_parameters;
 	std::map<TString, std::vector<TString> > pfjet_cut_descriptors;
@@ -95,7 +116,6 @@ void InclusiveBHistograms::beginJob()
 	pfjet_cuts.push_back("IsLooseID");
 	pfjet_cut_parameters["IsLooseID"] = std::vector<double>();
 	pfjet_cut_descriptors["IsLooseID"] = std::vector<TString>();
-
 	pfjet_selector_ = new ObjectSelector<QCDPFJet>;
 	PFJetCutFunctions::Configure(pfjet_selector_);
 	for (auto& it_cut : pfjet_cuts) {
@@ -127,21 +147,15 @@ void InclusiveBHistograms::beginJob()
 	event_cuts.push_back("MaxMetOverSumEt");
 	event_cut_parameters["MaxMetOverSumEt"] = std::vector<double>{0.5};
 	event_cut_descriptors["MaxMetOverSumEt"] = std::vector<TString>();
+	event_cuts.push_back("GoodPFDijet");
+	event_cut_parameters["GoodPFDijet"] = std::vector<double>();
+	event_cut_descriptors["GoodPFDijet"] = std::vector<TString>();
 	event_cuts.push_back("MinLeadingPFJetPt");
 	event_cut_parameters["MinLeadingPFJetPt"] = std::vector<double>{25.};
 	event_cut_descriptors["MinLeadingPFJetPt"] = std::vector<TString>();
 	event_cuts.push_back("MinSubleadingPFJetPt");
 	event_cut_parameters["MinSubleadingPFJetPt"] = std::vector<double>{25.};
 	event_cut_descriptors["MinSubleadingPFJetPt"] = std::vector<TString>();
-	event_cuts.push_back("PFDijetTightID");
-	event_cut_parameters["PFDijetTightID"] = std::vector<double>();
-	event_cut_descriptors["PFDijetTightID"] = std::vector<TString>();
-	event_cuts.push_back("PFDijetMaxAbsEta");
-	event_cut_parameters["PFDijetMaxAbsEta"] = std::vector<double>{2.5};
-	event_cut_descriptors["PFDijetMaxAbsEta"] = std::vector<TString>();
-	event_cuts.push_back("PFDijetMaxMuonEnergyFraction");
-	event_cut_parameters["PFDijetMaxMuonEnergyFraction"] = std::vector<double>{0.8};
-	event_cut_descriptors["PFDijetMaxMuonEnergyFraction"] = std::vector<TString>();
 	event_cuts.push_back("PFDijetMaxDeltaEta");
 	event_cut_parameters["PFDijetMaxDeltaEta"] = std::vector<double>{1.3};
 	event_cut_descriptors["PFDijetMaxDeltaEta"] = std::vector<TString>();
@@ -151,7 +165,7 @@ void InclusiveBHistograms::beginJob()
 	for (auto& it_cut : event_cuts) {
 		event_selector_->RegisterCut(it_cut, event_cut_descriptors[it_cut], event_cut_parameters[it_cut]);
 	}
-	event_selector_->AddObjectSelector(ObjectIdentifiers::kPFJet, pfjet_selector_);
+	event_selector_->AddObjectSelector(ObjectIdentifiers::kPFJet, dijet_selector_);
 
 
 	//--------- Histograms -----------------------
@@ -231,6 +245,7 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 			// Correct objects?
 
 			// Object selection
+			dijet_selector_->ClassifyObjects(event_->pfjets());
 			pfjet_selector_->ClassifyObjects(event_->pfjets());
 
 			// Event selection
