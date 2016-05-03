@@ -166,24 +166,8 @@ namespace QCDEventCutFunctions {
 		return pass;
 	}
 
-	bool PFDijetTightID(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
-		bool pass = true;
-		if (!(p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 0) && p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 1))) {
-			pass = false;
-		} else {
-			pass = (p_data.pfjet(0).isTightID() && p_data.pfjet(1).isTightID());
-		}
-		return pass;
-	}
-
-	bool PFDijetMaxAbsEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
-		bool pass = true;
-		if (!(p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 0) && p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 1))) {
-			pass = false;
-		} else {
-			pass = ((TMath::Abs(p_data.pfjet(0).eta()) < p_event_selector->GetCutParameters("PFDijetMaxAbsEta")[0]) && (TMath::Abs(p_data.pfjet(0).eta()) < p_event_selector->GetCutParameters("PFDijetMaxAbsEta")[1]));
-		}
-		return pass;
+	bool GoodPFDijet(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		return (p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 0) && p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 1));
 	}
 
 	bool MinPFMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
@@ -250,18 +234,6 @@ namespace QCDEventCutFunctions {
 		} else {
 			p_event_selector->SetReturnData("CaloDijetMaxDeltaEta", p_data.calojet(0).eta() - p_data.calojet(1).eta());
 			pass = TMath::Abs(p_data.calojet(0).eta() - p_data.calojet(1).eta()) < p_event_selector->GetCutParameters("CaloDijetMaxDeltaEta")[0];
-		}
-		return pass;
-	}
-
-	bool PFDijetMaxMuonEnergyFraction(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
-		bool pass = true;
-		if (!(p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 0) && p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 1))) {
-			pass = false;
-		} else {
-			for (int i = 0; i <= 1; ++i) {
-				pass = (pass && (p_data.pfjet(i).muonEnergyFraction() < p_event_selector->GetCutParameters("PFDijetMaxMuonEnergyFraction")[0]));
-			}
 		}
 		return pass;
 	}
@@ -500,11 +472,9 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddCutFunction("MinSubleadingCaloJetPt", &MinSubleadingCaloJetPt);
 		p_event_selector->AddCutFunction("MaxLeadingCaloJetEta", &MaxLeadingCaloJetEta);
 		p_event_selector->AddCutFunction("MaxSubleadingCaloJetEta", &MaxSubleadingCaloJetEta);
-		p_event_selector->AddCutFunction("PFDijetTightID", &PFDijetTightID);
-		p_event_selector->AddCutFunction("PFDijetMaxAbsEta", &PFDijetMaxAbsEta);
-		p_event_selector->AddCutFunction("PFDijetMaxMuonEnergyFraction", &PFDijetMaxMuonEnergyFraction);
 		p_event_selector->AddCutFunction("PFDijetMinDeltaEta", &PFDijetMinDeltaEta);
 		p_event_selector->AddCutFunction("PFDijetMaxDeltaEta", &PFDijetMaxDeltaEta);
+		p_event_selector->AddCutFunction("GoodPFDijet", &GoodPFDijet);
 		p_event_selector->AddCutFunction("MinPFMjj", &MinPFMjj);
 		p_event_selector->AddCutFunction("MaxPFMjj", &MaxPFMjj);
 		p_event_selector->AddCutFunction("MinCaloMjj", &MinCaloMjj);

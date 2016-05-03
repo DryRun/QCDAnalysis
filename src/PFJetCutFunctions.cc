@@ -131,6 +131,50 @@ namespace PFJetCutFunctions {
 		return p_data[n].isTightID();
 	}
 
+	bool MinBTagWeight(const std::vector<QCDPFJet>& p_data, ObjectSelector<QCDPFJet>* p_object_selector, const int n) {
+		float btag = 0.;
+		if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("tche")) {
+			btag = p_data[n].btag_tche();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("tchp")) {
+			btag = p_data[n].btag_tchp();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("csv")) {
+			btag = p_data[n].btag_csv();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("ssvhe")) {
+			btag = p_data[n].btag_ssvhe();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("ssvhp")) {
+			btag = p_data[n].btag_ssvhp();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("jp")) {
+			btag = p_data[n].btag_jp();
+		} else {
+			std::cerr << "[PFJetCutFunctions::MinBTagWeight] ERROR : Unknown b-tag type: " << p_object_selector->GetCutDescriptors("MinBTagWeight")[0] << std::endl;
+			exit(1);
+		} 
+		p_object_selector->SetReturnData("MinBTagWeight", btag);
+		return btag > p_object_selector->GetCutParameters("MinBTagWeight")[0];
+	}
+
+	bool MaxBTagWeight(const std::vector<QCDPFJet>& p_data, ObjectSelector<QCDPFJet>* p_object_selector, const int n) {
+		float btag = 0.;
+		if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("tche")) {
+			btag = p_data[n].btag_tche();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("tchp")) {
+			btag = p_data[n].btag_tchp();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("csv")) {
+			btag = p_data[n].btag_csv();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("ssvhe")) {
+			btag = p_data[n].btag_ssvhe();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("ssvhp")) {
+			btag = p_data[n].btag_ssvhp();
+		} else if (p_object_selector->GetCutDescriptors("MinBTagWeight")[0].EqualTo("jp")) {
+			btag = p_data[n].btag_jp();
+		} else {
+			std::cerr << "[PFJetCutFunctions::MinBTagWeight] ERROR : Unknown b-tag type: " << p_object_selector->GetCutDescriptors("MinBTagWeight")[0] << std::endl;
+			exit(1);
+		} 
+		p_object_selector->SetReturnData("MinBTagWeight", btag);
+		return btag < p_object_selector->GetCutParameters("MinBTagWeight")[0];
+	}
+
 
 	void Configure(ObjectSelector<QCDPFJet>* p_selector) {
 		p_selector->AddCutFunction("MinPt", &MinPt);
@@ -175,7 +219,9 @@ namespace PFJetCutFunctions {
 		p_selector->AddCutFunction("MaxBetaStar", &MaxBetaStar);
 		p_selector->AddCutFunction("IsLooseID", &IsLooseID);
 		p_selector->AddCutFunction("IsTightID", &IsTightID);
-		
+		p_selector->AddCutFunction("MinBTagWeight", &MinBTagWeight);
+		p_selector->AddCutFunction("MaxBTagWeight", &MaxBTagWeight);
+
 		p_selector->SetObjectName("PFJet");
 		p_selector->SetObjectType(ObjectIdentifiers::kPFJet);
 	}

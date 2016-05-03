@@ -63,6 +63,8 @@ namespace PFJetCutFunctions {
 	bool MaxBetaStar(const std::vector<QCDPFJet>& p_data, ObjectSelector<QCDPFJet>* p_object_selector, const int n);
 	bool IsLooseID(const std::vector<QCDPFJet>& p_data, ObjectSelector<QCDPFJet>* p_object_selector, const int n);
 	bool IsTightID(const std::vector<QCDPFJet>& p_data, ObjectSelector<QCDPFJet>* p_object_selector, const int n);
+	bool MinBTagWeight(const std::vector<QCDPFJet>& p_data, ObjectSelector<QCDPFJet>* p_object_selector, const int n);
+	bool MaxBTagWeight(const std::vector<QCDPFJet>& p_data, ObjectSelector<QCDPFJet>* p_object_selector, const int n);
 
 	void Configure(ObjectSelector<QCDPFJet>* p_selector);
 }

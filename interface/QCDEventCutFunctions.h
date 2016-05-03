@@ -44,9 +44,7 @@ namespace QCDEventCutFunctions {
 	bool MaxSubleadingCaloJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 
 	// Cuts on the PF dijet system
-	bool PFDijetTightID(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
-	bool PFDijetMaxAbsEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
-	bool PFDijetMaxMuonEnergyFraction(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool GoodPFDijet(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool PFDijetMinDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool PFDijetMaxDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool MinPFMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
