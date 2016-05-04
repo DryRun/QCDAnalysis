@@ -521,6 +521,7 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddNMinusOneHistogram("SubleadingBVetoPF", "Discriminant", 2000, -100., 100.);
 		p_event_selector->AddNMinusOneHistogram("SubleadingBVetoCalo", "Discriminant", 2000, -100., 100.);
 
+		p_event_selector->SetName("QCDEventSelector");
 		p_event_selector->SetObjectName("Event");
 	}
 
