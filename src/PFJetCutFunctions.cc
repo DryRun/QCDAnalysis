@@ -222,6 +222,7 @@ namespace PFJetCutFunctions {
 		p_selector->AddCutFunction("MinBTagWeight", &MinBTagWeight);
 		p_selector->AddCutFunction("MaxBTagWeight", &MaxBTagWeight);
 
+		p_selector->SetName("PFJetSelector");
 		p_selector->SetObjectName("PFJet");
 		p_selector->SetObjectType(ObjectIdentifiers::kPFJet);
 	}
