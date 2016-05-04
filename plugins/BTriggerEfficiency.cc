@@ -85,6 +85,20 @@ void BTriggerEfficiency::beginJob()
 		histograms_reference_[it_trig1]->AddTH2D("pf_pt1_pt2", "pf_pt1_pt2", "p_{T} (leading jet) [GeV]", 100, 0., 1000., "p_{T} (subleading jet) [GeV]", 100, 0., 1000.);
 		histograms_reference_[it_trig1]->AddTH1D("pf_btag_csv1", "pf_btag_csv1", "CSV (leading jet)", 40, -2., 2.);
 		histograms_reference_[it_trig1]->AddTH1D("pf_btag_csv2", "pf_btag_csv2", "CSV (subleading jet)", 40, -2., 2.);
+
+		histograms_reference_[it_trig1]->AddTH1D("nevents_weighted", "nevents", "", 1, 0.5, 1.5);
+		histograms_reference_[it_trig1]->AddTH1D("pf_mjj_weighted", "pf_mjj", "m_{jj} [GeV]", 2000, 0., 2000.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_mjj_160_120_weighted", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_mjj_80_70_weighted", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_deltaeta_weighted", "pf_deltaeta", "#Delta#eta(jj)", 100, -10., 10.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_eta1_weighted", "pf_eta1", "#eta (leading jet)", 100, -5., 5.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_eta2_weighted", "pf_eta2", "#eta (subleading jet)", 100, -5., 5.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_pt1_weighted", "pf_pt1", "p_{T} (leading jet) [GeV]", 1000, 0., 1000.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_pt2_weighted", "pf_pt2", "p_{T} (subleading jet) [GeV]", 1000, 0., 1000.);
+		histograms_reference_[it_trig1]->AddTH2D("pf_pt1_pt2_weighted", "pf_pt1_pt2", "p_{T} (leading jet) [GeV]", 100, 0., 1000., "p_{T} (subleading jet) [GeV]", 100, 0., 1000.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_btag_csv1_weighted", "pf_btag_csv1", "CSV (leading jet)", 40, -2., 2.);
+		histograms_reference_[it_trig1]->AddTH1D("pf_btag_csv2_weighted", "pf_btag_csv2", "CSV (subleading jet)", 40, -2., 2.);
+
 		global_histograms_->GetTH1D("trigger_counts")->GetXaxis()->SetBinLabel(std::find(trigger_paths_.begin(), trigger_paths_.end(), it_trig1) - trigger_paths_.begin() + 1, it_trig1);
 		global_histograms_->GetTH1D("trigger_counts_prescale")->GetXaxis()->SetBinLabel(std::find(trigger_paths_.begin(), trigger_paths_.end(), it_trig1) - trigger_paths_.begin() + 1, it_trig1);
 		global_histograms_->GetTH1D("trigger_counts_L1prescale")->GetXaxis()->SetBinLabel(std::find(trigger_paths_.begin(), trigger_paths_.end(), it_trig1) - trigger_paths_.begin() + 1, it_trig1);
@@ -281,21 +295,11 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 				double pf_eta1 = event_->pfjet(0).eta();
 				double pf_eta2 = event_->pfjet(1).eta();
 
-				for (auto& it_trigger_combination : trigger_combinations_) {
-					TString test_trigger = it_trigger_combination.second;
-					TString ref_trigger = it_trigger_combination.first;
+				for (auto& ref_trigger : trigger_paths_) {
 					// Loop over trigger indices associated with the trigger name (i.e. over trigger versions)
 					//int test_hlt_index = -1;
 					int ref_hlt_index = -1;
-					bool pass_test = false;
 					bool pass_ref = false;
-					for (auto& it_trig_index : trigger_path_indices_[test_trigger]) {
-						if (event_->fired(it_trig_index) == 1) {
-							pass_test = true;
-							//test_hlt_index = it_trig_index;
-							break;
-						}
-					} 
 					for (auto& it_trig_index : trigger_path_indices_[ref_trigger]) {
 						if (event_->fired(it_trig_index) == 1) {
 							pass_ref = true;
@@ -303,7 +307,6 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 							break;
 						}
 					} 
-
 					if (pass_ref) {
 						double ref_l1_prescale = event_->minPreL1(ref_hlt_index);
 						double ref_hlt_prescale = event_->preHLT(ref_hlt_index);
@@ -332,23 +335,51 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 						histograms_reference_[ref_trigger]->GetTH2D("pf_pt1_pt2")->Fill(pf_pt1, pf_pt2);
 						histograms_reference_[ref_trigger]->GetTH1D("pf_btag_csv1")->Fill(pf_btag_csv1);
 						histograms_reference_[ref_trigger]->GetTH1D("pf_btag_csv2")->Fill(pf_btag_csv2);
-						if (pass_test) {
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("nevents")->Fill(1);
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_mjj")->Fill(pf_mjj);
-							if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.4 && TMath::Abs(pf_eta2) < 2.4) {
-								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_mjj_160_120")->Fill(pf_mjj);
+
+						histograms_reference_[ref_trigger]->GetTH1D("nevents_weighted")->Fill(1, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH1D("pf_mjj_weighted")->Fill(pf_mjj, ref_prescale);
+						if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.4 && TMath::Abs(pf_eta2) < 2.4) {
+							histograms_reference_[ref_trigger]->GetTH1D("pf_mjj_160_120_weighted")->Fill(pf_mjj, ref_prescale);
+						}
+						if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
+							histograms_reference_[ref_trigger]->GetTH1D("pf_mjj_80_70_weighted")->Fill(pf_mjj, ref_prescale);
+						}
+						histograms_reference_[ref_trigger]->GetTH1D("pf_deltaeta_weighted")->Fill(pf_deltaeta, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH1D("pf_eta1_weighted")->Fill(pf_eta1, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH1D("pf_eta2_weighted")->Fill(pf_eta2, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH1D("pf_pt1_weighted")->Fill(pf_pt1, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH1D("pf_pt2_weighted")->Fill(pf_pt2, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH2D("pf_pt1_pt2_weighted")->Fill(pf_pt1, pf_pt2, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH1D("pf_btag_csv1_weighted")->Fill(pf_btag_csv1, ref_prescale);
+						histograms_reference_[ref_trigger]->GetTH1D("pf_btag_csv2_weighted")->Fill(pf_btag_csv2, ref_prescale);
+						
+						for (auto& test_trigger : trigger_paths_) {
+							bool pass_test = false;
+							for (auto& it_trig_index : trigger_path_indices_[test_trigger]) {
+								if (event_->fired(it_trig_index) == 1) {
+									pass_test = true;
+									//test_hlt_index = it_trig_index;
+									break;
+								}
+							} 
+							if (pass_test) {
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("nevents")->Fill(1);
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_mjj")->Fill(pf_mjj);
+								if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.4 && TMath::Abs(pf_eta2) < 2.4) {
+									histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_mjj_160_120")->Fill(pf_mjj);
+								}
+								if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
+									histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_mjj_80_70")->Fill(pf_mjj);
+								}
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_deltaeta")->Fill(pf_deltaeta);
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_eta1")->Fill(pf_eta1);
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_eta2")->Fill(pf_eta2);
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_pt1")->Fill(pf_pt1);
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_pt2")->Fill(pf_pt2);
+								histograms_test_[ref_trigger][test_trigger]->GetTH2D("pf_pt1_pt2")->Fill(pf_pt1, pf_pt2);
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_btag_csv1")->Fill(pf_btag_csv1);
+								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_btag_csv2")->Fill(pf_btag_csv2);
 							}
-							if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
-								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_mjj_80_70")->Fill(pf_mjj);
-							}
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_deltaeta")->Fill(pf_deltaeta);
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_eta1")->Fill(pf_eta1);
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_eta2")->Fill(pf_eta2);
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_pt1")->Fill(pf_pt1);
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_pt2")->Fill(pf_pt2);
-							histograms_test_[ref_trigger][test_trigger]->GetTH2D("pf_pt1_pt2")->Fill(pf_pt1, pf_pt2);
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_btag_csv1")->Fill(pf_btag_csv1);
-							histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_btag_csv2")->Fill(pf_btag_csv2);
 						}
 					}
 				}
