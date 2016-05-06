@@ -26,6 +26,14 @@ BTriggerEfficiency::BTriggerEfficiency(edm::ParameterSet const& cfg)
 	current_file_ = 0;
 	n_total_ = 0;
 	n_pass_ = 0;
+	if (cfg.getParameter<std::string>("data_source") == "collision_data") {
+		data_source_ = ObjectIdentifiers::kCollisionData;
+	} else if (cfg.getParameter<std::string>("data_source") == "mc") {
+		data_source_ = ObjectIdentifiers::kSimulation;
+	} else {
+		std::cerr << "[BTriggerEfficiency::BTriggerEfficiency] ERROR : Unknown data source: " << cfg.getParameter<std::string>("data_source") << std::endl;
+		exit(1);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -301,16 +309,22 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 					int ref_hlt_index = -1;
 					bool pass_ref = false;
 					for (auto& it_trig_index : trigger_path_indices_[ref_trigger]) {
-						if (event_->fired(it_trig_index) == 1) {
+						if (data_source_ == ObjectIdentifiers::kCollisionData) {
+							if (event_->fired(it_trig_index) == 1) {
+								pass_ref = true;
+								ref_hlt_index = it_trig_index;
+								break;
+							}
+						} else {
+							// Simulation doesn't have trigger yet... 
 							pass_ref = true;
-							ref_hlt_index = it_trig_index;
-							break;
+							ref_hlt_index = 0;
 						}
 					} 
 					if (pass_ref) {
-						double ref_l1_prescale = event_->minPreL1(ref_hlt_index);
-						double ref_hlt_prescale = event_->preHLT(ref_hlt_index);
-						double ref_prescale = ref_hlt_prescale * ref_l1_prescale;
+						double ref_l1_prescale  = (data_source_ == ObjectIdentifiers::kCollisionData ? event_->minPreL1(ref_hlt_index) : 1);
+						double ref_hlt_prescale = (data_source_ == ObjectIdentifiers::kCollisionData ? event_->preHLT(ref_hlt_index) : 1);
+						double ref_prescale     = (data_source_ == ObjectIdentifiers::kCollisionData ? ref_hlt_prescale * ref_l1_prescale : 1);
 						if (ref_l1_prescale < 0) {
 							std::cerr << "[BTriggerEfficiency::analyze] WARNING : Didn't find L1 prescale for HLT index " << ref_hlt_index << " / name = " << ref_trigger << std::endl;
 						}
@@ -355,13 +369,17 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 						
 						for (auto& test_trigger : trigger_paths_) {
 							bool pass_test = false;
-							for (auto& it_trig_index : trigger_path_indices_[test_trigger]) {
-								if (event_->fired(it_trig_index) == 1) {
-									pass_test = true;
-									//test_hlt_index = it_trig_index;
-									break;
-								}
-							} 
+							if (data_source_ == ObjectIdentifiers::kCollisionData) {
+								for (auto& it_trig_index : trigger_path_indices_[test_trigger]) {
+									if (event_->fired(it_trig_index) == 1) {
+										pass_test = true;
+										//test_hlt_index = it_trig_index;
+										break;
+									}
+								} 
+							} else {
+								pass_test = true;
+							}
 							if (pass_test) {
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("nevents")->Fill(1);
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pf_mjj")->Fill(pf_mjj);

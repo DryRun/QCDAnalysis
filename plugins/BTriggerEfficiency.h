@@ -22,6 +22,7 @@
 #include "MyTools/RootUtils/interface/HistogramManager.h"
 #include "MyTools/AnalysisTools/interface/EventSelector.h"
 #include "MyTools/AnalysisTools/interface/ObjectSelector.h"
+#include "MyTools/AnalysisTools/interface/ObjectTypeEnums.h"
 
 class BTriggerEfficiency : public edm::EDAnalyzer
 {
@@ -39,6 +40,7 @@ class BTriggerEfficiency : public edm::EDAnalyzer
     std::vector<std::string> input_file_names_;
     TString input_tree_name_;
     TString trigger_histogram_name_;
+    ObjectIdentifiers::DataSource data_source_;
 
     bool first_event_;
     std::vector<TString> trigger_paths_; // HLT names
