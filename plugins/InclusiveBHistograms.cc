@@ -23,7 +23,10 @@ InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg)
 	input_file_names_  = cfg.getParameter<std::vector<std::string> > ("file_names");
 	input_tree_name_  = cfg.getParameter<std::string> ("tree_name");
 	trigger_histogram_name_  = cfg.getParameter<std::string> ("trigger_histogram_name");
-	trigger_list_unparsed_ = cfg.getParameter<std::vector<std::string> >("triggers");
+	std::vector<std::string> triggers_str = cfg.getParameter<std::vector<std::string> >("triggers");
+	for (auto& it_trig : triggers_str) {
+		triggers_.push_back(it_trig);
+	}
 	current_file_ = 0;
 	n_total_ = 0;
 	n_pass_ = 0;
@@ -33,23 +36,22 @@ InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg)
 void InclusiveBHistograms::beginJob() 
 {
 	// Parse HLT and L1 names from trigger list, and look up indices from histogram named trigger_histogram_name_
-	for (auto& it_trig : trigger_list_unparsed_) {
-		std::cout << "[InclusiveBHistograms::beginJob] DEBUG : Parsing " << it_trig << std::endl;
-		std::vector<std::string> tokens;
-		std::size_t start = 0, end = 0;
-		while ((end = it_trig.find(':', start)) != std::string::npos) {
-    		tokens.push_back(it_trig.substr(start, end - start));
-			start = end + 1;
-		}
-		tokens.push_back(it_trig.substr(start));
-		if (tokens.size() != 2) {
-			throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : Failed to parse two words out of string ") << it_trig << std::endl;
-		}
-		triggers_.push_back(std::make_pair<TString, TString>(tokens[0], tokens[1]));
-		hlt_triggers_.push_back(tokens[0]);
-		l1_triggers_.push_back(tokens[1]);
-	}
-
+	//for (auto& it_trig : trigger_list_unparsed_) {
+	//	std::cout << "[InclusiveBHistograms::beginJob] DEBUG : Parsing " << it_trig << std::endl;
+	//	std::vector<std::string> tokens;
+	//	std::size_t start = 0, end = 0;
+	//	while ((end = it_trig.find(':', start)) != std::string::npos) {
+ 	//   	tokens.push_back(it_trig.substr(start, end - start));
+	//		start = end + 1;
+	//	}
+	//	tokens.push_back(it_trig.substr(start));
+	//	if (tokens.size() != 2) {
+	//		throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : Failed to parse two words out of string ") << it_trig << std::endl;
+	//	}
+	//	triggers_.push_back(std::make_pair<TString, TString>(tokens[0], tokens[1]));
+	//	hlt_triggers_.push_back(tokens[0]);
+	//	l1_triggers_.push_back(tokens[1]);
+	//}
 	TFile *f = new TFile(TString(input_file_names_[0]), "READ");
 	TH1F *h_trigger_names = (TH1F*)f->Get(trigger_histogram_name_);
 	if (!h_trigger_names) {
@@ -60,23 +62,23 @@ void InclusiveBHistograms::beginJob()
 		int hlt_index = -1;
 		for(int bin = 1; bin <= h_trigger_names->GetNbinsX(); ++bin) {
 			string ss = h_trigger_names->GetXaxis()->GetBinLabel(bin);
-			if (it_trig.first.EqualTo(ss)) {
+			if (it_trig.EqualTo(ss)) {
 				hlt_index = bin - 1; // Bins start from 1, while index starts from 0
 				break;
 			}
 		}
 		if (hlt_index == -1) {
-			throw cms::Exception("]InclusiveBHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << it_trig.first << " in TriggerNames." << std::endl;
+			throw cms::Exception("]InclusiveBHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << it_trig << " in TriggerNames." << std::endl;
 		} else {
-			hlt_indices_.push_back(hlt_index);
-			hlt_index_to_hlt_name_[hlt_index] = it_trig.first;
-			hlt_index_to_l1_name_[hlt_index] = it_trig.second; // Record L1 name corresponding to the HLT index
+			trigger_indices_.push_back(hlt_index);
+			triggers_to_indices_[it_trig] = hlt_index;
+			indices_to_triggers_[hlt_index] = it_trig;
 		}
 	}
 
 	std::cout << "List of triggers and indices:" << std::endl;
-	for (auto& it_index_name : hlt_index_to_hlt_name_) {
-		std::cout << "\t" << it_index_name.first << " = " << it_index_name.second << std::endl;
+	for (auto& it_trig : triggers_) {
+		std::cout << "\t" << it_trig << " = " << triggers_to_indices_[it_trig] << std::endl;
 	}
 	f->Close();
 	delete f;
@@ -140,7 +142,7 @@ void InclusiveBHistograms::beginJob()
 	std::map<TString, std::vector<TString> > event_cut_descriptors;
 	event_cuts.push_back("TriggerXOR");
 	event_cut_parameters["TriggerXOR"] = std::vector<double>();
-	for (auto& it_trig_index : hlt_indices_) {
+	for (auto& it_trig_index : trigger_indices_) {
 		event_cut_parameters["TriggerXOR"].push_back((double)it_trig_index);
 	}
 	event_cut_descriptors["TriggerXOR"] = std::vector<TString>();
@@ -191,6 +193,15 @@ void InclusiveBHistograms::beginJob()
 	calojet_histograms_->AddTH1D("deltaeta", "deltaeta", "#Delta#eta", 100., -5., 5.);
 	calojet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
 	calojet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+
+	fatjet_histograms_ = new Root::HistogramManager();
+	fatjet_histograms_->AddPrefix("h_fatjet_");
+	fatjet_histograms_->AddTFileService(&fs_);
+	fatjet_histograms_->AddTH1D("mjj", "mjj", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	fatjet_histograms_->AddTH1D("deltaeta", "deltaeta", "#Delta#eta", 100., -5., 5.);
+	fatjet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
+	fatjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+
 }
 
 
@@ -255,16 +266,7 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 				++n_pass_;
 				// Get prescale
 				int hlt_index = (int)event_selector_->GetReturnData("TriggerXOR");
-				TString L1_name = hlt_index_to_l1_name_[hlt_index];
-				double prescale_L1 = -10;
-				for (auto& it_l1 : event_->preL1(hlt_index)) {
-					if (L1_name.EqualTo(it_l1.first)) {
-						prescale_L1 = it_l1.second;
-					}
-				}
-				if (prescale_L1 == -10) {
-					throw cms::Exception("[InclusiveBHistograms::analyze] ERROR : Couldn't find L1 prescale for HLT trigger name ") << hlt_index_to_hlt_name_[hlt_index] << " / L1 name " << hlt_index_to_l1_name_[hlt_index] << std::endl;
-				}
+				double prescale_L1 = event_->minPreL1(hlt_index);
 				double prescale = event_->preHLT(hlt_index) * prescale_L1;
 				global_histograms_->GetTH1F("pass_nevents")->Fill(1);
 				global_histograms_->GetTH1F("pass_nevents_weighted")->Fill(1, prescale);
@@ -286,6 +288,77 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 				calojet_histograms_->GetTH1D("deltaeta")->Fill(calo_deltaeta, prescale);
 				calojet_histograms_->GetTH2F("mjj_deltaeta")->Fill(calo_mjj, calo_deltaeta, prescale);
 				calojet_histograms_->GetTH2F("btag_csv")->Fill(calo_btag_csv1, calo_btag_csv2, prescale);
+
+	/**
+				// Fat jets
+				LorentzVector 
+				for (auto& it_pfjet : )
+		if (qcdpfjet.ptCor() >= mMinPFFatPt && fabs(qcdpfjet.eta()) < mMaxPFFatEta && qcdpfjet.isLooseID())
+			tmpPFJets.push_back(qcdpfjet);
+	}
+	//----------- PFFatJets ----------------------
+	sort(tmpPFJets.begin(),tmpPFJets.end(),sort_pfjets);
+	if (tmpPFJets.size()>1) {
+		LorentzVector lead[2], fat[2]; 
+		float sumPt[2],sumPtUnc[2];
+		for(unsigned i = 0; i<2; i++) {
+			lead[i]     = tmpPFJets[i].p4()*tmpPFJets[i].cor();
+			fat[i]      = tmpPFJets[i].p4()*tmpPFJets[i].cor();
+			sumPt[i]    = tmpPFJets[i].ptCor();
+			sumPtUnc[i] = tmpPFJets[i].ptCor() * tmpPFJets[i].unc();
+		}
+		double rmax = 1.1;
+		for(unsigned i = 2; i<tmpPFJets.size(); i++) {
+			LorentzVector cand = tmpPFJets[i].p4();
+			double dR1 = deltaR(lead[0],cand);
+			double dR2 = deltaR(lead[1],cand);
+			int index(-1);
+			if (dR1 < dR2 && dR1 < rmax) 
+				index = 0;
+			if (dR1 > dR2 && dR2 < rmax)
+				index = 1;
+			if (index > -1) {
+				fat[index]      += cand * tmpPFJets[i].cor();
+				sumPt[index]    += tmpPFJets[i].ptCor();
+				sumPtUnc[index] += tmpPFJets[i].ptCor()*tmpPFJets[i].unc();
+			} 
+		}
+		QCDJet fatJet[2];
+		vector<float> uncSrc(0);
+		for(unsigned i = 0; i<2; i++) { 
+			fatJet[i].setP4(fat[i]);
+			fatJet[i].setLooseIDFlag(tmpPFJets[i].isLooseID());
+			fatJet[i].setTightIDFlag(tmpPFJets[i].isTightID());
+			fatJet[i].setCor(1.0);
+			fatJet[i].setArea(0.0);
+			fatJet[i].setUncSrc(uncSrc); 
+			//
+			fatJet[i].setBtag_tche(tmpPFJets[i].btag_tche());
+			fatJet[i].setBtag_tchp(tmpPFJets[i].btag_tchp());
+			fatJet[i].setBtag_csv(tmpPFJets[i].btag_csv()); 
+			fatJet[i].setBtag_ssvhe(tmpPFJets[i].btag_ssvhe()); 
+			fatJet[i].setBtag_ssvhp(tmpPFJets[i].btag_ssvhp());
+			fatJet[i].setBtag_jp(tmpPFJets[i].btag_jp());
+			fatJet[i].setFlavor(tmpPFJets[i].flavor());
+			fatJet[i].setBstatus(tmpPFJets[i].bstatus3(), tmpPFJets[i].bstatus2());
+			fatJet[i].setPartonId(tmpPFJets[i].PartonId());
+			//
+			if (sumPt[i] > 0)
+				fatJet[i].setUnc(sumPtUnc[i]/sumPt[i]);
+			else
+				fatJet[i].setUnc(0.0); 
+			fatJet[i].setGen(tmpPFJets[i].genp4(),tmpPFJets[i].genR());
+		}
+		if (fatJet[0].pt()>fatJet[1].pt()) {
+			mPFFatJets.push_back(fatJet[0]); 
+			mPFFatJets.push_back(fatJet[1]);
+		}
+		else {
+			mPFFatJets.push_back(fatJet[1]); 
+			mPFFatJets.push_back(fatJet[0]);
+		}
+	}
+	**/
 
 			}
 		}
