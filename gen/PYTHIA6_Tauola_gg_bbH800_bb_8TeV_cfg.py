@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.381.2.28 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/PyReleaseValidation/python/ConfigBuilder.py,v 
-# with command line options: CMSDIJET/QCDAnalysis/python/PYTHIA6_Tauola_gg_bbH1100_bb_8TeV_cff.py --python_filename /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/PYTHIA6_Tauola_gg_bbH1100_bb_8TeV_cfg.py --fileout file:PYTHIA6_Tauola_gg_bbH1100_bb_8TeV_FastSim_RECOSIM.root --step GEN,FASTSIM,HLT:7E33v2 --mc --eventcontent RECOSIM --datatier GEN-SIM-DIGI-RECO --pileup 2012_Startup_inTimeOnly --geometry DB --conditions auto:mc --beamspot Realistic8TeVCollision --no_exec -n 1000
+# with command line options: CMSDIJET/QCDAnalysis/python/PYTHIA6_Tauola_gg_bbH800_bb_8TeV_cff.py --python_filename /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/PYTHIA6_Tauola_gg_bbH800_bb_8TeV_cfg.py --fileout file:PYTHIA6_Tauola_gg_bbH800_bb_8TeV_FastSim_RECOSIM.root --step GEN,FASTSIM,HLT:7E33v2 --mc --eventcontent RECOSIM --datatier GEN-SIM-DIGI-RECO --pileup 2012_Startup_inTimeOnly --geometry DB --conditions auto:mc --beamspot Realistic8TeVCollision --no_exec -n 1000
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('HLT')
@@ -36,7 +36,7 @@ process.options = cms.untracked.PSet(
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.381.2.28 $'),
-    annotation = cms.untracked.string('CMSDIJET/QCDAnalysis/python/PYTHIA6_Tauola_gg_bbH1100_bb_8TeV_cff.py nevts:1000'),
+    annotation = cms.untracked.string('CMSDIJET/QCDAnalysis/python/PYTHIA6_Tauola_gg_bbH800_bb_8TeV_cff.py nevts:1000'),
     name = cms.untracked.string('PyReleaseValidation')
 )
 
@@ -46,7 +46,7 @@ process.RECOSIMoutput = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
     outputCommands = process.RECOSIMEventContent.outputCommands,
-    fileName = cms.untracked.string('file:PYTHIA6_Tauola_gg_bbH1100_bb_8TeV_FastSim_RECOSIM.root'),
+    fileName = cms.untracked.string('file:PYTHIA6_Tauola_gg_bbH800_bb_8TeV_FastSim_RECOSIM.root'),
     dataset = cms.untracked.PSet(
         filterName = cms.untracked.string(''),
         dataTier = cms.untracked.string('GEN-SIM-DIGI-RECO')
@@ -116,7 +116,7 @@ process.generator = cms.EDFilter("Pythia6GeneratorFilter",
             'KFPR(186,2)= 5 ! Q = b Registered by Alexandre.Nikitenko@cern.ch', 
             'IMSS(1)= 1     ! MSSM with parameters', 
             'RMSS(5)= 30.   ! tan beta', 
-            'RMSS(19)= 1100 ! m_A', 
+            'RMSS(19)= 800 ! m_A', 
             'RMSS(1)= 100.  ! M1', 
             'RMSS(2)= 200.  ! M2', 
             'RMSS(3)= 800.  ! Mg', 
