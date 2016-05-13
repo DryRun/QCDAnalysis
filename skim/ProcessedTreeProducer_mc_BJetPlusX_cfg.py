@@ -74,7 +74,7 @@ process.maxEvents = cms.untracked.PSet(
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 #############   Define the source file ###############
 
-if "file:" in options.dataset:
+if "file:" in options.dataset or "/store" in options.dataset:
     input_file_vstring = cms.untracked.vstring(options.dataset)
 elif options.dataset == "/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM":
     input_file_vstring = cms.untracked.vstring('/store/mc/Summer12_DR53X/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v2/00000/00BA1E5C-2008-E211-9F96-002618943951.root')
