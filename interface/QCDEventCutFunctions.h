@@ -66,6 +66,19 @@ namespace QCDEventCutFunctions {
 	bool SubleadingBVetoPF(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool SubleadingBVetoCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 
+	// Fat jet cuts. Think about whether to use normal or fat jets for these!
+	bool MinLeadingPFFatJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinSubleadingPFFatJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxLeadingPFFatJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxSubleadingPFFatJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool PFFatDijetMinDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool PFFatDijetMaxDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinPFFatMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MaxPFFatMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool LeadingBTagPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool SubleadingBTagPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool LeadingBVetoPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool SubleadingBVetoPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 
 	void Configure(EventSelector<QCDEvent>* p_event_selector);
 }
