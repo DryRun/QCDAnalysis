@@ -200,7 +200,10 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 
 
 	//------ loop over all trigger names ---------
-	for(unsigned itrig=0;itrig<triggerNames_.size() && !mIsMCarlo;itrig++) {
+	if (debug_counter < 10) {
+		std::cout << "[debug] triggerNames_.size() = " << triggerNames_.size() << std::endl;
+	}
+	for(unsigned itrig=0; itrig<triggerNames_.size(); itrig++) {
 		bool accept(false);
 		//int preL1(-1);
 		std::vector<std::pair<std::string, int> > preL1;
@@ -260,7 +263,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 				}
 			}// loop over modules
 		}// if the trigger exists in the menu
-		//cout<<triggerNames_[itrig]<<" "<<triggerIndex_[itrig]<<" "<<accept<<" "<<tmpFired<<endl;
+		//std::cout << "[debug] " << triggerNames_[itrig] << " " << triggerIndex_[itrig] << " " << accept << " " << tmpFired << std::endl;
 		Fired.push_back(tmpFired);
 		L1Prescales.push_back(preL1);
 		HLTPrescales.push_back(preHLT);
@@ -269,6 +272,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	}// loop over trigger names  
 	mEvent->setTrigDecision(Fired);
 	if (debug_counter < 10) {
+		std::cout << "[ProcessedTreeProducer] DEBUG : Set trigger decision with Fired.size() = " << Fired.size() << std::endl;
 		std::cout << "[ProcessedTreeProducer] DEBUG : Printing L1 prescales:" << std::endl;
 		for (unsigned int i_trig = 0; i_trig < L1Prescales.size(); ++i_trig) {
 			for (auto& it_trig : L1Prescales[i_trig]) {

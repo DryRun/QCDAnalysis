@@ -38,7 +38,15 @@ class QCDEvent
       unsigned int nCaloJets()                         const {return CaloJets_.size();}
       unsigned int nGenJets()                          const {return GenJets_.size();}
       int nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets) const;
-      int fired(int i)                                 const {return TriggerDecision_[i];}
+      int fired(int i)                                 const {
+            if ((unsigned int)i >= TriggerDecision_.size()) {
+                  std::cerr << "[QCDEvent::fired] ERROR : Requested trigger index " << i << " is out of range. Printing TriggerDecision_." << std::endl;
+                  for (unsigned int i_trig = 0; i_trig < TriggerDecision_.size(); ++i_trig) {
+                        std::cerr << "[QCDEvent::fired] ERROR : \t" << i_trig << " = " << TriggerDecision_[i_trig] << std::endl;
+                  }
+            }
+            return TriggerDecision_[i];
+      }
       std::vector<std::pair<std::string, int> > preL1(int i) const {return L1Prescale_[i];}
       int minPreL1(int i);
       int preHLT(int i)                                const {return HLTPrescale_[i];}
