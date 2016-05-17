@@ -16,9 +16,9 @@ namespace QCDEventCutFunctions {
 		int n_fired = 0;
 		std::vector<int> fired_trigger_indices;
 		for (auto& it_trig : p_event_selector->GetCutParameters("TriggerXOR")) {
-			bool trigger_on = (p_data.preHLT((int)it_trig) > 0);
-			bool trigger_fired = p_data.fired((int)it_trig);
-			if (trigger_on && trigger_fired) {
+			//bool trigger_on = (p_data.preHLT((int)it_trig) > 0);
+			int trigger_fired = p_data.fired((int)it_trig);
+			if (trigger_fired == 1) { // removed trigger_on because it doesn't work on MC
 				++n_fired;
 				fired_trigger_indices.push_back((int)it_trig);
 			}
@@ -37,9 +37,9 @@ namespace QCDEventCutFunctions {
 	bool TriggerOR(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		int n_fired = 0;
 		for (auto& it_trig : p_event_selector->GetCutParameters("TriggerOR")) {
-			bool trigger_on = (p_data.preHLT((int)it_trig) > 0);
-			bool trigger_fired = p_data.fired((int)it_trig);
-			if (trigger_on && trigger_fired) {
+			//bool trigger_on = (p_data.preHLT((int)it_trig) > 0);
+			int trigger_fired = p_data.fired((int)it_trig);
+			if (trigger_fired == 1) { // removed trigger_on because it doesn't work on MC
 				++n_fired;
 			}
 		}
@@ -454,6 +454,144 @@ namespace QCDEventCutFunctions {
 		return (p_data.pfmet().met_o_sumet() < p_event_selector->GetCutParameters("MaxMetOverSumEt")[0]);
 	}
 
+	// Fat jet cuts
+	bool MinLeadingPFFatJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		p_event_selector->SetReturnData("MinLeadingPFFatJetPt", p_data.fatjet(0).pt());
+		return (p_data.fatjet(0).pt() > p_event_selector->GetCutParameters("MinLeadingPFFatJetPt")[0]);
+	}
+	bool MinSubleadingPFFatJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		p_event_selector->SetReturnData("MinSubleadingPFFatJetPt", p_data.fatjet(1).pt());
+		return (p_data.fatjet(1).pt() > p_event_selector->GetCutParameters("MinSubleadingPFFatJetPt")[0]);
+	}
+	bool MaxLeadingPFFatJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		p_event_selector->SetReturnData("MaxLeadingPFFatJetEta", p_data.fatjet(0).eta());
+		return (TMath::Abs(p_data.fatjet(0).eta()) < p_event_selector->GetCutParameters("MaxLeadingPFFatJetEta")[0]);
+	}
+	bool MaxSubleadingPFFatJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		p_event_selector->SetReturnData("MaxSubleadingPFFatJetEta", p_data.fatjet(1).eta());
+		return (TMath::Abs(p_data.fatjet(1).eta()) < p_event_selector->GetCutParameters("MaxSubleadingPFFatJetEta")[0]);
+	}
+	bool PFFatDijetMinDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		double delta_eta = p_data.fatjet(0).eta() - p_data.fatjet(1).eta();
+		p_event_selector->SetReturnData("PFFatDijetMinDeltaEta", delta_eta);
+		return (TMath::Abs(delta_eta) > p_event_selector->GetCutParameters("PFFatDijetMinDeltaEta")[0]);
+	}
+	bool PFFatDijetMaxDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		double delta_eta = p_data.fatjet(0).eta() - p_data.fatjet(1).eta();
+		p_event_selector->SetReturnData("PFFatDijetMaxDeltaEta", delta_eta);
+		return (TMath::Abs(delta_eta) < p_event_selector->GetCutParameters("PFFatDijetMaxDeltaEta")[0]);
+	}
+	bool MinPFFatMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		double mjj = (p_data.fatjet(0).p4() + p_data.fatjet(1).p4()).mass();
+		p_event_selector->SetReturnData("MinPFFatMjj", mjj);
+		return (mjj > p_event_selector->GetCutParameters("MinPFFatMjj")[0]);
+	}
+	bool MaxPFFatMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		double mjj = (p_data.fatjet(0).p4() + p_data.fatjet(1).p4()).mass();
+		p_event_selector->SetReturnData("MaxPFFatMjj", mjj);
+		return (mjj < p_event_selector->GetCutParameters("MaxPFFatMjj")[0]);
+	}
+	bool LeadingBTagPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() == 0) {
+			p_event_selector->SetReturnData("LeadingBTagPFFat", -100.);
+			return false;
+		}
+		float btag = 0.;
+		if (p_event_selector->GetCutDescriptors("LeadingBTagPFFat")[0].EqualTo("tche")) {
+			btag = p_data.fatjet(0).btag_tche();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBTagPFFat")[0].EqualTo("tchp")) {
+			btag = p_data.fatjet(0).btag_tchp();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBTagPFFat")[0].EqualTo("csv")) {
+			btag = p_data.fatjet(0).btag_csv();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBTagPFFat")[0].EqualTo("ssvhe")) {
+			btag = p_data.fatjet(0).btag_ssvhe();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBTagPFFat")[0].EqualTo("ssvhp")) {
+			btag = p_data.fatjet(0).btag_ssvhp();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBTagPFFat")[0].EqualTo("jp")) {
+			btag = p_data.fatjet(0).btag_jp();
+		} else {
+			std::cerr << "[QCDEventCutFunctions::LeadingBTagPFFat] ERROR : Unknown b-tag type: " << p_event_selector->GetCutDescriptors("LeadingBTagPFFat")[0] << std::endl;
+			exit(1);
+		} 
+		p_event_selector->SetReturnData("LeadingBTagPFFat", btag);
+		return btag > p_event_selector->GetCutParameters("LeadingBTagPFFat")[0];
+	}
+	bool SubleadingBTagPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() <= 1) {
+			p_event_selector->SetReturnData("SubleadingBTagPFFat", -100.);
+			return false;
+		}
+		float btag = 0.;
+		if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("tche")) {
+			btag = p_data.fatjet(1).btag_tche();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("tchp")) {
+			btag = p_data.fatjet(1).btag_tchp();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("csv")) {
+			btag = p_data.fatjet(1).btag_csv();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("ssvhe")) {
+			btag = p_data.fatjet(1).btag_ssvhe();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("ssvhp")) {
+			btag = p_data.fatjet(1).btag_ssvhp();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("jp")) {
+			btag = p_data.fatjet(1).btag_jp();
+		} else {
+			std::cerr << "[QCDEventCutFunctions::SubleadingBTagPFFat] ERROR : Unknown b-tag type: " << p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0] << std::endl;
+			exit(1);
+		} 
+		p_event_selector->SetReturnData("SubleadingBTagPFFat", btag);
+		return btag > p_event_selector->GetCutParameters("SubleadingBTagPFFat")[0];
+	}
+	bool LeadingBVetoPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() == 0) {
+			p_event_selector->SetReturnData("LeadingBVetoPFFat", -100.);
+			return false;
+		}
+		float btag = 0.;
+		if (p_event_selector->GetCutDescriptors("LeadingBVetoPFFat")[0].EqualTo("tche")) {
+			btag = p_data.fatjet(0).btag_tche();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBVetoPFFat")[0].EqualTo("tchp")) {
+			btag = p_data.fatjet(0).btag_tchp();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBVetoPFFat")[0].EqualTo("csv")) {
+			btag = p_data.fatjet(0).btag_csv();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBVetoPFFat")[0].EqualTo("ssvhe")) {
+			btag = p_data.fatjet(0).btag_ssvhe();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBVetoPFFat")[0].EqualTo("ssvhp")) {
+			btag = p_data.fatjet(0).btag_ssvhp();
+		} else if (p_event_selector->GetCutDescriptors("LeadingBVetoPFFat")[0].EqualTo("jp")) {
+			btag = p_data.fatjet(0).btag_jp();
+		} else {
+			std::cerr << "[QCDEventCutFunctions::LeadingBVetoPFFat] ERROR : Unknown b-tag type: " << p_event_selector->GetCutDescriptors("LeadingBVetoPFFat")[0] << std::endl;
+			exit(1);
+		} 
+		p_event_selector->SetReturnData("LeadingBVetoPFFat", btag);
+		return btag < p_event_selector->GetCutParameters("LeadingBVetoPFFat")[0];
+	}
+	bool SubleadingBVetoPFFat(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() <= 1) {
+			p_event_selector->SetReturnData("SubleadingBTagPFFat", -100.);
+			return false;
+		}
+		float btag = 0.;
+		if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("tche")) {
+			btag = p_data.fatjet(1).btag_tche();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("tchp")) {
+			btag = p_data.fatjet(1).btag_tchp();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("csv")) {
+			btag = p_data.fatjet(1).btag_csv();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("ssvhe")) {
+			btag = p_data.fatjet(1).btag_ssvhe();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("ssvhp")) {
+			btag = p_data.fatjet(1).btag_ssvhp();
+		} else if (p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0].EqualTo("jp")) {
+			btag = p_data.fatjet(1).btag_jp();
+		} else {
+			std::cerr << "[QCDEventCutFunctions::SubleadingBTagPFFat] ERROR : Unknown b-tag type: " << p_event_selector->GetCutDescriptors("SubleadingBTagPFFat")[0] << std::endl;
+			exit(1);
+		} 
+		p_event_selector->SetReturnData("SubleadingBTagPFFat", btag);
+		return btag < p_event_selector->GetCutParameters("SubleadingBTagPFFat")[0];
+	}
+
 	void Configure(EventSelector<QCDEvent>* p_event_selector) {
 		p_event_selector->AddCutFunction("Trigger", &Trigger);
 		p_event_selector->AddCutFunction("TriggerOR", &TriggerOR);
@@ -490,6 +628,19 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddCutFunction("SubleadingBVetoPF", &SubleadingBVetoPF);
 		p_event_selector->AddCutFunction("SubleadingBVetoCalo", &SubleadingBVetoCalo);
 
+		p_event_selector->AddCutFunction("MinLeadingPFFatJetPt", &MinLeadingPFFatJetPt);
+		p_event_selector->AddCutFunction("MinSubleadingPFFatJetPt", &MinSubleadingPFFatJetPt);
+		p_event_selector->AddCutFunction("MaxLeadingPFFatJetEta", &MaxLeadingPFFatJetEta);
+		p_event_selector->AddCutFunction("MaxSubleadingPFFatJetEta", &MaxSubleadingPFFatJetEta);
+		p_event_selector->AddCutFunction("PFFatDijetMinDeltaEta", &PFFatDijetMinDeltaEta);
+		p_event_selector->AddCutFunction("PFFatDijetMaxDeltaEta", &PFFatDijetMaxDeltaEta);
+		p_event_selector->AddCutFunction("MinPFFatMjj", &MinPFFatMjj);
+		p_event_selector->AddCutFunction("MaxPFFatMjj", &MaxPFFatMjj);
+		p_event_selector->AddCutFunction("LeadingBTagPFFat", &LeadingBTagPFFat);
+		p_event_selector->AddCutFunction("SubleadingBTagPFFat", &SubleadingBTagPFFat);
+		p_event_selector->AddCutFunction("LeadingBVetoPFFat", &LeadingBVetoPFFat);
+		p_event_selector->AddCutFunction("SubleadingBVetoPFFat", &SubleadingBVetoPFFat);
+
 		// N-1 histograms
 		p_event_selector->AddNMinusOneHistogram("MaxMetOverSumEt", "E_{T}^{miss} / #SigmaE_{T}", 40, 0., 2.);
 		p_event_selector->AddNMinusOneHistogram("MinNPFJets", "N_{jets}", 21, -0.5, 20.5);
@@ -520,6 +671,18 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddNMinusOneHistogram("LeadingBVetoCalo", "Discriminant", 2000, -100., 100.);
 		p_event_selector->AddNMinusOneHistogram("SubleadingBVetoPF", "Discriminant", 2000, -100., 100.);
 		p_event_selector->AddNMinusOneHistogram("SubleadingBVetoCalo", "Discriminant", 2000, -100., 100.);
+		p_event_selector->AddNMinusOneHistogram("MinLeadingPFFatJetPt", "Jet p_{T} [GeV]", 1000, 0., 1000.);
+		p_event_selector->AddNMinusOneHistogram("MinSubleadingPFFatJetPt", "Jet p_{T} [GeV]", 1000, 0., 1000.);
+		p_event_selector->AddNMinusOneHistogram("MaxLeadingPFFatJetEta", "#eta", 100, -5., 5.);
+		p_event_selector->AddNMinusOneHistogram("MaxSubleadingPFFatJetEta", "#eta", 100, -5., 5.);
+		p_event_selector->AddNMinusOneHistogram("PFFatDijetMinDeltaEta", "Dijet #Delta#eta", 100, -5., 5.);
+		p_event_selector->AddNMinusOneHistogram("PFFatDijetMaxDeltaEta", "Dijet #Delta#eta", 100, -5., 5.);
+		p_event_selector->AddNMinusOneHistogram("MinPFFatMjj", "m_{jj} [GeV]", 2000, 0., 2000.);
+		p_event_selector->AddNMinusOneHistogram("MaxPFFatMjj", "m_{jj} [GeV]", 2000, 0., 2000.);
+		p_event_selector->AddNMinusOneHistogram("LeadingBTagPFFat", "Discriminant", 2000, -100., 100.);
+		p_event_selector->AddNMinusOneHistogram("SubleadingBTagPFFat", "Discriminant", 2000, -100., 100.);
+		p_event_selector->AddNMinusOneHistogram("LeadingBVetoPFFat", "Discriminant", 2000, -100., 100.);
+		p_event_selector->AddNMinusOneHistogram("SubleadingBVetoPFFat", "Discriminant", 2000, -100., 100.);
 
 		p_event_selector->SetName("QCDEventSelector");
 		p_event_selector->SetObjectName("Event");
