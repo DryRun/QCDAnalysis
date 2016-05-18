@@ -15,13 +15,36 @@ triggers = [
 	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV'
 ]
 
-fit_functions = {}
-fit_functions[]
-
-def MjjFit(x, par):
+def BackgroundFit(x, par):
 	#for i in xrange(3):
 	#	print "par[" + str(i) + "] = " + str(par[i])
 	return par[0] * (1. - (x[0] / 8.e3))**par[1] / ((x[0] / 8.e3)**(par[2] + par[3] * TMath.Log((x[0] / 8.e3))))
+
+def DoMjjBackgroundFit(hist, blind_range=None, fit_min=500., fit_max=2000., rebin=20):
+	# Clone the histogram to avoid modifying the original
+	hist = hist.Clone()
+	hist.SetName(hist.GetName() + "_copy")
+
+	if blind:
+		for bin in xrange(1, hist.GetNbinsX() + 1):
+			if TMath.Abs(hist.GetBinCenter(bin) - 750.) < 75.:
+				hist.SetBinContent(bin, 0.)
+				hist.SetBinError(bin, 0.)
+	fit = TF1("fit_mjj", BackgroundFit, fit_min, fit_max, 4)
+	fit.SetParameter(0, 2.e-4)
+	fit.SetParameter(1, 3)
+	fit.SetParameter(2, 10)
+	fit.SetParameter(3, 1)
+	#fit[trigger].SetParLimits(0, 1.e-6, 1.e2)
+	#fit[trigger].SetParLimits(1, -25., 25.)
+	#fit[trigger].SetParLimits(2, -25., 25.)
+	#fit[trigger].SetParLimits(3, -1., 1.)
+	hist.Fit(fit, "ER0I")
+	fit_ratio = MakeFitPullHistogram(hist, fit)
+	print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
+
+	return {"fit":fit, "fit_ratio":fit_ratio}
+
 
 def MjjPlot(input_file, output_tag, plot_log=False, signal_file=None, signal_xs=None, blind=False, fit_min=500., fit_max=2000.):
 	f_in = TFile(input_file, "READ")
@@ -38,11 +61,11 @@ def MjjPlot(input_file, output_tag, plot_log=False, signal_file=None, signal_xs=
 				hist.SetBinContent(bin, 0.)
 				hist.SetBinError(bin, 0.)
 
-	fit] = TF1("fit_mjj", MjjFit, fit_min, fit_max, 4)
-	fit].SetParameter(0, 2.e-4)
-	fit].SetParameter(1, 3)
-	fit].SetParameter(2, 10)
-	fit].SetParameter(3, 1)
+	fit = TF1("fit_mjj", BackgroundFit, fit_min, fit_max, 4)
+	fit.SetParameter(0, 2.e-4)
+	fit.SetParameter(1, 3)
+	fit.SetParameter(2, 10)
+	fit.SetParameter(3, 1)
 	#fit[trigger].SetParLimits(0, 1.e-6, 1.e2)
 	#fit[trigger].SetParLimits(1, -25., 25.)
 	#fit[trigger].SetParLimits(2, -25., 25.)
