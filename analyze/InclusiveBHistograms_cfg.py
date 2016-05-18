@@ -4,7 +4,7 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing()
 options.register('inputFiles', 
 	'/uscms/home/dryu/eosdir/BJetPlusX/QCDBEventTree_BJetPlusX_Run2012B_v1_3/160429_121519/0000/QCDBEventTree_567.root',
-	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.multiplicity.list,
 	VarParsing.VarParsing.varType.string,
 	"List of input files"
 )

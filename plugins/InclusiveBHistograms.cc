@@ -198,6 +198,8 @@ void InclusiveBHistograms::endJob()
 {
 	event_selector_->MakeCutflowHistograms(&*fs_);
 	event_selector_->SaveNMinusOneHistogram(&*fs_);
+	pfjet_selector_->MakeCutflowHistograms(&*fs_);
+	pfjet_selector_->SaveNMinusOneHistogram(&*fs_);
 	//delete event_;
 	//event_ = 0;
 	std::cout << "[InclusiveBHistograms::endJob] INFO : Pass / Total = " << n_pass_ << " / " << n_total_ << std::endl;
