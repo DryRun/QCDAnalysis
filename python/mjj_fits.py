@@ -20,7 +20,7 @@ def BackgroundFit(x, par):
 	#	print "par[" + str(i) + "] = " + str(par[i])
 	return par[0] * (1. - (x[0] / 8.e3))**par[1] / ((x[0] / 8.e3)**(par[2] + par[3] * TMath.Log((x[0] / 8.e3))))
 
-def DoMjjBackgroundFit(hist, blind_range=None, fit_min=500., fit_max=2000., rebin=20):
+def DoMjjBackgroundFit(hist, blind=True, fit_min=500., fit_max=2000., rebin=20):
 	# Clone the histogram to avoid modifying the original
 	hist = hist.Clone()
 	hist.SetName(hist.GetName() + "_copy")

@@ -40,3 +40,26 @@ submission_jdl_files["Z'"] = "ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@
 def GetSubmissionJDLFile(p_model, p_mass_point, p_stage, p_simtype):
 	return submission_jdl_files[p_model].replace("@MASS@", str(p_mass_point)).replace("@STAGE@", p_stage).replace("@SIMTYPE@", p_simtype)
 
+signal_cross_sections = {}
+signal_cross_sections["RSG"] = {}
+signal_cross_sections["RSG"][200.] = 9.287e-07 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][250.] = 3.519e-07 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][300.] = 1.556e-07 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][350.] = 7.611e-08 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][400.] = 4.014e-08 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][450.] = 2.205e-08 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][500.] = 1.309e-08 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][550.] = 8.126e-09 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][600.] = 5.188e-09 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][650.] = 3.328e-09 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][700.] = 2.253e-09 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][750.] = 1.551e-09 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][800.] = 1.078e-09 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][850.] = 7.717e-10 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][900.] = 5.48e-10 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][950.] = 3.991e-10 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][1000.] = 2.97e-10 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][1050.] = 2.247e-10 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][1100.] = 1.719e-10 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][1150.] = 1.305e-10 * 10**9 # Taken from FASTSIM generation logs, 5000 events
+signal_cross_sections["RSG"][1200.] = 9.891e-11 * 10**9 # Taken from FASTSIM generation logs, 5000 events
