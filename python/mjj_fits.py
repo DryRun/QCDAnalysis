@@ -20,6 +20,26 @@ def BackgroundFit(x, par):
 	#	print "par[" + str(i) + "] = " + str(par[i])
 	return par[0] * (1. - (x[0] / 8.e3))**par[1] / ((x[0] / 8.e3)**(par[2] + par[3] * TMath.Log((x[0] / 8.e3))))
 
+def MakeFitPullHistogram(hist, fit):
+	print "Fit xmin = " + str(fit.GetXmin())
+	hist_ratio = hist.Clone()
+	hist_ratio.SetName(hist.GetName() + "_fit_ratio")
+	for bin in xrange(1, hist_ratio.GetNbinsX() + 1):
+		xmin = hist_ratio.GetXaxis().GetBinLowEdge(bin)
+		xmax = hist_ratio.GetXaxis().GetBinUpEdge(bin)
+		if xmax < fit.GetXmin() or xmin > fit.GetXmax():
+			hist_ratio.SetBinContent(bin, 0.)
+			hist_ratio.SetBinError(bin, 0.)
+			continue
+		fit_integral = fit.Integral(xmin, xmax)
+		if hist.GetBinError(bin) > 0:
+			hist_ratio.SetBinContent(bin, (hist.GetBinContent(bin) * hist.GetBinWidth(bin) - fit_integral) / (hist.GetBinError(bin) * hist.GetBinWidth(bin)))
+			hist_ratio.SetBinError(bin, 0.)
+		else:
+			hist_ratio.SetBinContent(bin, 0.)
+			hist_ratio.SetBinError(bin, 0.)
+	return hist_ratio
+
 def DoMjjBackgroundFit(hist, blind=True, fit_min=500., fit_max=2000., rebin=20):
 	# Clone the histogram to avoid modifying the original
 	hist = hist.Clone()
@@ -35,10 +55,10 @@ def DoMjjBackgroundFit(hist, blind=True, fit_min=500., fit_max=2000., rebin=20):
 	fit.SetParameter(1, 3)
 	fit.SetParameter(2, 10)
 	fit.SetParameter(3, 1)
-	#fit[trigger].SetParLimits(0, 1.e-6, 1.e2)
-	#fit[trigger].SetParLimits(1, -25., 25.)
-	#fit[trigger].SetParLimits(2, -25., 25.)
-	#fit[trigger].SetParLimits(3, -1., 1.)
+	fit.SetParLimits(0, 1.e-6, 1.e2)
+	fit.SetParLimits(1, -25., 25.)
+	fit.SetParLimits(2, -25., 25.)
+	fit.SetParLimits(3, -5., 5.)
 	hist.Fit(fit, "ER0I")
 	fit_ratio = MakeFitPullHistogram(hist, fit)
 	print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())

@@ -33,6 +33,7 @@ def MakeCff(p_template, p_mass, p_output):
 		cff.write(out_line + "\n")
 	template.close()
 	cff.close()
+	print "Created " + os.path.expandvars(p_output)
 
 def MakeFullSimCfgs(p_model, p_mass_point):
 	stages = ["GENSIM", "REDIGI", "RECOSIM"]
@@ -157,7 +158,7 @@ if __name__ == "__main__":
 				cff_templates[model], 
 				mass_point,
 				cff_files[model].replace("@MASS@", str(mass_point))
-			) for model in ["Hbb", "RSG"] for mass_point in mass_points["FASTSIM"]
+			) for model in ["Hbb"] for mass_point in mass_points["FASTSIM"]
 		)
 	if args.cfg:
 		#Parallel(n_jobs=4)(
@@ -165,6 +166,6 @@ if __name__ == "__main__":
 		#)
 
 		Parallel(n_jobs=4)(
-			delayed(MakeFastSimCfg)(model, mass_point) for model in ["Hbb", "RSG"] for mass_point in mass_points["FASTSIM"]
+			delayed(MakeFastSimCfg)(model, mass_point) for model in ["Hbb"] for mass_point in mass_points["FASTSIM"]
 		)
 

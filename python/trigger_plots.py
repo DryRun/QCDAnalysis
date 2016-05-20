@@ -20,7 +20,7 @@ reference_triggers = [
 ]
 test_triggers = [
 	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose', 
-	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV'
+	#'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV'
 ]
 
 online_pt_thresholds = {}
@@ -113,152 +113,6 @@ def SumVersions(p_tdf, p_pattern):
 		print "[SumVersions] WARNING : Didn't find any histograms matching pattern" + p_pattern
 
 	return h_return
-
-def MjjFit(x, par):
-	#for i in xrange(3):
-	#	print "par[" + str(i) + "] = " + str(par[i])
-	return par[0] * (1. - (x[0] / 8.e3))**par[1] / ((x[0] / 8.e3)**(par[2] + par[3] * TMath.Log((x[0] / 8.e3))))
-
-def MakeFitPullHistogram(hist, fit):
-	print "Fit xmin = " + str(fit.GetXmin())
-	hist_ratio = hist.Clone()
-	hist_ratio.SetName(hist.GetName() + "_fit_ratio")
-	for bin in xrange(1, hist_ratio.GetNbinsX() + 1):
-		xmin = hist_ratio.GetXaxis().GetBinLowEdge(bin)
-		xmax = hist_ratio.GetXaxis().GetBinUpEdge(bin)
-		if xmax < fit.GetXmin() or xmin > fit.GetXmax():
-			hist_ratio.SetBinContent(bin, 0.)
-			hist_ratio.SetBinError(bin, 0.)
-			continue
-		fit_integral = fit.Integral(xmin, xmax)
-		if hist.GetBinError(bin) > 0:
-			hist_ratio.SetBinContent(bin, (hist.GetBinContent(bin) * hist.GetBinWidth(bin) - fit_integral) / (hist.GetBinError(bin) * hist.GetBinWidth(bin)))
-			hist_ratio.SetBinError(bin, 0.)
-		else:
-			hist_ratio.SetBinContent(bin, 0.)
-			hist_ratio.SetBinError(bin, 0.)
-	return hist_ratio
-
-def MjjPlot(input_file, output_tag, plot_log=False, signal_file=None, signal_xs=None):
-	f_in = TFile(input_file, "READ")
-	tdf = f_in.Get("inclusive")
-	rebin = 20
-
-	hist = {}
-	fit = {}
-	fit_ratio = {}
-	ymax = -1.
-	for trigger in test_triggers:
-		if "Jet160" in trigger:
-			hist[trigger] = tdf.Get("h_ref" + trigger + "_pf_mjj_160_120")
-		elif "Jet80" in trigger:
-			hist[trigger] = tdf.Get("h_ref" + trigger + "_pf_mjj_80_70")
-		hist[trigger].SetDirectory(0)
-		hist[trigger].Rebin(rebin)
-		blind = False
-		if blind:
-			for bin in xrange(1, hist[trigger].GetNbinsX() + 1):
-				if TMath.Abs(hist[trigger].GetBinCenter(bin) - 750.) < 75.:
-					hist[trigger].SetBinContent(bin, 0.)
-					hist[trigger].SetBinError(bin, 0.)
-		if hist[trigger].GetMaximum() > ymax:
-			ymax = hist[trigger].GetMaximum()
-
-		# Fit
-		print "Fitting mjj for trigger " + trigger
-		if trigger == "HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV":
-			fit_min = 300.
-		else:
-			fit_min = 500.
-		fit[trigger] = TF1("fit_mjj_" + trigger, MjjFit, fit_min, 2000., 4)
-		fit[trigger].SetParameter(0, 2.e-4)
-		fit[trigger].SetParameter(1, 3)
-		fit[trigger].SetParameter(2, 10)
-		fit[trigger].SetParameter(3, 1)
-		#fit[trigger].SetParLimits(0, 1.e-6, 1.e2)
-		#fit[trigger].SetParLimits(1, -25., 25.)
-		#fit[trigger].SetParLimits(2, -25., 25.)
-		#fit[trigger].SetParLimits(3, -1., 1.)
-		hist[trigger].Fit(fit[trigger], "ER0I")
-		fit_ratio[trigger] = MakeFitPullHistogram(hist[trigger], fit[trigger])
-		print "fit[" + trigger + "] chi2/ndf = " + str(fit[trigger].GetChisquare()) + " / " + str(fit[trigger].GetNDF()) + " = " + str(fit[trigger].GetChisquare() / fit[trigger].GetNDF())
-
-		# Styling
-		hist[trigger].SetLineColor(ROOT.kBlack)
-		hist[trigger].SetMarkerColor(ROOT.kBlack)
-		hist[trigger].SetMarkerStyle(20)
-		hist[trigger].GetYaxis().SetTitle("Events / " + str(int(hist[trigger].GetXaxis().GetBinWidth(1))) + " GeV")
-		hist[trigger].GetXaxis().SetTitleSize(0)
-		hist[trigger].GetXaxis().SetLabelSize(0)
-		fit[trigger].SetLineColor(seaborn.GetColorRoot("dark", 2))
-		fit_ratio[trigger].SetLineColor(ROOT.kBlack)
-		fit_ratio[trigger].SetFillColor(seaborn.GetColorRoot("dark", 2))
-		fit_ratio[trigger].SetFillStyle(1001)
-		fit_ratio[trigger].GetYaxis().SetTitle("#frac{Data - Fit}{#sigma(Data)}")
-
-		# Drawing
-		c = ROOT.TCanvas("c_mjj_" + trigger, "c_mjj_" + trigger, 800, 1000)
-		top = ROOT.TPad("top", "top", 0., 0.5, 1., 1.)
-		if plot_log:
-			top.SetLogy()
-		top.SetBottomMargin(0.03)
-		top.Draw()
-		c.cd()
-		bottom = ROOT.TPad("bottom", "bottom", 0., 0., 1., 0.5)
-		bottom.SetTopMargin(0.03)
-		bottom.SetBottomMargin(0.2)
-		bottom.Draw()
-		ROOT.SetOwnership(c, False)
-		ROOT.SetOwnership(top, False)
-		ROOT.SetOwnership(bottom, False)
-		top.cd()
-		hist[trigger].Draw("p e1")
-		fit[trigger].Draw("same")
-		c.cd()
-		bottom.cd()
-		fit_ratio[trigger].Draw("fhist")
-		c.cd()
-
-		if signal_file:
-			hist_signal[trigger].Draw("hist same")
-		if plot_log:
-			c.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + "_log.pdf")
-		else:
-			c.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + ".pdf")
-
-		c_zoom = ROOT.TCanvas("c_mjj_" + trigger + "zoom750", "c_mjj_" + trigger + "zoom750", 800, 1000)
-		zoom_bin_min = hist[trigger].GetXaxis().FindBin(500.)
-		zoom_bin_max = hist[trigger].GetXaxis().FindBin(1000.)
-		hist[trigger].GetXaxis().SetRange(zoom_bin_min, zoom_bin_max)
-		fit_ratio[trigger].GetXaxis().SetRange(zoom_bin_min, zoom_bin_max)
-		top_zoom = ROOT.TPad("top_zoom", "top_zoom", 0., 0.5, 1., 1.)
-		if plot_log:
-			top_zoom.SetLogy()
-		top_zoom.SetBottomMargin(0.03)
-		top_zoom.Draw()
-		c_zoom.cd()
-		bottom_zoom = ROOT.TPad("bottom_zoom", "bottom_zoom", 0., 0., 1., 0.5)
-		bottom_zoom.SetTopMargin(0.03)
-		bottom_zoom.SetBottomMargin(0.2)
-		bottom_zoom.Draw()
-		ROOT.SetOwnership(c, False)
-		ROOT.SetOwnership(top_zoom, False)
-		ROOT.SetOwnership(bottom_zoom, False)
-		top_zoom.cd()
-		hist[trigger].Draw("p e1")
-		fit[trigger].Draw("same")
-		c_zoom.cd()
-		bottom_zoom.cd()
-		fit_ratio[trigger].Draw("fhist")
-		c_zoom.cd()
-
-		if signal_file:
-			hist_signal[trigger].Draw("hist same")
-		if plot_log:
-			c_zoom.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c_zoom.GetName() + "_log.pdf")
-		else:
-			c_zoom.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c_zoom.GetName() + ".pdf")
-
 
 
 def VarPlots(input_file, output_tag, plot_log=False, signal_file=None, signal_xs=None):
@@ -427,10 +281,13 @@ def EfficiencyPlots(input_file, output_tag):
 	tdf = f_in.Get("inclusive")
 
 	# Efficiency plots
-	efficiency_variables = ["nevents", "pf_mjj", "pf_mjj_160_120", "pf_mjj_80_70", "pf_deltaeta", "pf_eta1", "pf_eta2", "pf_pt1", "pf_pt2", "pf_btag_csv1", "pf_btag_csv2"]
-	rebin = {"pf_mjj":20, "pf_mjj_160_120":20, "pf_mjj_80_70":20, "pf_deltaeta":4, "pf_eta1":4, "pf_eta2":4, "pf_pt1":20, "pf_pt2":20, "pf_btag_csv1":1, "pf_btag_csv2":1}
+	#efficiency_variables = ["nevents", "pfjet_mjj", "pfjet_mjj_160_120", "pfjet_mjj_80_70", "pfjet_deltaeta", "fatjet_deltaeta", "pfjet_eta1", "pfjet_eta2", "pfjet_pt1", "pfjet_pt2", "pfjet_btag_csv1", "pfjet_btag_csv2", "fatjet_mjj", "fatjet_eta1", "fatjet_eta2", "fatjet_pt1", "fatjet_pt2"]
+	efficiency_variables = ["fatjet_mjj_160_120", "pfjet_mjj_160_120"]
+	rebin = {"pfjet_mjj":20, "pfjet_mjj_160_120":20, "pfjet_mjj_80_70":20, "pfjet_deltaeta":4, "pfjet_eta1":4, "pfjet_eta2":4, "pfjet_pt1":20, "pfjet_pt2":20, "pfjet_btag_csv1":1, "pfjet_btag_csv2":1, "fatjet_mjj":20, "fatjet_mjj_160_120":20, "fatjet_mjj_80_70":20, "fatjet_deltaeta":4, "fatjet_eta1":4, "fatjet_eta2":4, "fatjet_pt1":20, "fatjet_pt2":20, "fatjet_btag_csv1":1, "fatjet_btag_csv2":1}
 	for reference_trigger in reference_triggers:
+		print "[debug] reference_trigger = " + reference_trigger
 		for var in efficiency_variables:
+			print "[debug] var = " + var
 			if "mjj" in var or "pt" in var:
 				c = ROOT.TCanvas("c_trigeff_" + var + "_ref" + reference_trigger, "c_trigeff_" + var + "_ref" + reference_trigger, 800, 600)
 				l = ROOT.TLegend(0.38, 0.25, 0.92, 0.4)
@@ -449,6 +306,10 @@ def EfficiencyPlots(input_file, output_tag):
 			ymax = -1.
 			#h_ref = SumVersions(tdf, "h_ref" + reference_trigger + "_(?P<version>v\d)_" + var)
 			h_ref = tdf.Get("h_ref" + reference_trigger + "_" + var)
+			if not h_ref:
+				print "[EfficiencyPlots] ERROR : Unable to find histogram " + "h_ref" + reference_trigger + "_" + var
+				tdf.ls()
+				sys.exit(1)
 			h_ref.SetDirectory(0)
 			if var in rebin.keys():
 				h_ref.Rebin(rebin[var])
@@ -530,7 +391,7 @@ def EfficiencyPlots(input_file, output_tag):
 
 	for reference_trigger in reference_triggers:
 		for test_trigger in test_triggers:
-			for var2D in ["pf_pt1_pt2"]:
+			for var2D in ["pfjet_pt1_pt2"]:
 				c = ROOT.TCanvas("c_trigeff_" + var2D + "_ref" + reference_trigger + "_test" + test_trigger, "c_trigeff_" + var2D + "_ref" + reference_trigger + "_test" + test_trigger, 800, 600)
 				c.SetRightMargin(0.25)
 				h_ref = tdf.Get("h_ref" + reference_trigger + "_" + var2D)
@@ -543,6 +404,9 @@ def EfficiencyPlots(input_file, output_tag):
 
 
 	f_in.Close()
+
+#def JetLegEfficiencyPlots(h_ref_pt1_vs_pt2, h_test_pt1_vs_pt2, pt_threshold_1, pt_threshold_2):
+
 
 
 if __name__ == "__main__":
@@ -557,7 +421,7 @@ if __name__ == "__main__":
 	output_tag.replace(".root", "")
 
 	#PrescaleTable(args.input, output_tag)
-	#EfficiencyPlots(args.input, output_tag)
+	EfficiencyPlots(args.input, output_tag)
 	#NormVarPlots(args.input, output_tag)
 	#
 	#if args.signal:
@@ -566,4 +430,4 @@ if __name__ == "__main__":
 	#else:
 	#	VarPlots(args.input, output_tag)
 	#	VarPlots(args.input, output_tag, plot_log=True)
-	MjjPlot(args.input, output_tag, plot_log=True)
+	#MjjPlot(args.input, output_tag, plot_log=True)
