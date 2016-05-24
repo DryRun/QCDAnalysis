@@ -472,21 +472,37 @@ namespace QCDEventCutFunctions {
 		return (TMath::Abs(p_data.fatjet(1).eta()) < p_event_selector->GetCutParameters("MaxSubleadingPFFatJetEta")[0]);
 	}
 	bool PFFatDijetMinDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() <= 1) {
+			p_event_selector->SetReturnData("PFFatDijetMinDeltaEta", -100.);
+			return false;
+		}
 		double delta_eta = p_data.fatjet(0).eta() - p_data.fatjet(1).eta();
 		p_event_selector->SetReturnData("PFFatDijetMinDeltaEta", delta_eta);
 		return (TMath::Abs(delta_eta) > p_event_selector->GetCutParameters("PFFatDijetMinDeltaEta")[0]);
 	}
 	bool PFFatDijetMaxDeltaEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() <= 1) {
+			p_event_selector->SetReturnData("PFFatDijetMaxDeltaEta", -100.);
+			return false;
+		}
 		double delta_eta = p_data.fatjet(0).eta() - p_data.fatjet(1).eta();
 		p_event_selector->SetReturnData("PFFatDijetMaxDeltaEta", delta_eta);
 		return (TMath::Abs(delta_eta) < p_event_selector->GetCutParameters("PFFatDijetMaxDeltaEta")[0]);
 	}
 	bool MinPFFatMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() <= 1) {
+			p_event_selector->SetReturnData("MinPFFatMjj", 0.);
+			return false;
+		}
 		double mjj = (p_data.fatjet(0).p4() + p_data.fatjet(1).p4()).mass();
 		p_event_selector->SetReturnData("MinPFFatMjj", mjj);
 		return (mjj > p_event_selector->GetCutParameters("MinPFFatMjj")[0]);
 	}
 	bool MaxPFFatMjj(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		if (p_data.nFatJets() <= 1) {
+			p_event_selector->SetReturnData("MaxPFFatMjj", 0.);
+			return false;
+		}
 		double mjj = (p_data.fatjet(0).p4() + p_data.fatjet(1).p4()).mass();
 		p_event_selector->SetReturnData("MaxPFFatMjj", mjj);
 		return (mjj < p_event_selector->GetCutParameters("MaxPFFatMjj")[0]);
