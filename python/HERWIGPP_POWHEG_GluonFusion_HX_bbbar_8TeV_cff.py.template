@@ -57,7 +57,7 @@ generator = cms.EDFilter(
     'set /Herwig/Particles/h0:NominalMass @MASS@.*GeV',
     'set /Herwig/Particles/h0/h0->b,bbar;:OnOff On',
     #'set /Herwig/Particles/h0/h0->b,bbar;:BranchingRatio 0.7195',
-    #'set /Herwig/Particles/h0/h0->b,bbar;:BranchingRatio 1.0000',
+    'set /Herwig/Particles/h0/h0->b,bbar;:BranchingRatio 1.0000',
     'set /Herwig/Particles/h0/h0->W+,W-;:OnOff Off',
     'set /Herwig/Particles/h0/h0->tau-,tau+;:OnOff Off',
     'set /Herwig/Particles/h0/h0->g,g;:OnOff Off',
