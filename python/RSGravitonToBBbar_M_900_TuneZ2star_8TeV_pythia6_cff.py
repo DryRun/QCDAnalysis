@@ -13,7 +13,7 @@ generator = cms.EDFilter("Pythia6GeneratorFilter",
     PythiaParameters = cms.PSet(
         pythiaUESettingsBlock,
         processParameters = cms.vstring(
-	    'PMAS(347,1)= 500         ! mass of RS Graviton',
+	    'PMAS(347,1)= 900         ! mass of RS Graviton',
             'PARP(50) = 0.54           ! 0.54 == c=0.1 (k/M_PL=0.1)',
             'MSEL=0                    ! (D=1) to select between full user control (0, then use MSUB) and some preprogrammed alternative',
             'MSUB(391)=1               ! q qbar -> G* ',

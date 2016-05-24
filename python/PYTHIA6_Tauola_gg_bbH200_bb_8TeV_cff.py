@@ -28,7 +28,7 @@ generator = cms.EDFilter('Pythia6GeneratorFilter',
             # MSSM settings
             'IMSS(1)= 1     ! MSSM with parameters',
             'RMSS(5)= 30.   ! tan beta',
-            'RMSS(19)= 600 ! m_A',
+            'RMSS(19)= 200 ! m_A',
             'RMSS(1)= 100.  ! M1',
             'RMSS(2)= 200.  ! M2',
             'RMSS(3)= 800.  ! Mg',
