@@ -14,18 +14,54 @@ from CMSDIJET.QCDAnalysis.mjj_fits import *
 import CMSDIJET.QCDAnalysis.simulation_config
 from CMSDIJET.QCDAnalysis.simulation_config import *
 
-def MakeMjjPlot(data_hist, signal_histograms=None, signal_names=None, save_tag="c_mjj", x_min=0., x_max=1500., log=False, fit_min=500., fit_max=1500.):
-	fit_results = DoMjjBackgroundFit(data_hist, fit_min=fit_min, fit_max=fit_max, rebin=20, blind=True)
+def MakeMjjPlot(data_hist, cached_fit_results=None, signal_histograms=None, signal_names=None, save_tag="c_mjj", x_range=None, log=False, fit_min=500., fit_max=1500., save_file=None, blind=True):
+	print "[MakeMjjPlot] INFO : Welcome to MakeMjjPlot with save_tag=" + save_tag
+
+	if blind:
+		for bin in xrange(1, data_hist.GetNbinsX() + 1):
+			if TMath.Abs(data_hist.GetBinCenter(bin) - 750.) < 75.:
+				data_hist.SetBinContent(bin, 0.)
+				data_hist.SetBinError(bin, 0.)
+
+	if not cached_fit_results:
+		print "[MakeMjjPlot] INFO : Launching background fits"
+		fit_results = DoMjjBackgroundFit(data_hist, fit_min=fit_min, fit_max=fit_max, rebin=20, blind=blind)
+	else:
+		print "[MakeMjjPlot] INFO : Using cached fit results"
+
+
+	# Get histogram limits
+	if x_range:
+		x_min = x_range[0]
+		x_max = x_range[1]
+	else:
+		x_min = data_hist.GetXaxis().GetXmin()
+		x_max = data_hist.GetXaxis().GetXmax()
+	y_min = 1.e20
+	y_max = -1.e20
+	for bin in xrange(1, data_hist.GetNbinsX() + 1):
+		if data_hist.GetBinContent(bin) == 0:
+			continue
+		if data_hist.GetXaxis().GetBinCenter(bin) < x_min or data_hist.GetXaxis().GetBinCenter(bin) > x_max:
+			continue
+		if data_hist.GetBinContent(bin) < y_min:
+			y_min = data_hist.GetBinContent(bin)
+		if data_hist.GetBinContent(bin) > y_max:
+			y_max = data_hist.GetBinContent(bin)
+	print "X axis range: " + str(x_min) + " - " + str(x_max)
+	print "Y axis range: " + str(y_min) + " - " + str(y_max)
 
 	c = TCanvas(save_tag, save_tag, 800, 1200)
-	l = TLegend(0.6, 0.6, 0.93, 0.9)
+	l = TLegend(0.55, 0.6, 0.88, 0.88)
 	l.SetFillColor(0)
 	l.SetBorderSize(0)
-	top = TPad(0., 0.5, 1., 1.)
+	top = TPad("top", "top", 0., 0.5, 1., 1.)
 	top.SetBottomMargin(0.03)
 	top.Draw()
+	if log:
+		top.SetLogy()
 	c.cd()
-	bottom = TPad(0., 0., 1., 0.5)
+	bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
 	bottom.SetTopMargin(0.02)
 	bottom.SetBottomMargin(0.2)
 	bottom.Draw()
@@ -37,14 +73,32 @@ def MakeMjjPlot(data_hist, signal_histograms=None, signal_names=None, save_tag="
 	data_hist.SetLineColor(ROOT.kBlack)
 	data_hist.SetMarkerColor(ROOT.kBlack)
 	data_hist.SetMarkerStyle(20)
-	data_hist.GetYaxis().SetTitle("Events / " + str(int(data_hist.GetXaxis().GetBinWidth(1))) + " GeV")
+	
+	frame = TH1D("frame", "frame", 100, x_min, x_max)
+	frame.GetYaxis().SetTitle("Events / " + str(int(data_hist.GetXaxis().GetBinWidth(1))) + " GeV")
+	frame.GetXaxis().SetTitleSize(0)
+	frame.GetXaxis().SetLabelSize(0)
+	if log:
+		frame.SetMaximum(y_max * 10.)
+		frame.SetMinimum(y_min / 100.)
+	else:
+		frame.SetMaximum(y_max * 1.3)
+		frame.SetMinimum(0.)
+	frame.Draw()
+
 	data_hist.GetXaxis().SetTitleSize(0)
 	data_hist.GetXaxis().SetLabelSize(0)
-	data_hist.Draw("p e1")
-	fit_results["fit"].SetLineColor(seaborn.GetColorRoot("dark", 2))
-	fit_results["fit"].Draw("same")
-	l.Add(data_hist, "Data", "pl")
-	l.Add(fit_results["fit"], "Fit", "l")
+
+	data_hist.Draw("p e1 same")
+	l.AddEntry(data_hist, "Data", "pl")
+	if cached_fit_results:
+		cached_fit_results["fit"].SetLineColor(seaborn.GetColorRoot("dark", 2))
+		cached_fit_results["fit"].Draw("same")
+		l.AddEntry(cached_fit_results["fit"], "Fit", "l")
+	else:
+		fit_results["fit"].SetLineColor(seaborn.GetColorRoot("dark", 2))
+		fit_results["fit"].Draw("same")
+		l.AddEntry(fit_results["fit"], "Fit", "l")
 
 	if signal_histograms:
 		for i in xrange(len(signal_histograms)):
@@ -55,126 +109,293 @@ def MakeMjjPlot(data_hist, signal_histograms=None, signal_names=None, save_tag="
 	l.Draw()
 	c.cd()
 	bottom.cd()
-	fit_results["fit_ratio"].SetLineColor(ROOT.kBlack)
-	fit_results["fit_ratio"].SetFillColor(seaborn.GetColorRoot("dark", 2))
-	fit_results["fit_ratio"].SetFillStyle(1001)
-	fit_results["fit_ratio"].GetXaxis().SetTitle("m_{jj} [GeV]")
-	fit_results["fit_ratio"].GetYaxis().SetTitle("#frac{Data - Fit}{#sigma(Data)}")
-	fit_results["fit_ratio"].Draw("fhist")
+	# Make frame
+	frame_bottom = TH1D("frame_bottom", "frame_bottom", 100, x_min, x_max)
+	frame_bottom.SetMinimum(-5.)
+	frame_bottom.SetMaximum(5.)
+	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+	frame_bottom.GetYaxis().SetTitle("#frac{Data - Fit}{#sigma(Data)}")
+
+	frame_bottom.GetXaxis().SetLabelSize(0.04)
+	frame_bottom.GetXaxis().SetTitleSize(0.06)
+	frame_bottom.GetXaxis().SetLabelOffset(0.01)
+	frame_bottom.GetXaxis().SetTitleOffset(1.1)
+
+	frame_bottom.GetYaxis().SetLabelSize(0.04)
+	frame_bottom.GetYaxis().SetTitleSize(0.037)
+	frame_bottom.GetYaxis().SetTitleOffset(0.7)
+
+	frame_bottom.Draw("axis")
+
+
+	if cached_fit_results:
+		cached_fit_results["fit_ratio"].SetLineColor(ROOT.kBlack)
+		cached_fit_results["fit_ratio"].SetFillColor(seaborn.GetColorRoot("dark", 2))
+		cached_fit_results["fit_ratio"].SetFillStyle(1001)
+		cached_fit_results["fit_ratio"].Draw("fhist same")
+	else:
+		fit_results["fit_ratio"].SetLineColor(ROOT.kBlack)
+		fit_results["fit_ratio"].SetFillColor(seaborn.GetColorRoot("dark", 2))
+		fit_results["fit_ratio"].SetFillStyle(1001)
+		fit_results["fit_ratio"].Draw("fhist same")
+
+
+
+	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
+	if save_file:
+		print "[MakeMjjPlot] INFO : Saving data histogram and fit results to " + save_file.GetPath()
+		save_file.cd()
+		data_hist.Write()
+		if not cached_fit_results:
+			fit_results["fit"].Write(save_tag + "_fit")
+			fit_results["fit_ratio"].Write(save_tag + "_fit_ratio")
+
+
+def MakeNMinusOnePlot(data_hist, save_tag, signal_histograms=None, signal_names=None, log=False, x_range=None, x_title=None, y_range=None, y_title=None):
+	# Get histogram limits
+	if x_range:
+		x_min = x_range[0]
+		x_max = x_range[1]
+	else:
+		x_min = data_hist.GetXaxis().GetXmin()
+		x_max = data_hist.GetXaxis().GetXmax()
+	y_min = 1.e20
+	y_max = -1.e20
+	for bin in xrange(1, data_hist.GetNbinsX() + 1):
+		if data_hist.GetBinContent(bin) != 0:
+			if data_hist.GetXaxis().GetBinCenter(bin) > x_min and data_hist.GetXaxis().GetBinCenter(bin) < x_max:
+				if data_hist.GetBinContent(bin) < y_min:
+					y_min = data_hist.GetBinContent(bin)
+				if data_hist.GetBinContent(bin) > y_max:
+					y_max = data_hist.GetBinContent(bin)
+		for signal_histogram in signal_histograms:
+			if signal_histogram.GetBinContent(bin) != 0:
+				if signal_histogram.GetXaxis().GetBinCenter(bin) > x_min and signal_histogram.GetXaxis().GetBinCenter(bin) < x_max:
+					if signal_histogram.GetBinContent(bin) < y_min:
+						y_min = signal_histogram.GetBinContent(bin)
+					if signal_histogram.GetBinContent(bin) > y_max:
+						y_max = signal_histogram.GetBinContent(bin)
+	print "X axis range: " + str(x_min) + " - " + str(x_max)
+	print "Y axis range: " + str(y_min) + " - " + str(y_max)
+
+
+	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 600)
+	if log:
+		c.SetLogy()
+	l = TLegend(0.6, 0.7, 0.88, 0.88)
+	l.SetFillColor(0)
+	l.SetBorderSize(0)
+	frame = TH1F("frame", "frame", 100, x_min, x_max)
+	frame.SetMinimum(0.)
+	frame.SetMaximum(y_max * 1.2)
+	if x_title:
+		frame.GetXaxis().SetTitle(x_title)
+	else:
+		frame.GetXaxis().SetTitle(data_hist.GetXaxis().GetTitle())
+	if y_title:
+		frame.GetYaxis().SetTitle(y_title)
+	else:
+		frame.GetYaxis().SetTitle(data_hist.GetYaxis().GetTitle())
+	frame.Draw("axis")
+
+	data_hist.SetMarkerStyle(20)
+	data_hist.SetMarkerSize(1)
+	data_hist.SetMarkerColor(1)
+	data_hist.Draw("p e1 same")
+	l.AddEntry(data_hist, "Data", "p")
+
+	for i_signal in xrange(len(signal_histograms)):
+		signal_histograms[i_signal].SetLineColor(seaborn.GetColorRoot("dark", i_signal+1))
+		signal_histograms[i_signal].SetLineWidth(2)
+		signal_histograms[i_signal].SetLineStyle(1)
+		signal_histograms[i_signal].Draw("hist same")
+		l.AddEntry(signal_histograms[i_signal], signal_names[i_signal], "l")
+	l.Draw()
 
 	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
 
-
-def VarPlots(input_file, output_tag, plot_log=False, signal_file=None, signal_xs=None):
-	f_in = TFile(input_file, "READ")
-	tdf = f_in.Get("inclusive")
-	variables = ["nevents", "pf_mjj", "pf_deltaeta", "pf_eta1", "pf_eta2", "pf_pt1", "pf_pt2", "pf_btag_csv1", "pf_btag_csv2"]
-	rebin = {"pf_mjj":20, "pf_mjj_160_120":20, "pf_mjj_80_70":20, "pf_deltaeta":1, "pf_eta1":2, "pf_eta2":2, "pf_pt1":20, "pf_pt2":20, "pf_btag_csv1":1, "pf_btag_csv2":1}
-
-	if signal_file:
-		f_signal = TFile(signal_file, "READ")
-		tdf_signal = f_signal.Get("inclusive")
-
-	for var in variables:
-		if "mjj" in var or "pt" in var:
-			c = ROOT.TCanvas("c_" + var, "c_" + var, 800, 600)
-			l = ROOT.TLegend(0.4, 0.7, 0.9, 0.9)
-		elif "btag" in var:
-			c = ROOT.TCanvas("c_" + var, "c_" + var, 800, 600)
-			l = ROOT.TLegend(0.21, 0.5, 0.7, 0.8)
-		elif "eta" in var:
-			c = ROOT.TCanvas("c_" + var, "c_" + var, 800, 600)
-			l = ROOT.TLegend(0.2, 0.75, 0.85, 0.9)
-		else:
-			c = ROOT.TCanvas("c_" + var, "c_" + var, 1200, 600)
-			c.SetRightMargin(0.25)
-			l = ROOT.TLegend(0.76, 0.4, 0.99, 0.7)
-		if plot_log:
-			c.SetLogy()
-		l.SetFillColor(0)
-		l.SetBorderSize(0)
-		style_counter = 0
-		hist = {}
-		hist_signal = {}
-		ymax = -1.
-		for trigger in test_triggers:
-			hist[trigger] = tdf.Get("h_ref" + trigger + "_" + var)
-			hist[trigger].SetDirectory(0)
-			if signal_file:
-				hist_signal[trigger] = tdf.Get("h_ref" + trigger + "_" + var)
-				hist_signal[trigger].SetDirectory(0)
-				# Normalize
-				hist_signal[trigger].Scale(1. / tdf_signal.Get("h_ref" + trigger + "_nevents").Integral() * 19700. * signal_xs)
-
-			if var in rebin.keys():
-				hist[trigger].Rebin(rebin[var])
-				if signal_file:
-					hist_signal[trigger].Rebin(rebin[var])
-			blind = False
-			if blind:
-				if "mjj" in var:
-					for bin in xrange(1, hist[trigger].GetNbinsX() + 1):
-						if TMath.Abs(hist[trigger].GetBinCenter(bin) - 750.) < 75.:
-							hist[trigger].SetBinContent(bin, 0.)
-							hist[trigger].SetBinError(bin, 0.)
-			hist[trigger].SetLineColor(seaborn.GetColorRoot("default", style_counter))
-			hist[trigger].SetMarkerColor(seaborn.GetColorRoot("default", style_counter))
-			hist[trigger].SetMarkerStyle(21)
-			if "mjj" in var or "pt" in var:
-				hist[trigger].GetYaxis().SetTitle("Events / " + str(int(hist[trigger].GetXaxis().GetBinWidth(1))) + " GeV")
-			l.AddEntry(hist[trigger], trigger, "l")
-			if signal_file:
-				hist_signal[trigger].SetLineColor(seaborn.GetColorRoot("dark", style_counter))
-
-			if hist[trigger].GetMaximum() > ymax:
-				ymax = hist[trigger].GetMaximum()
-
-			style_counter += 1
-
-		first = True
-		for trigger in test_triggers:
-			if first:
-				first = False
-				opt = "pe1"
-				if plot_log:
-					hist[trigger].SetMaximum(ymax * 10.)
-				else:
-					if "eta" in var:
-						hist[trigger].SetMaximum(ymax * 1.5)
-					else:
-						hist[trigger].SetMaximum(ymax * 1.2)
-				# Y axis label
-			else:
-				opt = "pe1 same"
-			hist[trigger].Draw(opt)
-			if signal_file:
-				hist_signal[trigger].Draw("hist same")
-		l.Draw()
-		if plot_log:
-			c.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + "_log.pdf")
-		else:
-			c.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + ".pdf")
+def MakeFatJetComparison(hist_pf, hist_fat, save_tag, fit_range=None, x_range=None, log=False):
+	print "Welcome to MakeFatJetComparison"
+	# Fits
+	fit_results_pf = DoSignalFit(hist_pf, fit_range=fit_range)
+	fit_results_fat = DoSignalFit(hist_fat, fit_range=fit_range)
 
 
+	if x_range:
+		x_min = x_range[0]
+		x_max = x_range[1]
+	else:
+		x_min = hist_pf.GetXaxis().GetXmin()
+		x_max = hist_pf.GetXaxis().GetXmax()
+
+	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 600)
+	if log:
+		c.SetLogy()
+	l = TLegend(0.65, 0.7, 0.88, 0.83)
+	l.SetBorderSize(0)
+	l.SetFillColor(0)
+
+	frame = TH1D("frame", "frame", 100, x_min, x_max)
+	frame.GetXaxis().SetTitle(hist_pf.GetXaxis().GetTitle())
+	frame.GetYaxis().SetTitle(hist_pf.GetYaxis().GetTitle())
+	if log:
+		frame.SetMaximum(hist_pf.GetMaximum() * 5.)
+	else:
+		frame.SetMaximum(hist_pf.GetMaximum() * 1.7)
+	frame.Draw("axis")
+
+	hist_pf.SetMarkerStyle(20)
+	hist_pf.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
+	hist_pf.SetLineColor(seaborn.GetColorRoot("dark", 0))
+	hist_pf.SetMarkerSize(1)
+	hist_pf.Draw("p e1 same")
+	l.AddEntry(hist_pf, "ak5 jets", "pl")
+
+	fit_results_pf["fit"].SetLineColor(seaborn.GetColorRoot("pastel", 0))
+	fit_results_pf["fit"].SetLineWidth(2)
+	fit_results_pf["fit"].Draw("same")
+	l.AddEntry(fit_results_pf["fit"], "ak5 jets fit", "l")
+
+	hist_fat.SetMarkerStyle(24)
+	hist_fat.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
+	hist_fat.SetLineColor(seaborn.GetColorRoot("dark", 2))
+	hist_fat.SetMarkerSize(1)
+	hist_fat.Draw("p e1 same")
+	l.AddEntry(hist_fat, "Fat jets", "pl")
+
+	fit_results_fat["fit"].SetLineColor(seaborn.GetColorRoot("pastel", 2))
+	fit_results_fat["fit"].SetLineWidth(2)
+	fit_results_fat["fit"].Draw("same")
+	l.AddEntry(fit_results_fat["fit"], "Fat jets fit", "l")
+
+	l.Draw()
+	
+	# Write RMS on canvas
+	Root.myText(0.15, 0.85, kBlack, "#bar{x}/#sigma (ak5) = " + str(round(fit_results_pf["fit"].GetParameter(2), 2)) + "/" + str(round(fit_results_pf["fit"].GetParameter(3), 2)), 0.4)
+	Root.myText(0.15, 0.8, kBlack, "#bar{x}/#sigma (Fat) = " + str(round(fit_results_fat["fit"].GetParameter(2), 2)) + "/" + str(round(fit_results_fat["fit"].GetParameter(3), 2)), 0.4)
+	#pf_mean = hist_pf.GetMean()
+	#fat_mean = hist_fat.GetMean()
+	#pf_rms = hist_pf.GetRMS()
+	#fat_rms = hist_fat.GetRMS()
+	#Root.myText(0.15, 0.85, kBlack, "Mean/RMS (PF) = " + str(round(pf_mean, 2)) + "/" + str(round(pf_rms, 2)), 0.4)
+	#Root.myText(0.15, 0.8, kBlack, "Mean/RMS (Fat) = " + str(round(fat_mean, 2)) + "/" + str(round(fat_rms, 2)), 0.4)
+
+	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
 
 if __name__ == "__main__":
+	import argparse
+	parser = argparse.ArgumentParser(description = 'Dijet mass spectrum fits')
+	parser.add_argument('--mjj', action='store_true', help='Make mjj plot with fits')
+	parser.add_argument('--nmo', action='store_true', help='Make N-1 plots')
+	parser.add_argument('--peaks', action='store_true', help='Make signal peak plots')
+	parser.add_argument('--unblind', action='store_true', help='Unblind 750 region')
+	args = parser.parse_args()
+
+
 	f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root", "READ")
-	signal_mass_points = [500., 750., 1000.]
-	f_signal = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia6_FASTSIM.root", "READ")
+	signal_mass_points = [500., 750., 1000., 1200.]
+	f_signal = {}
+	f_signal["RSG"] = {}
+	f_signal["Zprime"] = {}
+	for signal_mass_point in signal_mass_points:
+		f_signal["RSG"][signal_mass_point] = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_RSGravitonToBBbar_M_" + str(int(signal_mass_point)) + "_TuneZ2star_8TeV_pythia6_FASTSIM.root", "READ")
+		f_signal["Zprime"][signal_mass_point] = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_ZprimeToBB_M_" + str(int(signal_mass_point)) + "_TuneD6T_8TeV_pythia6_FASTSIM.root", "READ")
 
-	for jet_type in ["fatjet", "pfjet"]:
-		data_hist = f_data.Get("inclusive/h_" + jet_type + "_mjj")
-		data_hist.SetName(data_hist.GetName() + "_data")
+	if args.mjj:
+		save_file = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/mjj_fits.root", "RECREATE")
+		fit_minima = {"fatjet":550., "pfjet":500.}
+		for jet_type in ["fatjet", "pfjet"]:
 
-		signal_histograms = []
-		signal_names = []
-		for signal_mass_point in signal_mass_points:
-			signal_histograms.append(f_signal.Get("inclusive/h_" + jet_type + "_mjj"))
-			signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
-			signal_histograms[-1].Scale(19700 / signal_cross_sections["RSG"][signal_mass_point])
-			signal_names.append("RSG to bb, m=" + str(signal_mass_point) + " GeV")
+			data_hist = f_data.Get("inclusive/h_" + jet_type + "_mjj")
+			data_hist.SetName(data_hist.GetName() + "_data")
+			data_hist.Rebin(20)
+			data_hist.SetDirectory(0)
 
-		MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_min=0., x_max=1500., save_tag="c_" + jet_type + "_mjj", log=False, fit_min=500., fit_max=1500.)
-		MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_min=0., x_max=1500., save_tag="c_" + jet_type + "_mjj_log", log=True, fit_min=500., fit_max=1500.)
-		MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_min=500., x_max=1000., save_tag="c_" + jet_type + "_mjj_zoom", log=False, fit_min=500., fit_max=1500.)
-		MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_min=500., x_max=1000., save_tag="c_" + jet_type + "_mjj_log_zoom", log=True, fit_min=500., fit_max=1500.)
+			signal_histograms = []
+			signal_names = []
+			for signal_mass_point in [500., 750., 1000.]:
+				input_nevents = (f_signal["RSG"][signal_mass_point].Get("inclusive/h_input_nevents")).Integral()
+				signal_histograms.append(f_signal["RSG"][signal_mass_point].Get("inclusive/h_" + jet_type + "_mjj"))
+				signal_histograms[-1].SetDirectory(0)
+				signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
+				signal_histograms[-1].Scale(19700 * signal_cross_sections["RSG"][signal_mass_point] / input_nevents)
+				signal_histograms[-1].Rebin(20)
+				signal_names.append("RSG to bb, m=" + str(int(signal_mass_point)) + " GeV")
+			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[0., 2000.], save_tag=jet_type + "_mjj", log=False, fit_min=fit_minima[jet_type], fit_max=1500., save_file=save_file, blind=(not args.unblind))
+
+			# For more plots, no need to redo fits
+			this_fit_results = {}
+			this_fit_results["fit"] = save_file.Get(jet_type + "_mjj_fit")
+			this_fit_results["fit_ratio"] = save_file.Get(jet_type + "_mjj_fit_ratio")
+			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[0., 2000.], save_tag=jet_type + "_mjj_log", log=True, fit_min=fit_minima[jet_type], fit_max=1500., cached_fit_results=this_fit_results, blind=(not args.unblind))
+			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[500., 1000.], save_tag=jet_type + "_mjj_zoom", log=False, fit_min=fit_minima[jet_type], fit_max=1500., cached_fit_results=this_fit_results, blind=(not args.unblind))
+			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[500., 1000.], save_tag=jet_type + "_mjj_log_zoom", log=True, fit_min=fit_minima[jet_type], fit_max=1500., cached_fit_results=this_fit_results, blind=(not args.unblind))
+
+	if args.nmo:
+		rebin = {}
+		rebin["PFFatDijetMaxDeltaEta"] = 4
+		rebin["MinLeadingPFJetPt"] = 20
+		rebin["MinSubleadingPFJetPt"] = 20
+		x_axis_titles = {}
+		x_axis_titles["PFFatDijetMaxDeltaEta"] = "#Delta#eta"
+		x_axis_titles["MinLeadingPFJetPt"] = "Leading jet p_{T} [GeV]"
+		x_axis_titles["MinSubleadingPFJetPt"] = "Subleading jet p_{T} [GeV]"
+
+
+		# Get all N-1 histogram names
+		nmo_histogram_names = []
+		f_data.cd("inclusive")
+		for key in gDirectory.GetListOfKeys():
+			if "nminusone" in key.GetName():
+				nmo_histogram_names.append(key.GetName())
+		print "Making N-1 plots for: "
+		print nmo_histogram_names
+		for signal_model in ["RSG", "Zprime"]:
+			for nmo_histogram_name in nmo_histogram_names:
+				variable_name = nmo_histogram_name.replace("h_nminusone_", "")
+				data_hist = f_data.Get("inclusive/" + nmo_histogram_name)
+				data_hist.SetDirectory(0)
+				data_hist.SetName(data_hist.GetName() + "_data")
+				if variable_name in rebin.keys():
+					data_hist.Rebin(rebin[variable_name])
+				if data_hist.Integral() > 0:
+					data_hist.Scale(1. / data_hist.Integral())
+				else:
+					continue
+				signal_histograms = []
+				signal_names = []
+				for signal_mass_point in [500., 750., 1000.]:
+					signal_histograms.append(f_signal[signal_model][signal_mass_point].Get("inclusive/" + nmo_histogram_name))
+					signal_histograms[-1].SetDirectory(0)
+					signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
+					if variable_name in rebin.keys():
+						signal_histograms[-1].Rebin(rebin[variable_name])
+					if signal_histograms[-1].Integral() > 0:
+						signal_histograms[-1].Scale(1. / signal_histograms[-1].Integral())
+					if signal_model == "RSG":
+						signal_names.append("RS G#rightarrowb#bar{b}, m=" + str(int(signal_mass_point)) + " GeV")
+					elif signal_model == "Zprime":
+						signal_names.append("Z'#rightarrowb#bar{b}, m=" + str(int(signal_mass_point)) + " GeV")
+				if variable_name in x_axis_titles.keys():
+					this_x_title = x_axis_titles[variable_name]
+				else:
+					this_x_title=None
+				MakeNMinusOnePlot(data_hist, nmo_histogram_name[2:] + "_" + signal_model, signal_histograms=signal_histograms, signal_names=signal_names, x_title=this_x_title)
+
+	if args.peaks:
+		for signal_model in ["RSG", "Zprime"]:
+			for signal_mass_point in [500., 750., 1000., 1200.]:
+		
+				input_nevents = (f_signal[signal_model][signal_mass_point].Get("inclusive/h_input_nevents")).Integral()
+				hist_pf = f_signal[signal_model][signal_mass_point].Get("inclusive/h_pfjet_mjj")
+				hist_pf.SetDirectory(0)
+				hist_pf.SetName(hist_pf.GetName() + "_pf")
+				hist_pf.Rebin(20)
+				hist_pf.Scale(19700 * signal_cross_sections[signal_model][signal_mass_point] / input_nevents)
+				hist_fat = f_signal[signal_model][signal_mass_point].Get("inclusive/h_fatjet_mjj")
+				hist_fat.SetDirectory(0)
+				hist_fat.SetName(hist_fat.GetName() + "_fat")
+				hist_fat.Rebin(20)
+				hist_fat.Scale(19700 * signal_cross_sections[signal_model][signal_mass_point] / input_nevents)
+
+				MakeFatJetComparison(hist_pf, hist_fat, "mjj_pf_vs_fat_" + signal_model + "_" + str(int(signal_mass_point)), x_range=[signal_mass_point-400., signal_mass_point+400.], fit_range=[signal_mass_point - 300., signal_mass_point + 200.], log=False)

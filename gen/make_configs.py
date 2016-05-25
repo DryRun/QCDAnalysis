@@ -33,19 +33,20 @@ def MakeCff(p_template, p_mass, p_output):
 		cff.write(out_line + "\n")
 	template.close()
 	cff.close()
+	print "Created " + os.path.expandvars(p_output)
 
 def MakeFullSimCfgs(p_model, p_mass_point):
 	stages = ["GENSIM", "REDIGI", "RECOSIM"]
 
 	commands = {}
-	commands["GENSIM"] = "cmsDriver.py " + GetSimulationCFF(p_model, p_mass_point).replace("$CMSSW_BASE/src/", "") + " --python_filename " + GetConfigPath(p_model, p_mass_point, "GENSIM", "FULLSIM") + " --step GEN,SIM --fileout file:" + GetOutputTag(p_model, p_mass_point, "GENSIM", "FULLSIM") + ".root --mc --pileup NoPileUp --datamix NODATAMIXER --conditions auto:mc --beamspot Realistic8TeVCollision --eventcontent RAWSIM --datatier GEN-SIM -n 100 --no_exec"
-	commands["REDIGI"] = "cmsDriver.py REDIGI --python_filename " + GetConfigPath(p_model, p_mass_point, "REDIGI", "FULLSIM") + " --step DIGI,L1,DIGI2RAW,HLT:7E33v2 --filein file:" + GetOutputTag(p_model, p_mass_point, "GENSIM", "FULLSIM") + ".root --fileout file:" + GetOutputTag(p_model, p_mass_point, "REDIGI", "FULLSIM") + ".root --mc --pileup 2012_Summer_50ns_PoissonOOTPU --datamix NODATAMIXER --conditions auto:mc --beamspot Realistic8TeVCollision --eventcontent RAWSIM --datatier GEN-SIM-RAW -n 100 --no_exec"
-	commands["RECOSIM"] = "cmsDriver.py RECO --python_filename " + GetConfigPath(p_model, p_mass_point, "RECOSIM", "FULLSIM") + " --step RAW2DIGI,L1Reco,RECO,VALIDATION:validation_prod,DQM:DQMOfflinePOGMC --filein file:" + GetOutputTag(p_model, p_mass_point, "REDIGI", "FULLSIM") + ".root --fileout file:" + GetOutputTag(p_model, p_mass_point, "RECOSIM", "FULLSIM") + ".root --mc --pileup 2012_Summer_50ns_PoissonOOTPU --datamix NODATAMIXER --conditions auto:mc --beamspot Realistic8TeVCollision --eventcontent AODSIM,DQM --datatier AODSIM,DQM -n 100 --no_exec"
+	commands["GENSIM"] = "cmsDriver.py " + GetSimulationCFF(p_model, p_mass_point).replace("$CMSSW_BASE/src/", "") + " --python_filename " + GetConfigPath(p_model, p_mass_point, "GENSIM", "FULLSIM") + " --step GEN,SIM --fileout file:" + GetOutputTag(p_model, p_mass_point, "FULLSIM") + "_GENSIM.root --mc --pileup NoPileUp --datamix NODATAMIXER --conditions auto:mc --beamspot Realistic8TeVCollision --eventcontent RAWSIM --datatier GEN-SIM -n 100 --no_exec"
+	commands["REDIGI"] = "cmsDriver.py REDIGI --python_filename " + GetConfigPath(p_model, p_mass_point, "REDIGI", "FULLSIM") + " --step DIGI,L1,DIGI2RAW,HLT:7E33v2 --filein file:" + GetOutputTag(p_model, p_mass_point, "FULLSIM") + "_GENSIM.root --fileout file:" + GetOutputTag(p_model, p_mass_point, "FULLSIM") + "_REDIGI.root --mc --pileup 2012_Summer_50ns_PoissonOOTPU --datamix NODATAMIXER --conditions auto:mc --beamspot Realistic8TeVCollision --eventcontent RAWSIM --datatier GEN-SIM-RAW -n 100 --no_exec"
+	commands["RECOSIM"] = "cmsDriver.py RECO --python_filename " + GetConfigPath(p_model, p_mass_point, "RECOSIM", "FULLSIM") + " --step RAW2DIGI,L1Reco,RECO,VALIDATION:validation_prod,DQM:DQMOfflinePOGMC --filein file:" + GetOutputTag(p_model, p_mass_point, "FULLSIM") + "_REDIGI.root --fileout file:" + GetOutputTag(p_model, p_mass_point, "FULLSIM") + "_AODSIM.root --mc --pileup 2012_Summer_50ns_PoissonOOTPU --datamix NODATAMIXER --conditions auto:mc --beamspot Realistic8TeVCollision --eventcontent AODSIM,DQM --datatier AODSIM,DQM -n 100 --no_exec"
 
 	for stage in stages:
 		os.system(commands[stage])
 		do_add_input_files = (stage != "GENSIM")
-		AddSubjobOption(GetConfigPath(p_model, p_mass_point, stage, "FULLSIM"), GetOutputTag(p_model, p_mass_point, stage, "FULLSIM"), add_subjob=True, add_input_files=do_add_input_files)
+		AddSubjobOption(GetConfigPath(p_model, p_mass_point, stage, "FULLSIM"), GetOutputTag(p_model, p_mass_point, "FULLSIM") + "_" + stage, add_subjob=True, add_input_files=do_add_input_files)
 
 #def MakeFullSimCfg(p_cff, p_cfg, p_output_tag):
 #	cfg_GENSIM = p_cfg.replace("@STAGE@", "GENSIM")
@@ -72,10 +73,10 @@ def MakeFastSimCfg(p_model, p_mass_point):
 	for stage in stages:
 		# RECOSIM output is large (~2 MB per event). Not reasonable for storage, well, anywhere.
 		#command = "cmsDriver.py " + GetSimulationCFF(p_model, p_mass_point).replace("$CMSSW_BASE/src/", "") + " --python_filename " + GetConfigPath(p_model, p_mass_point, "RECOSIM", "FASTSIM") + " --fileout file:" + GetOutputTag(p_model, p_mass_point, "RECOSIM", "FASTSIM") + ".root --step GEN,FASTSIM,HLT:7E33v2 --mc --eventcontent RECOSIM --datatier GEN-SIM-DIGI-RECO --pileup 2012_Startup_inTimeOnly --geometry DB --conditions auto:mc --beamspot Realistic8TeVCollision --no_exec -n 5000"
-		command = "cmsDriver.py " + GetSimulationCFF(p_model, p_mass_point).replace("$CMSSW_BASE/src/", "") + " --python_filename " + GetConfigPath(p_model, p_mass_point, stage, "FASTSIM") + " --fileout file:" + GetOutputTag(p_model, p_mass_point, stage, "FASTSIM") + ".root --step GEN,FASTSIM,HLT:7E33v2 --mc --eventcontent " + stage + " --datatier GEN-SIM-DIGI-RECO --pileup 2012_Startup_inTimeOnly --geometry DB --conditions auto:mc --beamspot Realistic8TeVCollision --no_exec -n " + str(n_events)
+		command = "cmsDriver.py " + GetSimulationCFF(p_model, p_mass_point).replace("$CMSSW_BASE/src/", "") + " --python_filename " + GetConfigPath(p_model, p_mass_point, stage, "FASTSIM") + " --fileout file:" + GetOutputTag(p_model, p_mass_point, "FASTSIM") + "_" + stage + ".root --step GEN,FASTSIM,HLT:7E33v2 --mc --eventcontent " + stage + " --datatier GEN-SIM-DIGI-RECO --pileup 2012_Startup_inTimeOnly --geometry DB --conditions auto:mc --beamspot Realistic8TeVCollision --no_exec -n " + str(n_events)
 		print command
 		os.system(command)
-		AddSubjobOption(GetConfigPath(p_model, p_mass_point, stage, "FASTSIM"), GetOutputTag(p_model, p_mass_point, "RECOSIM", "FASTSIM"))
+		AddSubjobOption(GetConfigPath(p_model, p_mass_point, stage, "FASTSIM"), GetOutputTag(p_model, p_mass_point, "FASTSIM") + "_" + stage)
 
 #def MakeFastSimCfg(p_cff, p_cfg, p_output_tag):
 #	cfg_FASTSIM = p_cfg.replace("@STAGE@", "FASTSIM")
@@ -157,7 +158,7 @@ if __name__ == "__main__":
 				cff_templates[model], 
 				mass_point,
 				cff_files[model].replace("@MASS@", str(mass_point))
-			) for model in ["Hbb", "RSG"] for mass_point in mass_points["FASTSIM"]
+			) for model in ["Hbb"] for mass_point in mass_points["FASTSIM"]
 		)
 	if args.cfg:
 		#Parallel(n_jobs=4)(
@@ -165,6 +166,6 @@ if __name__ == "__main__":
 		#)
 
 		Parallel(n_jobs=4)(
-			delayed(MakeFastSimCfg)(model, mass_point) for model in ["Hbb", "RSG"] for mass_point in mass_points["FASTSIM"]
+			delayed(MakeFastSimCfg)(model, mass_point) for model in ["Hbb"] for mass_point in mass_points["FASTSIM"]
 		)
 

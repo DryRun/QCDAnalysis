@@ -249,6 +249,10 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 			decade = k;          
 			tree_->GetEntry(entry);
 
+			// Object selection
+			dijet_selector_->ClassifyObjects(event_->pfjets());
+			pfjet_selector_->ClassifyObjects(event_->pfjets());
+
 			// Recompute fat jets
 			if (event_->nPFJets() >= 2) {
 				reco::Particle::LorentzVector lv_fatjet[2];
@@ -261,6 +265,9 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 				dsum_pt[0] = lv_fatjet[0].pt() * event_->pfjet(0).unc();
 				dsum_pt[1] = lv_fatjet[1].pt() * event_->pfjet(1).unc();
 				for (unsigned int jet_index = 2; jet_index < event_->nPFJets(); ++jet_index) {
+					if (!(pfjet_selector_->GetObjectPass(jet_index))) {
+						continue;
+					}
 					reco::Particle::LorentzVector lv_pfjet = event_->pfjet(jet_index).p4() * event_->pfjet(jet_index).cor();
 					double dR1 = deltaR(lv_fatjet[0], lv_pfjet);
 					double dR2 = deltaR(lv_fatjet[1], lv_pfjet);
@@ -316,10 +323,6 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 				std::vector<QCDJet> fat_jets_vector;
 	      		event_->setFatJets(fat_jets_vector);
 	      	}
-
-			// Object selection
-			dijet_selector_->ClassifyObjects(event_->pfjets());
-			pfjet_selector_->ClassifyObjects(event_->pfjets());
 
 			// Event selection
 			event_selector_->ProcessEvent(event_);
