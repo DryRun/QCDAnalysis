@@ -214,7 +214,13 @@ def MakeNMinusOnePlot(data_hist, save_tag, signal_histograms=None, signal_names=
 
 	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
 
-def MakeFatJetComparison(hist_pf, hist_fat, save_tag, x_range=None, log=False):
+def MakeFatJetComparison(hist_pf, hist_fat, save_tag, fit_range=None, x_range=None, log=False):
+	print "Welcome to MakeFatJetComparison"
+	# Fits
+	fit_results_pf = DoSignalFit(hist_pf, fit_range=fit_range)
+	fit_results_fat = DoSignalFit(hist_fat, fit_range=fit_range)
+
+
 	if x_range:
 		x_min = x_range[0]
 		x_max = x_range[1]
@@ -239,11 +245,16 @@ def MakeFatJetComparison(hist_pf, hist_fat, save_tag, x_range=None, log=False):
 	frame.Draw("axis")
 
 	hist_pf.SetMarkerStyle(20)
-	hist_pf.SetMarkerColor(seaborn.GetColorRoot("dark", 1))
-	hist_pf.SetLineColor(seaborn.GetColorRoot("dark", 1))
+	hist_pf.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
+	hist_pf.SetLineColor(seaborn.GetColorRoot("dark", 0))
 	hist_pf.SetMarkerSize(1)
 	hist_pf.Draw("p e1 same")
-	l.AddEntry(hist_pf, "PF jets", "pl")
+	l.AddEntry(hist_pf, "ak5 jets", "pl")
+
+	fit_results_pf["fit"].SetLineColor(seaborn.GetColorRoot("pastel", 0))
+	fit_results_pf["fit"].SetLineWidth(2)
+	fit_results_pf["fit"].Draw("same")
+	l.AddEntry(fit_results_pf["fit"], "ak5 jets fit", "l")
 
 	hist_fat.SetMarkerStyle(24)
 	hist_fat.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
@@ -252,14 +263,22 @@ def MakeFatJetComparison(hist_pf, hist_fat, save_tag, x_range=None, log=False):
 	hist_fat.Draw("p e1 same")
 	l.AddEntry(hist_fat, "Fat jets", "pl")
 
+	fit_results_fat["fit"].SetLineColor(seaborn.GetColorRoot("pastel", 2))
+	fit_results_fat["fit"].SetLineWidth(2)
+	fit_results_fat["fit"].Draw("same")
+	l.AddEntry(fit_results_fat["fit"], "Fat jets fit", "l")
+
 	l.Draw()
+	
 	# Write RMS on canvas
-	pf_mean = hist_pf.GetMean()
-	fat_mean = hist_fat.GetMean()
-	pf_rms = hist_pf.GetRMS()
-	fat_rms = hist_fat.GetRMS()
-	Root.myText(0.15, 0.85, kBlack, "Mean/RMS (PF) = " + str(round(pf_mean, 2)) + "/" + str(round(pf_rms, 2)), 0.4)
-	Root.myText(0.15, 0.8, kBlack, "Mean/RMS (Fat) = " + str(round(fat_mean, 2)) + "/" + str(round(fat_rms, 2)), 0.4)
+	Root.myText(0.15, 0.85, kBlack, "#bar{x}/#sigma (ak5) = " + str(round(fit_results_pf["fit"].GetParameter(2), 2)) + "/" + str(round(fit_results_pf["fit"].GetParameter(3), 2)), 0.4)
+	Root.myText(0.15, 0.8, kBlack, "#bar{x}/#sigma (Fat) = " + str(round(fit_results_fat["fit"].GetParameter(2), 2)) + "/" + str(round(fit_results_fat["fit"].GetParameter(3), 2)), 0.4)
+	#pf_mean = hist_pf.GetMean()
+	#fat_mean = hist_fat.GetMean()
+	#pf_rms = hist_pf.GetRMS()
+	#fat_rms = hist_fat.GetRMS()
+	#Root.myText(0.15, 0.85, kBlack, "Mean/RMS (PF) = " + str(round(pf_mean, 2)) + "/" + str(round(pf_rms, 2)), 0.4)
+	#Root.myText(0.15, 0.8, kBlack, "Mean/RMS (Fat) = " + str(round(fat_mean, 2)) + "/" + str(round(fat_rms, 2)), 0.4)
 
 	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
 
@@ -366,6 +385,7 @@ if __name__ == "__main__":
 	if args.peaks:
 		for signal_model in ["RSG", "Zprime"]:
 			for signal_mass_point in [500., 750., 1000., 1200.]:
+		
 				input_nevents = (f_signal[signal_model][signal_mass_point].Get("inclusive/h_input_nevents")).Integral()
 				hist_pf = f_signal[signal_model][signal_mass_point].Get("inclusive/h_pfjet_mjj")
 				hist_pf.SetDirectory(0)
@@ -378,4 +398,4 @@ if __name__ == "__main__":
 				hist_fat.Rebin(20)
 				hist_fat.Scale(19700 * signal_cross_sections[signal_model][signal_mass_point] / input_nevents)
 
-				MakeFatJetComparison(hist_pf, hist_fat, "mjj_pf_vs_fat_" + signal_model + "_" + str(int(signal_mass_point)), x_range=[signal_mass_point-400., signal_mass_point+400.], log=False)
+				MakeFatJetComparison(hist_pf, hist_fat, "mjj_pf_vs_fat_" + signal_model + "_" + str(int(signal_mass_point)), x_range=[signal_mass_point-400., signal_mass_point+400.], fit_range=[signal_mass_point - 300., signal_mass_point + 200.], log=False)
