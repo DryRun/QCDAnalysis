@@ -9,13 +9,13 @@ from os import listdir
 import sys
 sys.path.append('./')
 
-models = ['GluGluSpin0ToBBbar', 'RSGravitonToBBbar']
+models = ['GluGluSpin0ToBBbar', 'RSGravitonToBBbar_kMpl01']
 debug = True
 
 def GetDatasetName(model, mass, stage):
     if model == "GluGluSpin0ToBBbar":
         base1 = "GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_13TeV_pythia8"
-    elif model == "RSGravitonToBBbar":
+    elif model == "RSGravitonToBBbar_kMpl01":
         base1 = "RSGravitonToBBbar_kMpl01_M_@MASS@_TuneCUEP8M1_13TeV_pythia8"
     return [base1.replace("@MASS@", str(int(mass))), "dryu-" + stage, "USER"]
 
@@ -23,7 +23,11 @@ def GetCFIPath(model, mass):
     return "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/" + GetDatasetName(model, mass, "NULL")[0] + "_cfi.py" 
 
 def MakeCFI(model, mass, width):
-    template = open("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/" + )
+    if model == "GluGluSpin0ToBBbar":
+        template = open("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/GluGluSpin0ToBBbar_M_X_TuneCUEP8M1_13TeV_pythia8_cfi.py.template", 'r')
+    elif model == "RSGravitonToBBbar_kMpl01":
+        template = open("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/RSGravitonToBBbar_kMpl01_M_X_TuneCUEP8M1_13TeV_pythia8_cfi.py.template", 'r')
+    cfi = open("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/" + GetDatasetName(model, mass, "NULL") + "_cfi.py", 'w')
 
 def create(mass=750 , width=0.01):
 
