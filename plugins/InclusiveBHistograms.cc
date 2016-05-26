@@ -26,12 +26,24 @@ InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg)
 	current_file_ = 0;
 	n_total_ = 0;
 	n_pass_ = 0;
+	signal_mass_ = -1.;
 	if (cfg.getParameter<std::string>("data_source") == "collision_data") {
 		data_source_ = ObjectIdentifiers::kCollisionData;
 	} else if (cfg.getParameter<std::string>("data_source") == "simulation") {
 		data_source_ = ObjectIdentifiers::kSimulation;
 	} else {
-		throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : data_source must be collision_data or simulation") << std::endl;
+		throw cms::Exception("[InclusiveBHistograms::InclusiveBHistograms] ERROR : data_source must be collision_data or simulation") << std::endl;
+	}
+	if (cfg.getParameter<std::string>("data_type") == "data") {
+		data_type_ = ObjectIdentifiers::kData;
+	} else if (cfg.getParameter<std::string>("data_type") == "signal") {
+		data_type_ = ObjectIdentifiers::kSignal;
+		signal_mass_ = cfg.getParameter<double>("signal_mass");
+		std::cout << "[InclusiveBHistograms::InclusiveBHistograms] INFO : Signal job with mass " << signal_mass_ << std::endl;
+	} else if (cfg.getParameter<std::string>("data_type") == "background") {
+		data_type_ = ObjectIdentifiers::kBackground;
+	} else {
+		throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : data_type must be collision_data or simulation") << std::endl;
 	}
 
 	// Cuts
@@ -93,13 +105,11 @@ void InclusiveBHistograms::beginJob()
 		pfjet_selector_->RegisterCut(it_cut, pfjet_cut_descriptors_[it_cut], pfjet_cut_parameters_[it_cut]);
 	}
 
-
 	calojet_selector_ = new ObjectSelector<QCDCaloJet>;
 	CaloJetCutFunctions::Configure(calojet_selector_);
 	for (auto& it_cut : calojet_cuts_) {
 		calojet_selector_->RegisterCut(it_cut, calojet_cut_descriptors_[it_cut], calojet_cut_parameters_[it_cut]);
 	}
-
 
 	event_selector_ = new EventSelector<QCDEvent>;
 	QCDEventCutFunctions::Configure(event_selector_);
@@ -190,6 +200,11 @@ void InclusiveBHistograms::beginJob()
 	fatjet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
 	fatjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
 
+	if (data_type_ == ObjectIdentifiers::kSignal) {
+		pfjet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
+		calojet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
+		fatjet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
+	}
 }
 
 
@@ -354,6 +369,9 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 				pfjet_histograms_->GetTH1D("eta2")->Fill(event_->pfjet(1).eta(), prescale);
 				pfjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->pfmjjcor(0), pf_deltaeta, prescale);
 				pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, prescale);
+				if (data_type_ == ObjectIdentifiers::kSignal) {
+					pfjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, prescale);
+				}
 
 				//double calo_mjj = (event_->calojet(0).p4() + event_->calojet(1).p4()).mass();
 				double calo_deltaeta = event_->calojet(0).eta() - event_->calojet(1).eta();
@@ -368,6 +386,9 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 				calojet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->calojet(0).pt(), event_->calojet(1).pt(), prescale);
 				calojet_histograms_->GetTH1D("eta1")->Fill(event_->calojet(0).eta(), prescale);
 				calojet_histograms_->GetTH1D("eta2")->Fill(event_->calojet(1).eta(), prescale);
+				if (data_type_ == ObjectIdentifiers::kSignal) {
+					calojet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, prescale);
+				}
 
 				double fat_deltaeta = event_->fatjet(0).eta() - event_->fatjet(1).eta();
 				double fat_btag_csv1 = event_->fatjet(0).btag_csv();
@@ -381,6 +402,9 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 				fatjet_histograms_->GetTH1D("eta2")->Fill(event_->fatjet(1).eta(), prescale);
 				fatjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->fatmjjcor(0), fat_deltaeta, prescale);
 				fatjet_histograms_->GetTH2F("btag_csv")->Fill(fat_btag_csv1, fat_btag_csv2, prescale);
+				if (data_type_ == ObjectIdentifiers::kSignal) {
+					fatjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, prescale);
+				}
 			}
 		}
 		f->Close();

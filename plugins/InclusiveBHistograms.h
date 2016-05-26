@@ -37,6 +37,8 @@ class InclusiveBHistograms : public edm::EDAnalyzer
 
 	//---- configurable parameters --------   
 	ObjectIdentifiers::DataSource data_source_;
+	ObjectIdentifiers::DataType data_type_;
+	float signal_mass_;
 	std::vector<std::string> input_file_names_;
 	TString input_tree_name_;
 	TString trigger_histogram_name_;
