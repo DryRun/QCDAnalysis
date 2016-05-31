@@ -13,6 +13,7 @@ import CMSDIJET.QCDAnalysis.mjj_fits
 from CMSDIJET.QCDAnalysis.mjj_fits import *
 import CMSDIJET.QCDAnalysis.simulation_config
 from CMSDIJET.QCDAnalysis.simulation_config import *
+import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 
 def MakeMjjPlot(data_hist, cached_fit_results=None, signal_histograms=None, signal_names=None, save_tag="c_mjj", x_range=None, log=False, fit_min=500., fit_max=1500., save_file=None, blind=True):
 	print "[MakeMjjPlot] INFO : Welcome to MakeMjjPlot with save_tag=" + save_tag
@@ -282,6 +283,96 @@ def MakeFatJetComparison(hist_pf, hist_fat, save_tag, fit_range=None, x_range=No
 
 	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
 
+def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=False):
+	print "Welcome to JetHTComparisonPlot"
+
+	if x_range:
+		x_min = x_range[0]
+		x_max = x_range[1]
+	else:
+		x_min = hist_bjetplusx.GetXaxis().GetXmin()
+		x_max = hist_bjetplusx.GetXaxis().GetXmax()
+
+	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, int(800 * sqrt(2)))
+	l = TLegend(0.55, 0.6, 0.88, 0.88)
+	l.SetFillColor(0)
+	l.SetBorderSize(0)
+	top = TPad("top", "top", 0., 0.5, 1., 1.)
+	top.SetBottomMargin(0.03)
+	top.Draw()
+	if log:
+		top.SetLogy()
+	c.cd()
+	bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
+	bottom.SetTopMargin(0.02)
+	bottom.SetBottomMargin(0.2)
+	bottom.Draw()
+	ROOT.SetOwnership(c, False)
+	ROOT.SetOwnership(top, False)
+	ROOT.SetOwnership(bottom, False)
+
+	top.cd()
+
+	frame_top = TH1D("frame_top", "frame_top", 100, x_min, x_max)
+	frame_top.GetXaxis().SetTitleSize(0)
+	frame_top.GetXaxis().SetLabelSize(0)
+	bin_width = hist_bjetplusx.GetXaxis().GetBinWidth(1)
+	frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
+	if log:
+		frame_top.SetMaximum(hist_jetht.GetMaximum() * 5.)
+	else:
+		frame_top.SetMaximum(hist_jetht.GetMaximum() * 1.7)
+	frame_top.Draw("axis")
+
+	hist_bjetplusx.SetMarkerStyle(20)
+	hist_bjetplusx.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
+	hist_bjetplusx.SetLineColor(seaborn.GetColorRoot("dark", 0))
+	hist_bjetplusx.SetMarkerSize(1)
+	hist_bjetplusx.Draw("p e1 same")
+	l.AddEntry(hist_bjetplusx, "BJetPlusX", "pl")
+
+	hist_jetht.SetMarkerStyle(24)
+	hist_jetht.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
+	hist_jetht.SetLineColor(seaborn.GetColorRoot("dark", 2))
+	hist_jetht.SetMarkerSize(1)
+	hist_jetht.Draw("p e1 same")
+	l.AddEntry(hist_jetht, "JetHT", "pl")
+	l.Draw()
+
+	c.cd()
+	bottom.cd()
+	# Make frame
+	frame_bottom = TH1D("frame_bottom", "frame_bottom", 100, x_min, x_max)
+	frame_bottom.SetMinimum(-0.2)
+	frame_bottom.SetMaximum(1.2)
+	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+	frame_bottom.GetYaxis().SetTitle("#frac{Data - Fit}{#sigma(Data)}")
+
+	frame_bottom.GetXaxis().SetLabelSize(0.04)
+	frame_bottom.GetXaxis().SetTitleSize(0.06)
+	frame_bottom.GetXaxis().SetLabelOffset(0.01)
+	frame_bottom.GetXaxis().SetTitleOffset(1.1)
+
+	frame_bottom.GetYaxis().SetLabelSize(0.04)
+	frame_bottom.GetYaxis().SetTitleSize(0.037)
+	frame_bottom.GetYaxis().SetTitleOffset(0.7)
+
+	frame_bottom.Draw("axis")
+
+	unity = TLine(hist_bjetplusx.GetXaxis().GetXmin(), 1., hist_bjetplusx.GetXaxis().GetXmax(), 1.)
+	unity.SetLineColor(kGray)
+	unity.SetLineStyle(2)
+	unity.SetLineWidth(2)
+	unity.Draw("same")
+
+	# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
+	hist_ratio = hist_bjetplusx.Clone()
+	hist_ratio.Divide(hist_jetht)
+	hist_ratio.Draw("hist same")
+
+	c.SaveAs(analysis_config.figure_directory + "/" + save_tag + ".pdf")
+
+
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Dijet mass spectrum fits')
@@ -289,6 +380,7 @@ if __name__ == "__main__":
 	parser.add_argument('--nmo', action='store_true', help='Make N-1 plots')
 	parser.add_argument('--peaks', action='store_true', help='Make signal peak plots')
 	parser.add_argument('--unblind', action='store_true', help='Unblind 750 region')
+	parser.add_argument('--jetht', action='store_true', help='BJetPlusX over JetHT plot')
 	args = parser.parse_args()
 
 
@@ -399,3 +491,23 @@ if __name__ == "__main__":
 				hist_fat.Scale(19700 * signal_cross_sections[signal_model][signal_mass_point] / input_nevents)
 
 				MakeFatJetComparison(hist_pf, hist_fat, "mjj_pf_vs_fat_" + signal_model + "_" + str(int(signal_mass_point)), x_range=[signal_mass_point-400., signal_mass_point+400.], fit_range=[signal_mass_point - 300., signal_mass_point + 200.], log=False)
+
+	if args.jetht:
+		f_bjetplusx = TFile(analysis_config.files_InclusiveBHistograms["BJetPlusX_2012BCD"], "READ")
+		f_jetht = TFile(analysis_config.files_InclusiveBHistograms["JetHT_2012BCD"], "READ")
+		hist_pfjet_bjetplusx = f_bjetplusx.Get("inclusive/h_pfjet_mjj")
+		hist_pfjet_bjetplusx.Rebin(20)
+		hist_pfjet_bjetplusx.SetName("hist_pfjet_bjetplusx")
+		hist_pfjet_jetht = f_jetht.Get("inclusive/h_pfjet_mjj")
+		hist_pfjet_jetht.Rebin(20)
+		hist_pfjet_jetht.SetName("hist_pfjet_jetht")
+		JetHTComparisonPlot(hist_pfjet_bjetplusx, hist_pfjet_jetht, "BJetPlusX_over_JetHT_pfjet", log=True, x_range=[750., 2000.])
+
+		hist_fatjet_bjetplusx = f_bjetplusx.Get("inclusive/h_fatjet_mjj")
+		hist_fatjet_bjetplusx.Rebin(20)
+		hist_fatjet_bjetplusx.SetName("hist_fatjet_bjetplusx")
+		hist_fatjet_jetht = f_jetht.Get("inclusive/h_fatjet_mjj")
+		hist_fatjet_jetht.Rebin(20)
+		hist_fatjet_jetht.SetName("hist_fatjet_jetht")
+		JetHTComparisonPlot(hist_fatjet_bjetplusx, hist_fatjet_jetht, "BJetPlusX_over_JetHT_fatjet", log=True, x_range=[750., 2000.])
+
