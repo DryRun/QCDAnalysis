@@ -81,6 +81,8 @@ files_InclusiveBHistograms = {}
 files_InclusiveBHistograms["BJetPlusX_2012"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root"
 files_InclusiveBHistograms["BJetPlusX_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_2012BCD.root"
 files_InclusiveBHistograms["JetHT_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_JetHT_2012BCD.root"
+files_InclusiveBHistograms["BJetPlusX_tight_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_tight_2012BCD.root"
+files_InclusiveBHistograms["JetHT_tight_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_JetHT_tight_2012BCD.root"
 
 # Figures
 figure_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/"

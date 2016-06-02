@@ -293,7 +293,7 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 		x_min = hist_bjetplusx.GetXaxis().GetXmin()
 		x_max = hist_bjetplusx.GetXaxis().GetXmax()
 
-	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, int(800 * sqrt(2)))
+	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
 	l = TLegend(0.55, 0.6, 0.88, 0.88)
 	l.SetFillColor(0)
 	l.SetBorderSize(0)
@@ -316,10 +316,14 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 	frame_top = TH1D("frame_top", "frame_top", 100, x_min, x_max)
 	frame_top.GetXaxis().SetTitleSize(0)
 	frame_top.GetXaxis().SetLabelSize(0)
+	frame_top.GetYaxis().SetLabelSize(0.04)
+	frame_top.GetYaxis().SetTitleSize(0.04)
+	#frame_top.GetYaxis().SetTitleOffset(0.85)
 	bin_width = hist_bjetplusx.GetXaxis().GetBinWidth(1)
 	frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
 	if log:
 		frame_top.SetMaximum(hist_jetht.GetMaximum() * 5.)
+		frame_top.SetMinimum(5.)
 	else:
 		frame_top.SetMaximum(hist_jetht.GetMaximum() * 1.7)
 	frame_top.Draw("axis")
@@ -346,7 +350,7 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 	frame_bottom.SetMinimum(-0.2)
 	frame_bottom.SetMaximum(1.2)
 	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
-	frame_bottom.GetYaxis().SetTitle("#frac{Data - Fit}{#sigma(Data)}")
+	frame_bottom.GetYaxis().SetTitle("BJetsPlusX / JetHT")
 
 	frame_bottom.GetXaxis().SetLabelSize(0.04)
 	frame_bottom.GetXaxis().SetTitleSize(0.06)
@@ -354,16 +358,22 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 	frame_bottom.GetXaxis().SetTitleOffset(1.1)
 
 	frame_bottom.GetYaxis().SetLabelSize(0.04)
-	frame_bottom.GetYaxis().SetTitleSize(0.037)
-	frame_bottom.GetYaxis().SetTitleOffset(0.7)
+	frame_bottom.GetYaxis().SetTitleSize(0.04)
+	frame_bottom.GetYaxis().SetTitleOffset(0.85)
 
 	frame_bottom.Draw("axis")
 
-	unity = TLine(hist_bjetplusx.GetXaxis().GetXmin(), 1., hist_bjetplusx.GetXaxis().GetXmax(), 1.)
+	unity = TLine(x_min, 1., x_max, 1.)
 	unity.SetLineColor(kGray)
 	unity.SetLineStyle(2)
 	unity.SetLineWidth(2)
 	unity.Draw("same")
+
+	zero = TLine(x_min, 0., x_max, 0.)
+	zero.SetLineColor(kBlack)
+	zero.SetLineStyle(1)
+	zero.SetLineWidth(2)
+	zero.Draw("same")
 
 	# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
 	hist_ratio = hist_bjetplusx.Clone()
@@ -384,7 +394,9 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 
-	f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root", "READ")
+	#f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root", "READ")
+	f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_tight_2012BCD.root", "READ")
+
 	signal_mass_points = [500., 750., 1000., 1200.]
 	f_signal = {}
 	f_signal["RSG"] = {}
@@ -501,7 +513,7 @@ if __name__ == "__main__":
 		hist_pfjet_jetht = f_jetht.Get("inclusive/h_pfjet_mjj")
 		hist_pfjet_jetht.Rebin(20)
 		hist_pfjet_jetht.SetName("hist_pfjet_jetht")
-		JetHTComparisonPlot(hist_pfjet_bjetplusx, hist_pfjet_jetht, "BJetPlusX_over_JetHT_pfjet", log=True, x_range=[750., 2000.])
+		JetHTComparisonPlot(hist_pfjet_bjetplusx, hist_pfjet_jetht, "BJetPlusX_over_JetHT_pfjet", log=True, x_range=[500., 3000.])
 
 		hist_fatjet_bjetplusx = f_bjetplusx.Get("inclusive/h_fatjet_mjj")
 		hist_fatjet_bjetplusx.Rebin(20)

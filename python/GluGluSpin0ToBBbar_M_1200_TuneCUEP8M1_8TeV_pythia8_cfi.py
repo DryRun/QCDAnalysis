@@ -3,10 +3,9 @@ import FWCore.ParameterSet.Config as cms
 from Configuration.Generator.Pythia8CommonSettings_cfi import *
 from Configuration.Generator.Pythia8CUEP8M1Settings_cfi import *
 
-
 generator = cms.EDFilter("Pythia8GeneratorFilter",
         comEnergy = cms.double(8000.0),
-        #crossSection = cms.untracked.double(1.095e-3),
+        crossSection = cms.untracked.double(1.095e-3),
         filterEfficiency = cms.untracked.double(1),
         maxEventsToPrint = cms.untracked.int32(0),
         pythiaHepMCVerbosity = cms.untracked.bool(False),

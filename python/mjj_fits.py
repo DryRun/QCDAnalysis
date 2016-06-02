@@ -15,6 +15,8 @@ triggers = [
 	'HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV'
 ]
 
+def BackgroundFit(x, par):
+  	return par[0] * (1. - (x[0] / 8.e3))**par[1] / ((x[0] / 8.e3)**(par[2] + par[3] * TMath.Log((x[0] / 8.e3))))
 
 def CrystalBallFit(x, par):
 	#Crystal ball function for signal, parameters are 0:alpha,1:n,2:mean,3:sigma,4:normalization;
