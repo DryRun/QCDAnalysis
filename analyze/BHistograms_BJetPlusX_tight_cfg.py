@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
+import sys
 
 options = VarParsing.VarParsing()
 options.register('inputFiles', 
@@ -9,7 +10,7 @@ options.register('inputFiles',
 	"List of input files"
 )
 options.register('outputFile', 
-	'InclusiveBHistograms.root', 
+	'BHistograms_BJetPlusX_tight.root', 
 	VarParsing.VarParsing.multiplicity.singleton,
 	VarParsing.VarParsing.varType.string,
 	"Output file"
@@ -20,11 +21,26 @@ options.register('dataSource',
 	VarParsing.VarParsing.varType.string,
 	'collision_data or simulation'
 	)
+options.register('dataType',
+	'data',
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.string,
+	'data, signal, or background'
+	)
+options.register('signalMass',
+	750.,
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.float,
+	'Signal mass hypothesis (only necessary for running over signal)'
+	)
 options.parseArguments()
 
 if options.dataSource != "collision_data" and options.dataSource != "simulation":
-	import sys
-	print "[InclusiveBHistograms] ERROR : dataSource must be collision_data or simulation"
+	print "[BHistograms_BJetPlusX_tight] ERROR : dataSource must be collision_data or simulation"
+	sys.exit(1)
+
+if not options.dataType in ["data", "signal", "background"]:
+	print "[BHistograms_BJetPlusX_tight] ERROR : dataType must be data, signal, or background"
 	sys.exit(1)
 
 process = cms.Process("myprocess")
@@ -61,7 +77,7 @@ dijet_cuts = cms.VPSet(
 	),
 	cms.PSet(
 		name = cms.string("MinBTagWeight"),
-		parameters = cms.vdouble(0.244),
+		parameters = cms.vdouble(0.898),
 		descriptors = cms.vstring("csv")
 	)
 )
@@ -121,16 +137,23 @@ event_cuts = cms.VPSet(
 		parameters  = cms.vdouble(120.),
 		descriptors = cms.vstring()
 	),
+	cms.PSet(
+		name        = cms.string("PFFatDijetMaxDeltaEta"),
+		parameters  = cms.vdouble(1.3),
+		descriptors = cms.vstring()
+	)
 )
 
 ##-------------------- User analyzer  --------------------------------
-process.BHistograms    = cms.EDAnalyzer('InclusiveBHistograms',
+process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	file_names             = cms.vstring(options.inputFiles),
 	tree_name              = cms.string('ak5/ProcessedTree'),
 	trigger_histogram_name = cms.string('ak5/TriggerNames'),
 	#triggers              = cms.vstring('HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v2:L1_DoubleJetC36', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v3:L1_DoubleJetC36', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v4:L1_DoubleJetC36', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v5:L1_DoubleJetC36', 'HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose_v7:L1_DoubleJetC36'),
-	#triggers               = cms.vstring(	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v2:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v3:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v4:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v5:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v7:L1_SingleJet128'),
-	data_source            = cms.string(options.dataSource),    
+	#triggers              = cms.vstring(	'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v2:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v3:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v4:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v5:L1_SingleJet128', 'HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose_v7:L1_SingleJet128'),
+	data_source            = cms.string(options.dataSource),  
+	data_type              = cms.string(options.dataType),
+	signal_mass            = cms.double(options.signalMass),  
 	max_events             = cms.int32(-1),
 	dijet_cuts             = dijet_cuts,
 	pfjet_cuts             = pfjet_cuts,
