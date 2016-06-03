@@ -89,7 +89,7 @@ def sequence_GENSIM(model, mass,version='',submit=False):
         n_total = 1000
     else:
         n_total = 100000
-    create_GENSIM_crab(model, mass, 500, n_total, version)
+    create_GENSIM_crab(model, mass, 200, n_total, version)
     submit_GENSIM_crab(model, mass, submit)
 
 #################################
