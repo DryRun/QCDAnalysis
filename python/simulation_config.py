@@ -94,3 +94,8 @@ signal_cross_sections["Zprime"][1050.] = 4.534e-10 * 10**9
 signal_cross_sections["Zprime"][1100.] = 3.633e-10 * 10**9
 signal_cross_sections["Zprime"][1150.] = 2.96e-10 * 10**9
 signal_cross_sections["Zprime"][1200.] = 2.392e-10 * 10**9
+
+fullsim_datasets = {"GENSIM":{}, "DR1":{}, "DR2":{}}
+fullsim_datasets["GENSIM"] = {
+	"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FASTSIM":"/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_1-76ca9f00fbd35571059515ca22287825/USER"
+}
