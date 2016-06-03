@@ -11,14 +11,14 @@
 #include <climits>
 #include "TMath.h"
 
-#include "CMSDIJET/QCDAnalysis/plugins/InclusiveBHistograms.h"
+#include "CMSDIJET/QCDAnalysis/plugins/BHistograms.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 using namespace std;
 
-InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg) 
+BHistograms::BHistograms(edm::ParameterSet const& cfg) 
 {
 	input_file_names_  = cfg.getParameter<std::vector<std::string> > ("file_names");
 	input_tree_name_  = cfg.getParameter<std::string> ("tree_name");
@@ -32,18 +32,18 @@ InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg)
 	} else if (cfg.getParameter<std::string>("data_source") == "simulation") {
 		data_source_ = ObjectIdentifiers::kSimulation;
 	} else {
-		throw cms::Exception("[InclusiveBHistograms::InclusiveBHistograms] ERROR : data_source must be collision_data or simulation") << std::endl;
+		throw cms::Exception("[BHistograms::BHistograms] ERROR : data_source must be collision_data or simulation") << std::endl;
 	}
 	if (cfg.getParameter<std::string>("data_type") == "data") {
 		data_type_ = ObjectIdentifiers::kData;
 	} else if (cfg.getParameter<std::string>("data_type") == "signal") {
 		data_type_ = ObjectIdentifiers::kSignal;
 		signal_mass_ = cfg.getParameter<double>("signal_mass");
-		std::cout << "[InclusiveBHistograms::InclusiveBHistograms] INFO : Signal job with mass " << signal_mass_ << std::endl;
+		std::cout << "[BHistograms::BHistograms] INFO : Signal job with mass " << signal_mass_ << std::endl;
 	} else if (cfg.getParameter<std::string>("data_type") == "background") {
 		data_type_ = ObjectIdentifiers::kBackground;
 	} else {
-		throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : data_type must be collision_data or simulation") << std::endl;
+		throw cms::Exception("[BHistograms::beginJob] ERROR : data_type must be collision_data or simulation") << std::endl;
 	}
 
 	// Cuts
@@ -90,7 +90,7 @@ InclusiveBHistograms::InclusiveBHistograms(edm::ParameterSet const& cfg)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-void InclusiveBHistograms::beginJob() 
+void BHistograms::beginJob() 
 {
 	// Setup selector objects
 	dijet_selector_ = new ObjectSelector<QCDPFJet>;
@@ -118,15 +118,15 @@ void InclusiveBHistograms::beginJob()
 		if (it_cut.EqualTo("TriggerXOR") || it_cut.EqualTo("TriggerOR")) {
 			std::vector<double> tmp_parameters;
 			std::vector<TString> tmp_descriptors;
-			std::cout << "[InclusiveBHistograms::beginJob] INFO : Opening " << input_file_names_[0] << std::endl;
+			std::cout << "[BHistograms::beginJob] INFO : Opening " << input_file_names_[0] << std::endl;
 			TFile *f = TFile::Open(TString(input_file_names_[0]), "READ");
 			TH1F *h_trigger_names = (TH1F*)f->Get(trigger_histogram_name_);
 			for (int bin = 1; bin <= h_trigger_names->GetNbinsX(); ++bin) {
 				indices_to_triggers_[bin - 1] = h_trigger_names->GetXaxis()->GetBinLabel(bin);
-				std::cout << "[InclusiveBHistograms::beginJob] INFO : Trigger index " << bin - 1 << " = " << indices_to_triggers_[bin - 1] << std::endl;
+				std::cout << "[BHistograms::beginJob] INFO : Trigger index " << bin - 1 << " = " << indices_to_triggers_[bin - 1] << std::endl;
 			}
 			if (!h_trigger_names) {
-				throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : ") << "Trigger name histogram (" << trigger_histogram_name_ << ") not found in input file." << std::endl;
+				throw cms::Exception("[BHistograms::beginJob] ERROR : ") << "Trigger name histogram (" << trigger_histogram_name_ << ") not found in input file." << std::endl;
 			}
 			for (auto& it_trig : event_cut_descriptors_[it_cut]) {
 				// Look up index from histogram
@@ -139,7 +139,7 @@ void InclusiveBHistograms::beginJob()
 					}
 				}
 				if (hlt_index == -1) {
-					throw cms::Exception("[InclusiveBHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << it_trig << " in TriggerNames." << std::endl;
+					throw cms::Exception("[BHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << it_trig << " in TriggerNames." << std::endl;
 				} else {
 					tmp_parameters.push_back(hlt_index);
 				}
@@ -209,7 +209,7 @@ void InclusiveBHistograms::beginJob()
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-void InclusiveBHistograms::endJob() 
+void BHistograms::endJob() 
 {
 	event_selector_->MakeCutflowHistograms(&*fs_);
 	event_selector_->SaveNMinusOneHistogram(&*fs_);
@@ -217,10 +217,10 @@ void InclusiveBHistograms::endJob()
 	pfjet_selector_->SaveNMinusOneHistogram(&*fs_);
 	//delete event_;
 	//event_ = 0;
-	std::cout << "[InclusiveBHistograms::endJob] INFO : Pass / Total = " << n_pass_ << " / " << n_total_ << std::endl;
+	std::cout << "[BHistograms::endJob] INFO : Pass / Total = " << n_pass_ << " / " << n_total_ << std::endl;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-int InclusiveBHistograms::getBin(double x, const std::vector<double>& boundaries)
+int BHistograms::getBin(double x, const std::vector<double>& boundaries)
 {
 	int i;
 	int n = boundaries.size()-1;
@@ -234,7 +234,7 @@ int InclusiveBHistograms::getBin(double x, const std::vector<double>& boundaries
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup) 
+void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup) 
 { 
 	for (auto& it_filename : input_file_names_) {
 		TFile *f = TFile::Open(TString(it_filename), "READ");
@@ -416,4 +416,4 @@ void InclusiveBHistograms::analyze(edm::Event const& evt, edm::EventSetup const&
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 
-DEFINE_FWK_MODULE(InclusiveBHistograms);
+DEFINE_FWK_MODULE(BHistograms);

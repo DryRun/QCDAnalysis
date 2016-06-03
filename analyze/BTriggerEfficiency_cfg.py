@@ -136,7 +136,7 @@ event_cuts = cms.VPSet(
 )
 
 ##-------------------- User analyzer  --------------------------------
-process.inclusive    = cms.EDAnalyzer('BTriggerEfficiency',
+process.BHistograms    = cms.EDAnalyzer('BTriggerEfficiency',
 	file_names             = input_files_vstring,
 	tree_name              = cms.string('ak5/ProcessedTree'),
 	trigger_histogram_name = cms.string('ak5/TriggerNames'),
@@ -148,5 +148,5 @@ process.inclusive    = cms.EDAnalyzer('BTriggerEfficiency',
 	event_cuts             = event_cuts,
 )
 
-process.p = cms.Path(process.inclusive)
+process.p = cms.Path(process.BHistograms)
 

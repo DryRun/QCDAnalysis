@@ -86,3 +86,81 @@ files_InclusiveBHistograms["JetHT_tight_2012BCD"] = "/uscms/home/dryu/Dijets/dat
 
 # Figures
 figure_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/"
+
+
+# Analyses
+analyses = {}
+analyses["BJetPlusX_loose"] = {
+	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_loose_cfg.py",
+	"data_samples":["2012A", "2012B", "2012C", "2012D"],
+	"input_txts":{
+		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
+		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
+	},
+	"output_prefix":"BJetPlusX_loose"
+}
+analyses["BJetPlusX_loose_lowmass"] = {
+	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_loose_lowmass_cfg.py",
+	"data_samples":["2012A", "2012B", "2012C", "2012D"],
+	"input_txts":{
+		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
+		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
+	},
+	"output_prefix":"low_mass"
+}
+analyses["JetHT_loose"] = {
+	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_JetHT_loose_cfg.py",
+	"data_samples":["2012B", "2012C", "2012D"],
+	"input_txts":{
+		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
+	},
+	"output_prefix":"JetHT"
+}
+analyses["BJetPlusX_tight"] = {
+	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_tight_cfg.py",
+	"data_samples":["2012A", "2012B", "2012C", "2012D"],
+	"input_txts":{
+		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
+		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
+	},
+	"output_prefix":"BJetPlusX_tight"
+}
+analyses["JetHT_tight"] = {
+	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_JetHT_tight_cfg.py",
+	"data_samples":["2012B", "2012C", "2012D"],
+	"input_txts":{
+		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
+	},
+	"output_prefix":"JetHT_tight"
+}
+analyses["BJetPlusX_medium"] = {
+	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_medium_cfg.py",
+	"data_samples":["2012A", "2012B", "2012C", "2012D"],
+	"input_txts":{
+		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
+		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
+	},
+	"output_prefix":"BJetPlusX_medium"
+}
+analyses["JetHT_medium"] = {
+	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_JetHT_medium_cfg.py",
+	"data_samples":["2012B", "2012C", "2012D"],
+	"input_txts":{
+		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
+	},
+	"output_prefix":"JetHT_medium"
+}

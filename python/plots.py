@@ -395,7 +395,7 @@ if __name__ == "__main__":
 
 
 	#f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root", "READ")
-	f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_tight_2012BCD.root", "READ")
+	f_data = TFile(analysis_config.files_InclusiveBHistograms["BJetPlusX_tight_2012BCD"], "READ")
 
 	signal_mass_points = [500., 750., 1000., 1200.]
 	f_signal = {}
@@ -417,14 +417,14 @@ if __name__ == "__main__":
 
 			signal_histograms = []
 			signal_names = []
-			for signal_mass_point in [500., 750., 1000.]:
-				input_nevents = (f_signal["RSG"][signal_mass_point].Get("inclusive/h_input_nevents")).Integral()
-				signal_histograms.append(f_signal["RSG"][signal_mass_point].Get("inclusive/h_" + jet_type + "_mjj"))
-				signal_histograms[-1].SetDirectory(0)
-				signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
-				signal_histograms[-1].Scale(19700 * signal_cross_sections["RSG"][signal_mass_point] / input_nevents)
-				signal_histograms[-1].Rebin(20)
-				signal_names.append("RSG to bb, m=" + str(int(signal_mass_point)) + " GeV")
+			#for signal_mass_point in [500., 750., 1000.]:
+			#	input_nevents = (f_signal["RSG"][signal_mass_point].Get("inclusive/h_input_nevents")).Integral()
+			#	signal_histograms.append(f_signal["RSG"][signal_mass_point].Get("inclusive/h_" + jet_type + "_mjj"))
+			#	signal_histograms[-1].SetDirectory(0)
+			#	signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
+			#	signal_histograms[-1].Scale(19700 * signal_cross_sections["RSG"][signal_mass_point] / input_nevents)
+			#	signal_histograms[-1].Rebin(20)
+			#	signal_names.append("RSG to bb, m=" + str(int(signal_mass_point)) + " GeV")
 			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[0., 2000.], save_tag=jet_type + "_mjj", log=False, fit_min=fit_minima[jet_type], fit_max=1500., save_file=save_file, blind=(not args.unblind))
 
 			# For more plots, no need to redo fits

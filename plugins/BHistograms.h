@@ -1,5 +1,5 @@
-#ifndef InclusiveBHistograms_h
-#define InclusiveBHistograms_h
+#ifndef BHistograms_h
+#define BHistograms_h
 
 #include "TTree.h"
 #include "TH1F.h"
@@ -23,14 +23,14 @@
 #include "MyTools/AnalysisTools/interface/EventSelector.h"
 #include "MyTools/AnalysisTools/interface/ObjectSelector.h"
 
-class InclusiveBHistograms : public edm::EDAnalyzer
+class BHistograms : public edm::EDAnalyzer
 {
   public:
-	explicit InclusiveBHistograms(edm::ParameterSet const& cfg);
+	explicit BHistograms(edm::ParameterSet const& cfg);
 	virtual void beginJob();
 	virtual void analyze(edm::Event const& evt, edm::EventSetup const& iSetup);
 	virtual void endJob();
-	virtual ~InclusiveBHistograms() {}
+	virtual ~BHistograms() {}
 
   private:  
 	int getBin(double x, const std::vector<double>& boundaries); 

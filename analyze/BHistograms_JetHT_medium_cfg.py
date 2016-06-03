@@ -10,7 +10,7 @@ options.register('inputFiles',
 	"List of input files"
 )
 options.register('outputFile', 
-	'InclusiveBHistograms.root', 
+	'BHistograms_JetHT_medium.root', 
 	VarParsing.VarParsing.multiplicity.singleton,
 	VarParsing.VarParsing.varType.string,
 	"Output file"
@@ -36,11 +36,11 @@ options.register('signalMass',
 options.parseArguments()
 
 if options.dataSource != "collision_data" and options.dataSource != "simulation":
-	print "[InclusiveBHistograms] ERROR : dataSource must be collision_data or simulation"
+	print "[BHistograms_JetHT_medium] ERROR : dataSource must be collision_data or simulation"
 	sys.exit(1)
 
 if not options.dataType in ["data", "signal", "background"]:
-	print "[InclusiveBHistograms] ERROR : dataType must be data, signal, or background"
+	print "[BHistograms_JetHT_medium] ERROR : dataType must be data, signal, or background"
 	sys.exit(1)
 
 process = cms.Process("myprocess")
@@ -77,7 +77,7 @@ dijet_cuts = cms.VPSet(
 	),
 	cms.PSet(
 		name = cms.string("MinBTagWeight"),
-		parameters = cms.vdouble(0.898),
+		parameters = cms.vdouble(0.679),
 		descriptors = cms.vstring("csv")
 	)
 )
@@ -146,7 +146,7 @@ event_cuts = cms.VPSet(
 )
 
 ##-------------------- User analyzer  --------------------------------
-process.inclusive    = cms.EDAnalyzer('InclusiveBHistograms',
+process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	file_names             = cms.vstring(options.inputFiles),
 	tree_name              = cms.string('ak5/ProcessedTree'),
 	trigger_histogram_name = cms.string('ak5/TriggerNames'),
@@ -162,5 +162,5 @@ process.inclusive    = cms.EDAnalyzer('InclusiveBHistograms',
 	event_cuts             = event_cuts,
 )
 
-process.p = cms.Path(process.inclusive)
+process.p = cms.Path(process.BHistograms)
 
