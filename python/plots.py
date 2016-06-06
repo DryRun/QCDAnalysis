@@ -15,6 +15,14 @@ import CMSDIJET.QCDAnalysis.simulation_config
 from CMSDIJET.QCDAnalysis.simulation_config import *
 import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 
+def Blind(hist, center=750., half_width=75.):
+	hist_blind = hist.Clone()
+	for bin in xrange(1, hist_blind.GetNbinsX() + 1):
+		if TMath.Abs(hist_blind.GetBinCenter(bin) - center) < half_width:
+			hist_blind.SetBinContent(bin, 0.)
+			hist_blind.SetBinError(bin, 0.)
+	return hist_blind
+
 def MakeMjjPlot(data_hist, cached_fit_results=None, signal_histograms=None, signal_names=None, save_tag="c_mjj", x_range=None, log=False, fit_min=500., fit_max=1500., save_file=None, blind=True):
 	print "[MakeMjjPlot] INFO : Welcome to MakeMjjPlot with save_tag=" + save_tag
 
@@ -382,6 +390,97 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 
 	c.SaveAs(analysis_config.figure_directory + "/" + save_tag + ".pdf")
 
+def BTagWPPlot(mjj_histograms, denominator_name, save_tag, x_range=None, log=False):
+	print "Welcome to BTagWPPlot"
+
+	if x_range:
+		x_min = x_range[0]
+		x_max = x_range[1]
+	else:
+		x_min = mjj_histograms[denominator_name].GetXaxis().GetXmin()
+		x_max = mjj_histograms[denominator_name].GetXaxis().GetXmax()
+
+	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
+	l = TLegend(0.55, 0.6, 0.88, 0.88)
+	l.SetFillColor(0)
+	l.SetBorderSize(0)
+	top = TPad("top", "top", 0., 0.5, 1., 1.)
+	top.SetBottomMargin(0.03)
+	top.Draw()
+	if log:
+		top.SetLogy()
+	c.cd()
+	bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
+	bottom.SetTopMargin(0.02)
+	bottom.SetBottomMargin(0.2)
+	bottom.Draw()
+	ROOT.SetOwnership(c, False)
+	ROOT.SetOwnership(top, False)
+	ROOT.SetOwnership(bottom, False)
+
+	top.cd()
+
+	frame_top = TH1D("frame_top", "frame_top", 100, x_min, x_max)
+	frame_top.GetXaxis().SetTitleSize(0)
+	frame_top.GetXaxis().SetLabelSize(0)
+	frame_top.GetYaxis().SetLabelSize(0.04)
+	frame_top.GetYaxis().SetTitleSize(0.04)
+	#frame_top.GetYaxis().SetTitleOffset(0.85)
+	bin_width = mjj_histograms[denominator_name].GetXaxis().GetBinWidth(1)
+	frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
+	if log:
+		frame_top.SetMaximum(mjj_histograms[denominator_name].GetMaximum() * 5.)
+		frame_top.SetMinimum(0.5)
+	else:
+		frame_top.SetMaximum(mjj_histograms[denominator_name].GetMaximum() * 1.7)
+	frame_top.Draw("axis")
+
+	style_counter = 0
+	styles = {}
+	for name, hist in mjj_histograms.iteritems():
+		styles[name] = style_counter
+		hist.SetMarkerStyle(20 + style_counter)
+		hist.SetMarkerColor(seaborn.GetColorRoot("dark", style_counter))
+		hist.SetLineColor(seaborn.GetColorRoot("dark", style_counter))
+		hist.SetMarkerSize(1)
+		hist.Draw("p e1 same")
+		l.AddEntry(hist, name, "pl")
+		style_counter += 1
+	l.Draw()
+
+	c.cd()
+	bottom.cd()
+	bottom.SetLogy()
+	# Make frame
+	frame_bottom = TH1D("frame_bottom", "frame_bottom", 100, x_min, x_max)
+	frame_bottom.SetMinimum(1.e-3)
+	frame_bottom.SetMaximum(1.5)
+	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+	frame_bottom.GetYaxis().SetTitle("WP / " + denominator_name)
+
+	frame_bottom.GetXaxis().SetLabelSize(0.04)
+	frame_bottom.GetXaxis().SetTitleSize(0.06)
+	frame_bottom.GetXaxis().SetLabelOffset(0.01)
+	frame_bottom.GetXaxis().SetTitleOffset(1.1)
+
+	frame_bottom.GetYaxis().SetLabelSize(0.04)
+	frame_bottom.GetYaxis().SetTitleSize(0.04)
+	frame_bottom.GetYaxis().SetTitleOffset(0.85)
+
+	frame_bottom.Draw("axis")
+
+	# Make and draw ratio histograms
+	ratio_hists = {}
+	for name, hist in mjj_histograms.iteritems():
+		ratio_hists[name] = hist.Clone()
+		ratio_hists[name].SetName(name + "_ratio")
+		ratio_hists[name].Divide(ratio_hists[name], mjj_histograms[denominator_name], 1, 1, "B")
+		ratio_hists[name].SetMarkerStyle(20 + styles[name])
+		ratio_hists[name].SetMarkerColor(seaborn.GetColorRoot("dark", styles[name]))
+		ratio_hists[name].SetLineColor(seaborn.GetColorRoot("dark", styles[name]))
+		ratio_hists[name].Draw("p same")
+
+	c.SaveAs(analysis_config.figure_directory + "/" + save_tag + ".pdf")
 
 if __name__ == "__main__":
 	import argparse
@@ -391,6 +490,7 @@ if __name__ == "__main__":
 	parser.add_argument('--peaks', action='store_true', help='Make signal peak plots')
 	parser.add_argument('--unblind', action='store_true', help='Unblind 750 region')
 	parser.add_argument('--jetht', action='store_true', help='BJetPlusX over JetHT plot')
+	parser.add_argument('--btwp', action='store_true', help='Plot comparing B tagging working points')
 	args = parser.parse_args()
 
 
@@ -545,3 +645,23 @@ if __name__ == "__main__":
 		JetHTComparisonPlot(hist_fatjet_bjetplusx_tight, hist_fatjet_jetht_tight, "BJetPlusX_over_JetHT_fatjet_tight", log=True, x_range=[500., 3000.])
 		f_bjetplusx_tight.Close()
 		f_jetht_tight.Close()
+
+	if args.btwp:
+		wps = ["tight", "medium", "loose"]
+		hists = {}
+		for wp in wps:
+			if wp == "loose":
+				f = TFile("InclusiveBHistograms_2012.root", "READ")
+				h = f.Get("inclusive/h_pfjet_mjj")
+			else:
+				f = TFile("BJetPlusX_" + wp + "_2012.root", "READ")
+				h = f.Get("BHistograms/h_pfjet_mjj")
+			if not h:
+				print "Couldn't find BHistograms/h_pfjet_mjj for wp " + wp
+				sys.exit(1)
+			h.Rebin(20)
+			hists[wp] = Blind(h)
+			hists[wp].SetName(hists[wp].GetName() + "_" + wp)
+			hists[wp].SetDirectory(0)
+			f.Close()
+		BTagWPPlot(hists, "loose", "btwp", log=True, x_range=[0., 3000.])
