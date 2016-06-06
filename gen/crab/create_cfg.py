@@ -63,7 +63,7 @@ def create_GENSIM_crab(model, mass, unitsPerJob, totalUnits, version=''):
         elif 'totalUnits' in line:
             fout.write(line.rstrip('\n')+' '+str(totalUnits)+'\n')
         elif 'outputPrimaryDataset' in line:
-            fout.write(line.rstrip('\n')+' \''+(model.replace('_X_', '_'+str(mass)+'_'))+'\'\n')
+            fout.write(line.rstrip('\n')+' \''+get_dataset_name_pieces(model, mass, "GEN-SIM")[0]+'\'\n')
         elif 'outputDatasetTag' in line:
             fout.write(line.rstrip('\'\n')+"_v" + version+'\'\n')
         else:
