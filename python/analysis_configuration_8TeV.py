@@ -14,25 +14,30 @@ for signal_model in signal_models:
 		signal_samples[signal_model].append(signal_sample_namestrings[signal_model].replace("@MASS@", str(signal_mass)))
 		signal_sample_masses[signal_sample_namestrings[signal_model].replace("@MASS@", str(signal_mass))] = signal_mass
 
-# Skimmed trees
-# - Data files are stored in .txt files (they have thousands of files)
-files_QCDBEventTree = {}
-file_lists_QCDBEventTree = {
-	"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
-	"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-	"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-	"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt",
-	"2012B_JetHT":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012B_v1_4_1.txt",
-	"2012C_JetHT":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012C_v1_4_1.txt",
-	"2012D_JetHT":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012D_v1_4_1.txt"
-}
-for sample_name, sample_file_list in file_lists_QCDBEventTree.iteritems():
-	f = open(sample_file_list, 'r')
-	files_QCDBEventTree[sample_name] = []
-	for line in f:
-		files_QCDBEventTree[sample_name].append(line.rstrip())
+# Data samples
+data_samples = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D", "JetHT_2012B", "JetHT_2012C", "JetHT_2012D"]
+data_supersamples = {}
+data_supersamples["BJetPlusX_2012"] = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D"]
+data_supersamples["BJetPlusX_2012BCD"] = ["BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D"]
+data_supersamples["JetHT_2012BCD"] = ["JetHT_2012B", "JetHT_2012C", "JetHT_2012D"]
 
-# - Skimmed MC trees
+# Skimmed trees
+# - Data files are stored in .txt files (they have thousands of files, and reside on EOS)
+files_QCDBEventTree = {
+	"MultiJet_2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
+	"BJetPlusX_2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
+	"BJetPlusX_2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
+	"BJetPlusX_2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt",
+	"JetHT_2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012B_v1_4_1.txt",
+	"JetHT_2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012C_v1_4_1.txt",
+	"JetHT_2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012D_v1_4_1.txt"
+}
+#for sample_name, sample_file_list in file_lists_QCDBEventTree.iteritems():
+#	f = open(sample_file_list, 'r')
+#	files_QCDBEventTree[sample_name] = []
+#	for line in f:
+#		files_QCDBEventTree[sample_name].append(line.rstrip())
+# - MC files: only 1 per sample, so no need for .txt files
 files_QCDBEventTree["RSGravitonToBBbar_M_200_TuneZ2star_8TeV_pythia6_FASTSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/RSGravitonToBBbar_M_200_TuneZ2star_8TeV_pythia6_FASTSIM_AODSIM_QCDBEventTree.root"
 files_QCDBEventTree["RSGravitonToBBbar_M_250_TuneZ2star_8TeV_pythia6_FASTSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/RSGravitonToBBbar_M_250_TuneZ2star_8TeV_pythia6_FASTSIM_AODSIM_QCDBEventTree.root"
 files_QCDBEventTree["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia6_FASTSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia6_FASTSIM_AODSIM_QCDBEventTree.root"
@@ -76,91 +81,29 @@ files_QCDBEventTree["ZprimeToBB_M_1100_TuneD6T_8TeV_pythia6_FASTSIM"] = "/uscms/
 files_QCDBEventTree["ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6_FASTSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6_FASTSIM_QCDBEventTree.root"
 files_QCDBEventTree["ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6_FASTSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6_FASTSIM_QCDBEventTree.root"
 
-# Results files (from InclusiveBHistograms)
-files_InclusiveBHistograms = {}
-files_InclusiveBHistograms["BJetPlusX_2012"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root"
-files_InclusiveBHistograms["BJetPlusX_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_2012BCD.root"
-files_InclusiveBHistograms["JetHT_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_JetHT_2012BCD.root"
-files_InclusiveBHistograms["BJetPlusX_tight_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_tight_2012BCD.root"
-files_InclusiveBHistograms["JetHT_tight_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_JetHT_tight_2012BCD.root"
+# Histogram files
+b_histogram_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms"
+def get_b_histogram_filename(analysis, sample):
+	return b_histogram_directory + "/BHistograms_" + analysis + "_" + sample + ".root"
+#files_BHistograms = {}
+#files_BHistograms["BJetPlusX_2012"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root"
+#files_BHistograms["BJetPlusX_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_2012BCD.root"
+#files_BHistograms["JetHT_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_JetHT_2012BCD.root"
+#files_BHistograms["InclusiveBHistograms_BJetPlusX_tight_2012BCDCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_BJetPlusX_tight_2012BCD.root"
+#files_BHistograms["JetHT_tight_2012BCD"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_JetHT_tight_2012BCD.root"
 
 # Figures
 figure_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/"
 
 
 # Analyses
-analyses = {}
-analyses["BJetPlusX_loose"] = {
-	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_loose_cfg.py",
-	"data_samples":["2012A", "2012B", "2012C", "2012D"],
-	"input_txts":{
-		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
-		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
-	},
-	"output_prefix":"BJetPlusX_loose"
-}
-analyses["BJetPlusX_loose_lowmass"] = {
-	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_loose_lowmass_cfg.py",
-	"data_samples":["2012A", "2012B", "2012C", "2012D"],
-	"input_txts":{
-		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
-		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
-	},
-	"output_prefix":"low_mass"
-}
-analyses["JetHT_loose"] = {
-	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_JetHT_loose_cfg.py",
-	"data_samples":["2012B", "2012C", "2012D"],
-	"input_txts":{
-		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
-	},
-	"output_prefix":"JetHT"
-}
-analyses["BJetPlusX_tight"] = {
-	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_tight_cfg.py",
-	"data_samples":["2012A", "2012B", "2012C", "2012D"],
-	"input_txts":{
-		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
-		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
-	},
-	"output_prefix":"BJetPlusX_tight"
-}
-analyses["JetHT_tight"] = {
-	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_JetHT_tight_cfg.py",
-	"data_samples":["2012B", "2012C", "2012D"],
-	"input_txts":{
-		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
-	},
-	"output_prefix":"JetHT_tight"
-}
-analyses["BJetPlusX_medium"] = {
-	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_BJetPlusX_medium_cfg.py",
-	"data_samples":["2012A", "2012B", "2012C", "2012D"],
-	"input_txts":{
-		"2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_MultiJet_Run2012A_v1_4.txt",
-		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
-	},
-	"output_prefix":"BJetPlusX_medium"
-}
-analyses["JetHT_medium"] = {
-	"cfg_file":"/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_JetHT_medium_cfg.py",
-	"data_samples":["2012B", "2012C", "2012D"],
-	"input_txts":{
-		"2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012B_v1_4.txt",
-		"2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012C_v1_4.txt",
-		"2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_BJetPlusX_Run2012D_v1_4.txt"
-	},
-	"output_prefix":"JetHT_medium"
-}
+analysis_cfgs = {}
+analysis_cfgs["trigbbh_CSVL"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVL_cfg.py"
+analysis_cfgs["trigbbh_CSVM"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVM_cfg.py"
+analysis_cfgs["trigbbh_CSVT"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVT_cfg.py"
+analysis_cfgs["trigbbl_CSVL"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVL_cfg.py"
+analysis_cfgs["trigbbl_CSVM"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVM_cfg.py"
+analysis_cfgs["trigbbl_CSVT"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVT_cfg.py"
+analysis_cfgs["trigjetht_CSVL"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVL_cfg.py"
+analysis_cfgs["trigjetht_CSVM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVM_cfg.py"
+analysis_cfgs["trigjetht_CSVT"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVT_cfg.py"
