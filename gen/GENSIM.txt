@@ -45,7 +45,7 @@ RSGravitonToBBbar_750_v1_2 : /RSGravitonToBBbar/dryu-GEN-SIM_v1_2-beb3715d1689fb
 
 RSGravitonToBBbar_900_v1_2 : /RSGravitonToBBbar/dryu-GEN-SIM_v1_2-3e41a852e6bf8357e98e3479bcbd7f9c/USER'
 
-
+RSGravitonToBBbar_300_v1_2 : /RSGravitonToBBbar/dryu-GEN-SIM_v1_2-8dbdf10cf61968bfa85a0639a5c60768/USER
 RSGravitonToBBbar_1200_v1_2 : /RSGravitonToBBbar/dryu-GEN-SIM_v1_2-1f395c9a7e12a67c220e875104d5ee2a/USER'
 
 
