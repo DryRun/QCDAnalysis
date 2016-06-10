@@ -22,6 +22,19 @@ def get_dataset_name_pieces(model, mass, stage):
 def get_dataset_name(model, mass, stage):
     return "/" + "/".join(get_dataset_name_pieces(model, mass, "DR1")) + "/"
 
+actual_gensim_names = {
+    'RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-GEN-SIM_v1_2-8dbdf10cf61968bfa85a0639a5c60768/USER',
+    'RSGravitonToBBbar_kMpl01_M_600_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-GEN-SIM_v1_2-ba5eda0a5b5bcffc961896fda771deb1/USER',
+    'RSGravitonToBBbar_kMpl01_M_750_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-GEN-SIM_v1_2-beb3715d1689fb19768ecc1c5fdbe115/USER',
+    'RSGravitonToBBbar_kMpl01_M_900_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-GEN-SIM_v1_2-3e41a852e6bf8357e98e3479bcbd7f9c/USER',
+    'RSGravitonToBBbar_kMpl01_M_1200_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-GEN-SIM_v1_2-1f395c9a7e12a67c220e875104d5ee2a/USER',
+    'GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-83af25be40b86c943b5afca6bd8bb5e4/USER',
+    'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-e0d918201161801092957f0f2442e35d/USER',
+    'GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-9c1065b7a8ac99cb5a10424c07d5f182/USER',
+    'GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-bf8f96f66e8acaa508f5131e44fbc297/USER',
+    'GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_1-76ca9f00fbd35571059515ca22287825/USER'
+}
+
 def get_CFI_path(model, mass):
     return "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/" + get_dataset_name_pieces(model, mass, "NULL")[0] + "_cfi.py" 
 
@@ -132,7 +145,8 @@ def submit_DR1_crab(model, mass, submit=False):
 
 def sequence_DR1(model, mass,version='',submit=False):
     create_DR1_cfg(model, mass)
-    create_DR1_crab(model, mass, get_dataset_name(model, mass, "DR1"), version)
+    input_dataset = actual_gensim_names[get_dataset_name_pieces(model, mass, "DR1")[0]]
+    create_DR1_crab(model, mass, input_dataset, version)
     submit_DR1_crab(model, mass, submit)
 
 #################################

@@ -61,3 +61,5 @@ GluGluSpin0ToBBbar_900_v1_2 : /GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-9c1065b7a8ac
 GluGluSpin0ToBBbar_600_v1_2 : /GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-bf8f96f66e8acaa508f5131e44fbc297/USER'
 
 
+GluGluSpin0ToBBbar_750_v1_1 	/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_1-76ca9f00fbd35571059515ca22287825/USER 	 /store/user/dryu/GluGluSpin0ToBBbar/GEN-SIM_v1_1/160527_130752
+
