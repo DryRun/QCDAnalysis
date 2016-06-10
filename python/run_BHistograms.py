@@ -85,7 +85,7 @@ def RunSignal(analysis, samples):
 		command += " --run /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
 		command += " dataSource=simulation "
 		command += " dataType=signal "
-		command += " signalMass=" + str(sample_masses[sample]) + " "
+		command += " signalMass=" + str(analysis_config.signal_sample_masses[sample]) + " "
 		#command += "inputFiles=" + os.path.basename(input_files[sample])
 		command += " outputFile=" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample))
 		#print command
