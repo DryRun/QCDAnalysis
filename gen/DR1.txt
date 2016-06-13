@@ -1,0 +1,87 @@
+dryu_crab_dr1_RSGravitonToBBbar_1200_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_RSGravitonToBBbar_900_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_RSGravitonToBBbar_750_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+ (not done)
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_1200_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_600_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_RSGravitonToBBbar_600_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_300_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+(needs resubmit)
+
+dryu_crab_dr1_RSGravitonToBBbar_300_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+(needs resubmit)
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_900_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_750_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+(needs resubmit)
+
+
+Submission:
+crab submit -c crab_DR2_GluGluSpin0ToBBbar_600_cfg.py
+crab submit -c crab_DR2_GluGluSpin0ToBBbar_900_cfg.py
+crab submit -c crab_DR2_GluGluSpin0ToBBbar_1200_cfg.py
+crab submit -c crab_DR2_RSGravitonToBBbar_600_cfg.py
+crab submit -c crab_DR2_RSGravitonToBBbar_900_cfg.py
+crab submit -c crab_DR2_RSGravitonToBBbar_1200_cfg.py
+crab submit -c crab_DR2_GluGluSpin0ToBBbar_300_cfg.py
+crab submit -c crab_DR2_RSGravitonToBBbar_300_cfg.py
+
+Not available yet:
+crab submit -c crab_DR2_RSGravitonToBBbar_750_cfg.py
+crab submit -c crab_DR2_GluGluSpin0ToBBbar_750_cfg.py
+
+
+dryu_crab_dr1_RSGravitonToBBbar_1200_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_RSGravitonToBBbar_900_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_RSGravitonToBBbar_750_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+ (not done)
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_1200_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_600_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_RSGravitonToBBbar_600_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_300_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+(needs resubmit)
+
+dryu_crab_dr1_RSGravitonToBBbar_300_v1_2
+/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+(needs resubmit)
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_900_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+
+dryu_crab_dr1_GluGluSpin0ToBBbar_750_v1_2
+/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER
+
+(needs resubmit)
