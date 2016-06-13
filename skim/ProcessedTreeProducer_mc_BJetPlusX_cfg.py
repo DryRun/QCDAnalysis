@@ -29,7 +29,7 @@ options.register('globalTag',
 )
 
 # Dataset.
-options.register('dataset',
+options.register('inputFiles',
     '/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM', 
     VarParsing.VarParsing.multiplicity.singleton,
     VarParsing.VarParsing.varType.string,
@@ -74,11 +74,11 @@ process.maxEvents = cms.untracked.PSet(
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 #############   Define the source file ###############
 
-if "file:" in options.dataset or "/store" in options.dataset:
-    input_file_vstring = cms.untracked.vstring(options.dataset)
-elif options.dataset == "/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM":
+if "file:" in options.inputFiles or "/store" in options.inputFiles:
+    input_file_vstring = cms.untracked.vstring(options.inputFiles)
+elif options.inputFiles == "/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM":
     input_file_vstring = cms.untracked.vstring('/store/mc/Summer12_DR53X/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v2/00000/00BA1E5C-2008-E211-9F96-002618943951.root')
-elif options.dataset == "/RSGravitonToBBbar_M-700_TuneZ2star_8TeV-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM":
+elif options.inputFiles == "/RSGravitonToBBbar_M-700_TuneZ2star_8TeV-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM":
     input_file_vstring = cms.untracked.vstring('/store/mc/Summer12_DR53X/RSGravitonToBBbar_M-700_TuneZ2star_8TeV-pythia6/AODSIM/PU_S10_START53_V7A-v1/00000/86359ACA-8110-E211-B7C5-BCAEC50971E3.root')
 else:
     print "Unknown input dataset"

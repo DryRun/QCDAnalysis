@@ -10,14 +10,13 @@ import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 # RunData
 # - Input files are on EOS, so you can't do the normal files-per-job mechanism (this cp's the files to the worker node, which is bad for EOS). 
 # - Instead, do the subjobbing manually. 
-def RunData(analysis, sample, files_per_job=200):
+def RunBHistograms(analysis, sample, files_per_job=200, retar=False):
 	# Create working directory and cd
 	start_directory = os.getcwd()
 	working_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
 	os.system("mkdir -pv " + working_directory)
 	os.chdir(working_directory)
 
-	first = True
 	# Build file list 
 	file_list_handle = file(analysis_config.files_QCDBEventTree[sample], 'r')
 	file_list = file_list_handle.readlines()
@@ -33,8 +32,7 @@ def RunData(analysis, sample, files_per_job=200):
 		if len(this_job_files) < 1:
 			continue
 		command = "condor_cmsRun"
-		if first:
-			first = False
+		if retar:
 			command += " --retar "
 		command += " --submit-file=submit_" + analysis + "_" + sample + ".subjob" + str(subjob_index) + ".jdl "
 		command += " --output-tag=BHistograms_" + sample + ".subjob" + str(subjob_index) + " "
@@ -110,17 +108,18 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	if analysis_config.data_supersamples.has_key(args.sample):
-		for sample in analysis_config.data_supersamples[args.sample]:
-			RunData(args.analysis, sample)
+		samples = analysis_config.data_supersamples[args.sample]
 	elif args.sample in analysis_config.data_samples:
-		RunData(args.analysis, sample)
+		samples = [args.sample]
+	elif args.sample in analysis_config.signal_models:
+		samples = analysis_config.signal_samples[args.sample]
 	else:
-		# Signal job
-		if args.sample in analysis_config.signal_models:
-			# All signal samples corresponding to the specified model
-			signal_samples = analysis_config.signal_samples[args.sample]
-		else:
-			# Single signal sample
-			signal_samples = [args.sample]
-		RunSignal(args.analysis, signal_samples)
+		samples = [args.sample]
 
+	first = True
+	for sample in samples:
+		if first:
+			RunBHistograms(args.analysis, sample, retar=True)
+			first = False
+		else:
+			RunBHistograms(args.analysis, sample, retar=False)

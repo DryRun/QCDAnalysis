@@ -31,6 +31,9 @@ files_QCDBEventTree = {
 	"JetHT_2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012B_v1_4_1.txt",
 	"JetHT_2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012C_v1_4_1.txt",
 	"JetHT_2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012D_v1_4_1.txt"
+
+	# Signal MC
+	#"RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/hoem/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/"
 }
 #for sample_name, sample_file_list in file_lists_QCDBEventTree.iteritems():
 #	f = open(sample_file_list, 'r')

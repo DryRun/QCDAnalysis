@@ -3,7 +3,8 @@ simulation_types = ["FASTSIM", "FULLSIM"]
 
 mass_points = {}
 mass_points["FASTSIM"] = range(200, 1250, 50)
-mass_points["FULLSIM"] = [300, 750, 1000]
+#mass_points["FULLSIM"] = [300, 600, 750, 900, 1200]
+mass_points["FULLSIM"] = [600,  900, 1200]
 
 models = ["Hbb", "RSG", "Zprime"]
 cff_templates = {}
@@ -26,8 +27,9 @@ def GetConfigPath(p_model, p_mass_point, p_stage, p_simtype):
 	return cfg_files[p_model].replace("@MASS@", str(p_mass_point)).replace("@STAGE@", p_stage).replace("@SIMTYPE@", p_simtype)
 
 output_tags = {}
-output_tags["Hbb"] = "HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@"
-output_tags["RSG"] = "RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_@SIMTYPE@"
+#output_tags["Hbb"] = "HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@"
+output_tags["Hbb"] = "GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_@SIMTYPE@"
+output_tags["RSG"] = "RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_@SIMTYPE@"
 output_tags["Zprime"] = "ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@"
 def GetOutputTag(p_model, p_mass_point, p_simtype):
 	return output_tags[p_model].replace("@MASS@", str(p_mass_point)).replace("@SIMTYPE@", p_simtype)
@@ -40,6 +42,7 @@ submission_jdl_files["Zprime"] = "ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMT
 def GetSubmissionJDLFile(p_model, p_mass_point, p_stage, p_simtype):
 	return submission_jdl_files[p_model].replace("@MASS@", str(p_mass_point)).replace("@STAGE@", p_stage).replace("@SIMTYPE@", p_simtype)
 
+# Location of locally generated stuff on EOS
 eos_folder = "root://cmseos.fnal.gov//store/user/dryu/"
 eos_aods = {}
 eos_aods["Hbb"] = eos_folder + "EightTeeEeVeeBee/Simulation/@SIMTYPE@/HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@_@STAGE@.root" # @STAGE@ = FASTSIM, GENSIM, REDIGI, RECO
@@ -47,6 +50,19 @@ eos_aods["RSG"] = eos_folder + "EightTeeEeVeeBee/Simulation/@SIMTYPE@/RSGraviton
 eos_aods["Zprime"] = eos_folder + "EightTeeEeVeeBee/Simulation/@SIMTYPE@/ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@_@STAGE@.root" # @STAGE@ = FASTSIM, GENSIM, REDIGI, RECO
 def GetEOSLocation(p_model, p_mass_point, p_stage, p_simtype):
 	return eos_aods[p_model].replace("@MASS@", str(p_mass_point)).replace("@STAGE@", p_stage).replace("@SIMTYPE@", p_simtype)
+
+# Text files listing the bulk private MC production
+private_mc_file_lists = {}
+private_mc_file_lists["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_300_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_600_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_750_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_900_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_1200_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_300_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_600_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_750_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_900_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_1200_v1_2.txt"
 
 signal_cross_sections = {}
 signal_cross_sections["RSGravitonToBBbar_M_200_TuneZ2star_8TeV_pythia6"] = 9.287e-07 * 10**9 # Taken from FASTSIM generation logs, 5000 events

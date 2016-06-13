@@ -35,6 +35,19 @@ actual_gensim_names = {
     'GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_1-76ca9f00fbd35571059515ca22287825/USER'
 }
 
+actual_dr1_names = {
+    'RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'RSGravitonToBBbar_kMpl01_M_600_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'RSGravitonToBBbar_kMpl01_M_750_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'RSGravitonToBBbar_kMpl01_M_900_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'RSGravitonToBBbar_kMpl01_M_1200_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER', 
+    'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+    'GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-DIGI-RECO-1_v1_2-e55af98865f2d4f941410801f4f54826/USER',
+}
+
 def get_CFI_path(model, mass):
     return "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/" + get_dataset_name_pieces(model, mass, "NULL")[0] + "_cfi.py" 
 
@@ -189,7 +202,8 @@ def submit_DR2_crab(model, mass, submit=False):
 
 def sequence_DR2(model, mass,version='', submit=False):
     create_DR2_cfg(model, mass)
-    create_DR2_crab(model, mass, get_dataset_name(model, mass, "DR2"), version )
+    input_dataset = actual_dr1_names[get_dataset_name_pieces(model, mass, "DR1")[0]]
+    create_DR2_crab(model, mass, input_dataset, version )
     submit_DR2_crab(model, mass, submit)
 
 #################################
