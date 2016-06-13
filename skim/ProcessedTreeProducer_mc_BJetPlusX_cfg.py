@@ -31,7 +31,7 @@ options.register('globalTag',
 # Dataset.
 options.register('inputFiles',
     '/QCD_Pt-600to800_TuneZ2star_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM', 
-    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.multiplicity.list,
     VarParsing.VarParsing.varType.string,
     "Global Tag"
 )
