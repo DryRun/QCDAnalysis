@@ -22,6 +22,26 @@ ls GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160612_000246/0000/*root* >& GluGluSpin0T
 '/store/user/dryu/GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160612_000246/0000/DIGI-RECO_5.root'
 '160612_000246:dryu_crab_dr2_GluGluSpin0ToBBbar_600_v1_2'
 
+ls GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160612_164024/0000/*root* >& GluGluSpin0ToBBbar_300_v1_2.txt
+/store/user/dryu/GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160612_164024/0000/DIGI-RECO_2.root
+160612_164024:dryu_crab_dr2_GluGluSpin0ToBBbar_300_v1_2
+
+
+ls RSGravitonToBBbar/DIGI-RECO-2_v1_2/160612_164052/0000/D*root* >& RSGravitonToBBbar_300_v1_2.txt
+/store/user/dryu/RSGravitonToBBbar/DIGI-RECO-2_v1_2/160612_164052/0000/DIGI-RECO_2.root
+160612_164052:dryu_crab_dr2_RSGravitonToBBbar_300_v1_2
+
+
+ls GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160614_090713/0000/*root* >& GluGluSpin0ToBBbar_750_v1_2.txt
+/store/user/dryu/GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160614_090713/0000/DIGI-RECO_7.root
+160614_090713:dryu_crab_dr2_GluGluSpin0ToBBbar_750_v1_2
+
+
+ls RSGravitonToBBbar/DIGI-RECO-2_v1_2/160614_090636/0000/D*root* >& RSGravitonToBBbar_750_v1_2.txt
+/store/user/dryu/RSGravitonToBBbar/DIGI-RECO-2_v1_2/160614_090636/0000/DIGI-RECO_10.root
+160614_090636:dryu_crab_dr2_RSGravitonToBBbar_750_v1_2
+
+
 
 -rw-r--r-- 2 dryu us_cms 2.0M Jun 11 19:47 GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160612_000319/0000/DIGI-RECO_inDQM_44.root
 -rw-r--r-- 2 dryu us_cms  62M Jun 11 19:47 GluGluSpin0ToBBbar/DIGI-RECO-2_v1_2/160612_000319/0000/DIGI-RECO_44.root

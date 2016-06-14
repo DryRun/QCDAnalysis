@@ -485,6 +485,9 @@ def BTagWPPlot(mjj_histograms, denominator_name, save_tag, x_range=None, log=Fal
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Dijet mass spectrum fits')
+	parser.add_argument('--analyses', type=str, required=True, help='Analyses to plot')
+	parser.add_argument('--data_samples', type=str, required=True, help='Samples to plot')
+	parser.add_argument('--signal_samples', type=str, required=True, help='Samples to plot')
 	parser.add_argument('--mjj', action='store_true', help='Make mjj plot with fits')
 	parser.add_argument('--nmo', action='store_true', help='Make N-1 plots')
 	parser.add_argument('--peaks', action='store_true', help='Make signal peak plots')
@@ -492,6 +495,12 @@ if __name__ == "__main__":
 	parser.add_argument('--jetht', action='store_true', help='BJetPlusX over JetHT plot')
 	parser.add_argument('--btwp', action='store_true', help='Plot comparing B tagging working points')
 	args = parser.parse_args()
+
+	analyses = args.analyses.split(",")
+	samples = args.samples.split(",")
+
+	#for analysis in analyses:
+	#	for sample in data_samples:
 
 
 	#f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root", "READ")
