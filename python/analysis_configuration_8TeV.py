@@ -1,20 +1,7 @@
-# Signal samples
-signal_models = ["RSG", "Hbb"] # Zprime
-#signal_masses = [300, 600, 750, 900, 1200]
-#signal_masses = [600, 900, 1200]
-signal_masses = [300]
-signal_samples = {}
-signal_sample_masses = {}
-signal_sample_namestrings = {
-	"RSG":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_FULLSIM",
-	#"Zprime":"ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_FULLSIM",
-	"Hbb":"GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FULLSIM"
-}
-for signal_model in signal_models:
-	signal_samples[signal_model] = []
-	for signal_mass in signal_masses:
-		signal_samples[signal_model].append(signal_sample_namestrings[signal_model].replace("@MASS@", str(signal_mass)))
-		signal_sample_masses[signal_sample_namestrings[signal_model].replace("@MASS@", str(signal_mass))] = signal_mass
+import sys
+sys.path.append("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/python/CMSDIJET/QCDAnalysis")
+import simulation_configuration_8TeV as simulation
+
 
 # Data samples
 data_samples = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D", "JetHT_2012B", "JetHT_2012C", "JetHT_2012D"]
@@ -119,3 +106,15 @@ analysis_cfgs["trigbbl_CSVT"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/s
 analysis_cfgs["trigjetht_CSVL"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVL_cfg.py"
 analysis_cfgs["trigjetht_CSVM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVM_cfg.py"
 analysis_cfgs["trigjetht_CSVT"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVT_cfg.py"
+
+# Limit setting paths
+limit_paths = {}
+limit_paths["limits"] = "/uscms_data/d1/dryu/Dijets/EightTeeEeVeeBee/Results/Limits/"
+limit_paths["datacards"] = paths["limits"] + "/datacards/"
+limit_paths["workspaces"] = paths["limits"] + "/workspaces/"
+limit_paths["condor"] = paths["limits"] + "/condor/"
+limit_paths["resonance_shapes"] = "/uscms_data/d1/dryu/Dijets/EightTeeEeVeeBee/Results/ResonanceShapes/"
+
+# Get the path to a workspace. 
+def get_workspace_filename(analysis_name, model):
+	return limit_paths["workspaces"] + "/workspace_" + analysis_name + "_" + model + ".root"

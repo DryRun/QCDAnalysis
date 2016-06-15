@@ -1,30 +1,8 @@
-# Naming schemes
-simulation_types = ["FASTSIM", "FULLSIM"]
-
-mass_points = {}
-mass_points["FASTSIM"] = range(200, 1250, 50)
-#mass_points["FULLSIM"] = [300, 600, 750, 900, 1200]
-mass_points["FULLSIM"] = [600,  900, 1200]
-
-models = ["Hbb", "RSG", "Zprime"]
-cff_templates = {}
-cff_templates["Hbb"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/HERWIGPP_POWHEG_GluonFusion_HX_bbbar_8TeV_cff.py.template"
-cff_templates["RSG"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/RSGravitonToBBbar_M_X_TuneZ2star_8TeV_pythia6_cff.py.template"
-cff_templates["Zprime"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/ZprimeToBB_M_X_TuneD6T_8TeV_pythia6_cff.py.template"
-
-cff_files = {}
-cff_files["Hbb"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_cff.py"
-cff_files["RSG"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_cff.py"
-cff_files["Zprime"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_cff.py"
-def GetSimulationCFF(p_model, p_mass_point):
-	return cff_files[p_model].replace("@MASS@", str(p_mass_point))
-
-cfg_files = {}
-cfg_files["Hbb"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/gen/HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@_@STAGE@_cfg.py"
-cfg_files["RSG"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/gen/RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_@SIMTYPE@_@STAGE@_cfg.py"
-cfg_files["Zprime"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/gen/ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@_@STAGE@_cfg.py"
-def GetConfigPath(p_model, p_mass_point, p_stage, p_simtype):
-	return cfg_files[p_model].replace("@MASS@", str(p_mass_point)).replace("@STAGE@", p_stage).replace("@SIMTYPE@", p_simtype)
+# Signal samples
+signal_models = ["RSG", "Hbb", "Zprime"] # Zprime
+signal_masses = [300, 600, 750, 900, 1200]
+#signal_masses = [600, 900, 1200]
+#signal_masses = [300]
 
 output_tags = {}
 #output_tags["Hbb"] = "HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@"
@@ -33,6 +11,57 @@ output_tags["RSG"] = "RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_@SIMTYP
 output_tags["Zprime"] = "ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@"
 def GetOutputTag(p_model, p_mass_point, p_simtype):
 	return output_tags[p_model].replace("@MASS@", str(p_mass_point)).replace("@SIMTYPE@", p_simtype)
+
+signal_samples = {}
+signal_sample_masses = {}
+
+signal_sample_namestrings = {
+	"RSG":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_FULLSIM",
+	"RSG_FASTSIM":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_FASTSIM",
+	"Zprime_FASTSIM":"ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_FULLSIM",
+	"Hbb":"GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FULLSIM"
+}
+for signal_model in signal_models:
+	signal_samples[signal_model] = []
+	for signal_mass in signal_masses:
+		if signal_model == "Zprime":
+			simtype = "FASTSIM"
+		else:
+			simtype = "FULLSIM"
+		signal_samples[signal_model].append(GetOutputTag(signal_model, signal_mass, simtype))
+		signal_sample_masses[GetOutputTag(signal_model, signal_mass, simtype)] = signal_mass
+
+# Text files listing the bulk private MC production
+private_mc_file_lists = {}
+private_mc_file_lists["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_300_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_600_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_750_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_900_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_1200_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_300_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_600_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_750_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_900_v1_2.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_1200_v1_2.txt"
+
+
+# Fast sim configuration
+fastsim_models = ["RSG", "Zprime"]
+cff_templates = {}
+cff_templates["RSG"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/RSGravitonToBBbar_M_X_TuneZ2star_8TeV_pythia6_cff.py.template"
+cff_templates["Zprime"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/ZprimeToBB_M_X_TuneD6T_8TeV_pythia6_cff.py.template"
+
+cff_files = {}
+cff_files["RSG"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_cff.py"
+cff_files["Zprime"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_cff.py"
+def GetSimulationCFF(p_model, p_mass_point):
+	return cff_files[p_model].replace("@MASS@", str(p_mass_point))
+
+cfg_files = {}
+cfg_files["RSG"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/gen/RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_@SIMTYPE@_@STAGE@_cfg.py"
+cfg_files["Zprime"] = "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/gen/ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@_@STAGE@_cfg.py"
+def GetConfigPath(p_model, p_mass_point, p_stage, p_simtype):
+	return cfg_files[p_model].replace("@MASS@", str(p_mass_point)).replace("@STAGE@", p_stage).replace("@SIMTYPE@", p_simtype)
 
 
 submission_jdl_files = {}
@@ -50,19 +79,6 @@ eos_aods["RSG"] = eos_folder + "EightTeeEeVeeBee/Simulation/@SIMTYPE@/RSGraviton
 eos_aods["Zprime"] = eos_folder + "EightTeeEeVeeBee/Simulation/@SIMTYPE@/ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@_@STAGE@.root" # @STAGE@ = FASTSIM, GENSIM, REDIGI, RECO
 def GetEOSLocation(p_model, p_mass_point, p_stage, p_simtype):
 	return eos_aods[p_model].replace("@MASS@", str(p_mass_point)).replace("@STAGE@", p_stage).replace("@SIMTYPE@", p_simtype)
-
-# Text files listing the bulk private MC production
-private_mc_file_lists = {}
-private_mc_file_lists["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_300_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_600_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_750_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_900_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_1200_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_300_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_600_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_750_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_900_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_1200_v1_2.txt"
 
 signal_cross_sections = {}
 signal_cross_sections["RSGravitonToBBbar_M_200_TuneZ2star_8TeV_pythia6"] = 9.287e-07 * 10**9 # Taken from FASTSIM generation logs, 5000 events
@@ -115,49 +131,49 @@ fullsim_datasets["GENSIM"] = {
 }
 
 n_gen_events = {}
-n_gen_events["RSGravitonToBBbar_M_200_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_250_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_350_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_400_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_450_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_500_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_550_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_650_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_700_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_800_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_850_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_950_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_1000_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_1050_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_1100_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_1150_TuneZ2star_8TeV_pythia6"] = 5000
-n_gen_events["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia6"] = 5000
+n_gen_events["RSGravitonToBBbar_M_200_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_250_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_350_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_400_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_450_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_500_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_550_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_650_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_700_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_800_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_850_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_950_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_1000_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_1050_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_1100_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_1150_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia6_FASTSIM"] = 5000
 
-n_gen_events["ZprimeToBB_M_200_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_250_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_300_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_350_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_400_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_450_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_500_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_550_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_600_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_650_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_700_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_750_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_800_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_850_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_900_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_950_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_1000_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_1050_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_1100_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6"] = 5000
-n_gen_events["ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6"] = 5000
+n_gen_events["ZprimeToBB_M_200_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_250_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_300_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_350_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_400_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_450_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_500_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_550_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_600_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_650_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_700_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_750_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_800_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_850_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_900_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_950_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_1000_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_1050_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_1100_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
+n_gen_events["ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
 
 if __name__ == "__main__":
 	import ROOT
