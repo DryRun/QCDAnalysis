@@ -140,7 +140,7 @@ def create_DR1_crab(model, mass, dataset, version=''):
         elif 'inputDataset' in line:
             fout.write(line.rstrip('\n')+' \''+dataset+'\'\n')
         elif 'outputDatasetTag' in line:
-            fout.write(line.rstrip('\'\n')+ "_v" + version+'\'\n')
+            fout.write(line.rstrip('\'\n') + "_M_" + str(mass) + "_v" + version+'\'\n')
         else:
             fout.write(line)
     fout.close()
@@ -184,7 +184,7 @@ def create_DR2_crab(model, mass, dataset,version=''):
         elif 'inputDataset' in line:
             fout.write(line.rstrip('\n')+' \''+dataset+'\'\n')
         elif 'outputDatasetTag' in line:
-            fout.write(line.rstrip('\'\n')+"_v"+version+'\'\n')
+            fout.write(line.rstrip('\'\n') + "_M_" + str(mass) + "_v"+version+'\'\n')
         else:
             fout.write(line)
     fout.close()

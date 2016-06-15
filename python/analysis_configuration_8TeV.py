@@ -1,12 +1,14 @@
 # Signal samples
-signal_models = ["RSG", "Zprime", "Hbb"]
-signal_masses = xrange(300, 1250, 50)
+signal_models = ["RSG", "Hbb"]
+signal_masses = [300, 600, 750, 900, 1200]
 signal_samples = {}
 signal_sample_masses = {}
 signal_sample_namestrings = {
-	"RSG":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_FASTSIM",
-	"Zprime":"ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_FASTSIM",
-	"Hbb":"GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FASTSIM"
+	"RSG_FASTSIM":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_FASTSIM",
+	"Zprime_FASTSIM":"ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_FASTSIM",
+	"Hbb_FASTSIM":"GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FASTSIM",
+	"RSG":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_FULLSIM",
+	"Hbb":"GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FULLSIM"
 }
 for signal_model in signal_models:
 	signal_samples[signal_model] = []
