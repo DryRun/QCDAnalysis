@@ -2,7 +2,6 @@ import sys
 sys.path.append("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/python/CMSDIJET/QCDAnalysis")
 import simulation_configuration_8TeV as simulation
 
-
 # Data samples
 data_samples = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D", "JetHT_2012B", "JetHT_2012C", "JetHT_2012D"]
 data_supersamples = {}

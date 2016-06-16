@@ -19,7 +19,6 @@ config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 1
 config.Data.publication = True
 
-
 config.Data.outputDatasetTag  = 'DIGI-RECO-2'
 
 config.section_("Site")

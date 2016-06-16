@@ -64,7 +64,10 @@ def DoSignalFit(hist, fit_range=None):
 	fit.SetParameter(4, hist.GetMaximum())
 
 	hist.Fit(fit, "RI0")
-	print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
+	if fit.GetNDF() > 0:
+		print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
+	else:
+		print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = NAN"
 	return {"fit":fit, "fit_ratio":MakeFitPullHistogram(hist, fit)}
 
 def DoMjjBackgroundFit(hist, blind=True, fit_min=500., fit_max=2000., rebin=20):
