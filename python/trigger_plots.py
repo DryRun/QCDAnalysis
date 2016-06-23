@@ -3,6 +3,7 @@ import sys
 import re
 import ROOT
 from ROOT import *
+
 gROOT.SetBatch(True)
 gSystem.Load("~/Dijets/CMSSW_5_3_32_patch3/lib/slc6_amd64_gcc472/libMyToolsRootUtils.so")
 gStyle.SetOptStat(0)
@@ -11,6 +12,8 @@ seaborn = Root.SeabornInterface()
 seaborn.Initialize()
 Root.SetCanvasStyle()
 gStyle.SetPalette(1)
+
+import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 
 reference_triggers = [
 	"HLT_L1DoubleJet36Central", 
@@ -116,60 +119,6 @@ def SumVersions(p_tdf, p_pattern):
 
 
 
-def NormVarPlots(input_file, output_tag):
-	f_in = TFile(input_file, "READ")
-	tdf = f_in.Get("inclusive")
-	efficiency_variables = ["nevents", "pf_mjj", "pf_mjj_160_120", "pf_mjj_80_70", "pf_deltaeta", "pf_eta1", "pf_eta2", "pf_pt1", "pf_pt2", "pf_btag_csv1", "pf_btag_csv2"]
-	rebin = {"pf_mjj":20, "pf_mjj_160_120":20, "pf_mjj_80_70":20, "pf_deltaeta":4, "pf_eta1":4, "pf_eta2":4, "pf_pt1":20, "pf_pt2":20, "pf_btag_csv1":1, "pf_btag_csv2":1}
-
-	for var in efficiency_variables:
-		c = ROOT.TCanvas("c_norm_" + var, "c_norm_" + var, 1000, 600)
-		c.SetRightMargin(0.25)
-		l = ROOT.TLegend(0.77, 0.3, 0.99, 0.7)
-		l.SetFillColor(0)
-		l.SetBorderSize(0)
-		style_counter = 0
-		hist = {}
-		ymax = -1.
-		for trigger in all_triggers:
-			hist[trigger] = tdf.Get("h_ref" + trigger + "_" + var)
-			hist[trigger].SetDirectory(0)
-			if hist[trigger].Integral() > 0:
-				hist[trigger].Scale(1. / hist[trigger].Integral())
-			if "mjj" in var:
-				for bin in xrange(1, hist[trigger].GetNbinsX() + 1):
-					if TMath.Abs(hist[trigger].GetBinCenter(bin) - 750.) < 75.:
-						hist[trigger].SetBinContent(bin, 0.)
-			if var in rebin.keys():
-				hist[trigger].Rebin(rebin[var])
-			hist[trigger].SetLineColor(seaborn.GetColorRoot("default", style_counter))
-			hist[trigger].SetMarkerColor(seaborn.GetColorRoot("default", style_counter))
-			hist[trigger].SetMarkerStyle(25)
-			l.AddEntry(hist[trigger], trigger, "l")
-			if hist[trigger].GetMaximum() > ymax:
-				ymax = hist[trigger].GetMaximum()
-			style_counter += 1
-
-		first = True
-		for trigger in all_triggers:
-			if first:
-				first = False
-				opt = "hist"
-				hist[trigger].SetMaximum(ymax * 1.2)
-			else:
-				opt = "hist same"
-			hist[trigger].Draw(opt)
-		l.Draw()
-		c.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + ".pdf")
-
-	for var2D in ["pf_pt1_pt2"]:
-		for trigger in all_triggers:
-			c = ROOT.TCanvas("c_" + var2D + "_" + trigger, "c_" + var2D + "_" + trigger, 800, 600)
-			c.SetRightMargin(0.25)
-			hist = tdf.Get("h_ref" + trigger + "_" + var2D)
-			hist.SetDirectory(0)
-			hist.Draw("colz")
-			c.SaveAs("~/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + ".pdf")
 
 def DivideBinomial(h_num, h_den):
 	h_ratio = h_num.Clone()
@@ -315,29 +264,96 @@ def EfficiencyPlots(input_file, output_tag):
 
 	f_in.Close()
 
-#def JetLegEfficiencyPlots(h_ref_pt1_vs_pt2, h_test_pt1_vs_pt2, pt_threshold_1, pt_threshold_2):
+# Determine the lower threshold as the intersection of the trigger inefficiency with the statistical uncertainty
+def trigger_threshold_plot(test_hist, ref_hist, save_tag, x_range=None):
+	# Make trigger inefficiency histogram
+	inefficiency_hist = test_hist.Clone()
+	for bin in xrange(1, test_hist.GetNbinsX() + 1):
+		num = ref_hist.GetBinContent(bin) - test_hist.GetBinContent(bin)
+		den = ref_hist.GetBinContent(bin)
+		if den > 0:
+			ineff = num / den
+			d_ineff = (ineff * (1. - ineff) / den)**0.5
+		else:
+			ineff = 0.
+			d_ineff = 0.
+		inefficiency_hist.SetBinContent(bin, ineff)
+		inefficiency_hist.SetBinError(bin, d_ineff)
 
+	# Make statistical uncertainty histogram
+	stat_unc_hist = test_hist.Clone()
+	for bin in xrange(1, test_hist.GetNbinsX() + 1):
+		if test_hist.GetBinContent(bin) > 0:
+			stat_unc_hist.SetBinContent(bin, test_hist.GetBinError(bin) / test_hist.GetBinContent(bin))
+		else:
+			stat_unc_hist.SetBinContent(bin, 0)
+		stat_unc_hist.SetBinError(bin, 0.)
 
+	# Draw
+	c = TCanvas(save_tag, save_tag, 800, 600)
+	l = TLegend(0.65, 0.7, 0.93, 0.9)
+	l.SetFillColor(0)
+	l.SetBorderSize(0)
+	inefficiency_hist.SetLineColor(seaborn.GetColorRoot("dark", 2))
+	inefficiency_hist.SetLineWidth(2)
+	inefficiency_hist.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
+	inefficiency_hist.SetMarkerStyle(20)
+	inefficiency_hist.SetMinimum(-0.2)
+	inefficiency_hist.SetMaximum(1.2)
+	inefficiency_hist.Draw("pl")
+	l.AddEntry(inefficiency_hist, "Trigger inefficiency", "pl")
+
+	stat_unc_hist.SetLineColor(seaborn.GetColorRoot("dark", 3))
+	stat_unc_hist.SetLineWidth(2)
+	stat_unc_hist.SetMarkerColor(seaborn.GetColorRoot("dark", 3))
+	stat_unc_hist.SetMarkerStyle(24)
+	stat_unc_hist.SetMinimum(-0.2)
+	stat_unc_hist.SetMaximum(1.2)
+	stat_unc_hist.Draw("pl same")
+	l.AddEntry(stat_unc_hist, "Stat uncertainty", "pl")
+
+	l.Draw()
+	c.SaveAs(analysis_config.figure_directory + "/" + c.GetName() + ".pdf")
+
+# 2D jet leg turn-on plot. Cut is the lower edge of the bin.
+def trigger_jet_leg_turnon(ref_hist, test_hist, save_tag):
+	efficiency_hist = test_hist.Clone()
+	efficiency_hist.Reset()
+	for xbin in xrange(1, test_hist.GetNbinsX() + 1):
+		for ybin in xrange(1, test_hist.GetNbinsY() + 1):
+			num = test_hist.Integral(xbin, test_hist.GetNbinsX() + 1, ybin, test_hist.GetNbinsY() + 1)
+			den = ref_hist.Integral(xbin, ref_hist.GetNbinsX() + 1, ybin, ref_hist.GetNbinsY() + 1)
+			if den > 0 and num <= den:
+				eff = num / den
+				d_eff = (eff * (1. - eff) / den)**0.5
+			else:
+				eff = 0.
+				d_eff = 0.
+			efficiency_hist.SetBinContent(xbin, ybin, eff)
+			efficiency_hist.SetBinError(xbin, ybin, d_eff)
+	c = TCanvas(save_tag, save_tag, 800, 600)
+	c.SetRightMargin(0.2)
+	efficiency_hist.Draw("colz")
+	c.SaveAs(analysis_config.figure_directory + "/" + c.GetName() + ".pdf")
 
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Trigger efficiency histograms')
-	parser.add_argument('input', type=str, help='Input file')
-	parser.add_argument('--signal', type=str, help='Signal file')
-	parser.add_argument('--signal_xs', type=float, help='Signal xsec')
+	parser.add_argument('input_file', type=str, required=True, help='File containing output of BTriggerEfficiency')
+	parser.add_argument('save_tag', type=str, required=True, help='Save tag')
+	parser.add_argument('--eff_plot', action='store_true', help='Make trigger efficiency plots for a number of variables')
+	parser.add_argument('--threshold_plot', action='store_true', help='Make trigger threshold vs stat unc plot.')
+	parser.add_argument('--jet_legs', action='store_true', nargs=2, help='Make efficiency vs. jet pT plots.')
 	args = parser.parse_args()
 
-	output_tag = args.input
-	output_tag.replace(".root", "")
+	if args.eff_plot:
+		EfficiencyPlots(args.input_file, args.save_tag)
+	if args.threshold_plot:
+		reference_trigger = "HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV"
+		f = TFile(args.input_file, "READ")
+		for test_trigger in ["HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose", "HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV"]:
+			for var in ["pfjet_mjj", "fatjet_mjj"]:
+				ref_hist = f.Get("BTriggerEfficiency/h_ref" + reference_trigger + "_pfjet_mjj")
+				test_hist = f.Get("BTriggerEfficiency/h_test" + test_trigger + "_ref" + reference_trigger + "_pfjet_mjj")
+				trigger_threshold_plot(test_hist, ref_hist, "trigger_threshold_" + test_trigger + "_" + var)
 
-	#PrescaleTable(args.input, output_tag)
-	EfficiencyPlots(args.input, output_tag)
-	#NormVarPlots(args.input, output_tag)
-	#
-	#if args.signal:
-	#	VarPlots(args.input, output_tag, signal_file=args.signal, signal_xs=args.signal_xs)
-	#	VarPlots(args.input, output_tag, plot_log=True, signal_file=args.signal, signal_xs=args.signal_xs)
-	#else:
-	#	VarPlots(args.input, output_tag)
-	#	VarPlots(args.input, output_tag, plot_log=True)
-	#MjjPlot(args.input, output_tag, plot_log=True)

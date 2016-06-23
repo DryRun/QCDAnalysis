@@ -3,6 +3,7 @@ import sys
 import re
 import ROOT
 from ROOT import *
+
 gROOT.SetBatch(True)
 gSystem.Load("~/Dijets/CMSSW_5_3_32_patch3/lib/slc6_amd64_gcc472/libMyToolsRootUtils.so")
 gStyle.SetOptStat(0)
@@ -11,8 +12,8 @@ seaborn = Root.SeabornInterface()
 seaborn.Initialize()
 import CMSDIJET.QCDAnalysis.mjj_fits
 from CMSDIJET.QCDAnalysis.mjj_fits import *
-import CMSDIJET.QCDAnalysis.simulation_configuration_8TeV
-from CMSDIJET.QCDAnalysis.simulation_configuration_8TeV import *
+#import CMSDIJET.QCDAnalysis.simulation_configuration_8TeV
+#from CMSDIJET.QCDAnalysis.simulation_configuration_8TeV import *
 import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 
 def Blind(hist, center=750., half_width=75.):
@@ -22,6 +23,104 @@ def Blind(hist, center=750., half_width=75.):
 			hist_blind.SetBinContent(bin, 0.)
 			hist_blind.SetBinError(bin, 0.)
 	return hist_blind
+
+# Attempt at a generic plot to compare stuff.
+def plot_compare(names, histograms, save_tag, nominal_name=None, legend_entries=None, log=True, log_ratio=False, x_range=None, y_range=None):
+	c = TCanvas(save_tag, save_tag, 800, 1200)
+	top = TPad("top", "top", 0., 0.5, 1., 1.)
+	top.SetBottomMargin(0.02)
+	top.Draw()
+	top.cd()
+	l = TLegend(0.6, 0.6, 0.85, 0.8)
+	if log:
+		top.SetLogy()
+
+	if not nominal_name:
+		nominal_name = names[0]
+
+	if x_range:
+		x_min = x_range[0]
+		x_max = x_range[1]
+	else:
+		x_min = histograms[nominal_name].GetXaxis().GetXmin()
+		x_max = histograms[nominal_name].GetXaxis().GetXmax()
+
+	if y_range:
+		y_min = y_range[0]
+		y_max = y_range[1]
+	else:
+		y_max = -1.
+		for name in names:
+			if histograms[name].GetMaximum() > y_max:
+				y_max = histograms[name].GetMaximum()
+		if log:
+			y_min = 0.05
+			y_max = y_max * 10
+		else:
+			y_min = 0.
+			y_max = y_max * 1.3
+
+	frame_top = TH1F("frame_top", "frame_top", 100, x_min, x_max)
+	frame_top.SetMinimum(y_min)
+	frame_top.SetMaximum(y_max)
+	frame_top.GetXaxis().SetLabelSize(0)
+	frame_top.GetXaxis().SetTitleSize(0)
+	frame_top.GetYaxis().SetLabelSize(0.04)
+	frame_top.GetYaxis().SetTitleSize(0.04)
+	frame_top.Draw("axis")
+
+	style_counter = 0
+	for name in names:
+		histograms[name].SetLineColor(seaborn.GetColorRoot("dark", style_counter))
+		histograms[name].SetLineWidth(2)
+		histograms[name].Draw("hist same")
+		if legend_entries.has_key(name):
+			l.AddEntry(histograms[name], legend_entries[name], "l")
+		else:
+			l.AddEntry(name, legend_entries[name], "l")
+		style_counter += 1
+	l.Draw()
+
+	c.cd()
+	bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
+	bottom.SetTopMargin(0.03)
+	bottom.SetBottomMargin(0.2)
+	bottom.Draw()
+	bottom.cd()
+	if log_ratio:
+		bottom.SetLogy()
+	frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, x_min, x_max)
+	if log_ratio:
+		frame_bottom.SetMinimum(1.e-3)
+		frame_bottom.SetMaximum(5.)
+	else:
+		frame_bottom.SetMinimum(-0.2)
+		frame_bottom.SetMaximum(1.2)
+	frame_bottom.GetXaxis().SetTitle(histograms[nominal_name].GetXaxis().GetTitle())
+	frame_bottom.GetYaxis().SetTitle(histograms[nominal_name].GetYaxis().GetTitle())
+	frame_bottom.GetXaxis().SetLabelSize(0.04)
+	frame_bottom.GetXaxis().SetTitleSize(0.06)
+	frame_bottom.GetXaxis().SetLabelOffset(0.01)
+	frame_bottom.GetXaxis().SetTitleOffset(1.1)
+
+	frame_bottom.GetYaxis().SetLabelSize(0.04)
+	frame_bottom.GetYaxis().SetTitleSize(0.037)
+	frame_bottom.GetYaxis().SetTitleOffset(0.7)
+
+	frame_bottom.Draw("axis")
+
+	ratio_histograms = {}
+	for name in names:
+		if name == nominal_name:
+			continue
+		ratio_histograms[name] = histograms[name].Clone()
+		ratio_histograms[name].Divide(histograms[name], histograms[nominal_name], 1, 1, "B")
+		ratio_histograms[name].SetLineColor(histograms[name].GetLineColor())
+		ratio_histograms[name].SetLineWidth(histograms[name].GetLineWidth())
+		ratio_histograms[name].Draw("hist same")
+
+	c.cd()
+	c.SaveAs(analysis_config.figure_directory + "/CSVX/" + c.GetName() + ".pdf")
 
 def MakeMjjPlot(data_hist, cached_fit_results=None, signal_histograms=None, signal_names=None, save_tag="c_mjj", x_range=None, log=False, fit_min=500., fit_max=1500., save_file=None, blind=True):
 	print "[MakeMjjPlot] INFO : Welcome to MakeMjjPlot with save_tag=" + save_tag
@@ -485,37 +584,39 @@ def BTagWPPlot(mjj_histograms, denominator_name, save_tag, x_range=None, log=Fal
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Dijet mass spectrum fits')
-	parser.add_argument('--analyses', type=str, required=True, help='Analyses to plot')
-	parser.add_argument('--data_samples', type=str, required=True, help='Samples to plot')
-	parser.add_argument('--signal_samples', type=str, required=True, help='Samples to plot')
+	parser.add_argument('--analyses', type=str, default="trigbbh_CSVL", help='Analyses to plot')
+	parser.add_argument('--data_samples', type=str, default="BJetPlusX_2012", help='Data sample to plot')
+	parser.add_argument('--signal_samples', type=str, default=None, help='Signal samples to plot')
+	#parser.add_argument('--data_samples', type=str, required=True, help='Samples to plot')
+	#parser.add_argument('--signal_samples', type=str, required=True, help='Samples to plot')
 	parser.add_argument('--mjj', action='store_true', help='Make mjj plot with fits')
 	parser.add_argument('--nmo', action='store_true', help='Make N-1 plots')
 	parser.add_argument('--peaks', action='store_true', help='Make signal peak plots')
 	parser.add_argument('--unblind', action='store_true', help='Unblind 750 region')
 	parser.add_argument('--jetht', action='store_true', help='BJetPlusX over JetHT plot')
-	parser.add_argument('--btwp', action='store_true', help='Plot comparing B tagging working points')
+	parser.add_argument('--csv', action='store_true', help='Plot comparing B tagging working points')
 	args = parser.parse_args()
 
 	analyses = args.analyses.split(",")
-	samples = args.samples.split(",")
+	data_samples = args.data_samples.split(",")
+	signal_samples = []
+	if args.signal_samples:
+		signal_samples = args.signal_samples.split(",")
+	else:
+		for signal_model in ["Hbb", "RSG"]:
+			for mass in [300, 600, 900, 1200]:
+				signal_samples.append(analysis_config.simulation.get_signal_tag(signal_model, mass, "FULLSIM"))
 
-	#for analysis in analyses:
-	#	for sample in data_samples:
-
-
-	#f_data = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/InclusiveBHistograms_2012.root", "READ")
-	f_data = TFile(analysis_config.get_b_histogram_filename(args.analysis, "BJetPlusX_2012"), "READ")
-
-	signal_models = ["Hbb", "RSG"]
-	signal_mass_points = [300, 600, 900, 1200]
-
+	f_data = {}
 	f_signal = {}
-	for model in signal_models:
-		f_signal[model] = {}
-		for signal_mass_point in signal_mass_points:
-			print "Output tag = " + GetOutputTag(model, signal_mass_point, "FULLSIM")
-			print "Opening " + analysis_config.get_b_histogram_filename(args.analysis, GetOutputTag(model, signal_mass_point, "FULLSIM"))
-			f_signal[model][signal_mass_point] = TFile(analysis_config.get_b_histogram_filename(args.analysis, GetOutputTag(model, signal_mass_point, "FULLSIM")), "READ")
+	for analysis in analyses:
+		f_data[analysis] = {}
+		for data_sample in data_samples:
+			f_data[analysis][data_sample] = TFile(analysis_config.get_b_histogram_filename(analysis, data_sample), "READ")
+
+		f_signal[analysis] = {}
+		for signal_sample in signal_samples:
+			f_signal[analysis][signal_sample] = TFile(analysis_config.get_b_histogram_filename(analysis, signal_sample), "READ")
 
 	if args.mjj:
 		save_file = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/mjj_fits.root", "RECREATE")
@@ -528,16 +629,15 @@ if __name__ == "__main__":
 			data_hist.SetDirectory(0)
 
 			signal_histograms = []
-			signal_names = []
-			for signal_mass_point in signal_mass_points:
-				input_nevents = (f_signal["RSG"][signal_mass_point].Get("BHistograms/h_input_nevents")).Integral()
-				signal_histograms.append(f_signal["RSG"][signal_mass_point].Get("BHistograms/h_" + jet_type + "_mjj"))
+			for signal_sample in signal_samples:
+				signal_histograms.append(f_signal[signal_sample].Get("BHistograms/h_" + jet_type + "_mjj"))
+				input_nevents = (f_signal[signal_sample].Get("BHistograms/h_input_nevents")).Integral()
 				signal_histograms[-1].SetDirectory(0)
 				signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
 				signal_histograms[-1].Scale(19700 * signal_cross_sections["RSG"][signal_mass_point] / input_nevents)
 				signal_histograms[-1].Rebin(20)
 				signal_names.append("RSG to bb, m=" + str(int(signal_mass_point)) + " GeV")
-			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[0., 2000.], save_tag=jet_type + "_mjj_" + args.analysis, log=False, fit_min=fit_minima[jet_type], fit_max=1500., save_file=save_file, blind=(not args.unblind))
+			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_samples, x_range=[0., 2000.], save_tag=jet_type + "_mjj_" + args.analysis, log=False, fit_min=fit_minima[jet_type], fit_max=1500., save_file=save_file, blind=(not args.unblind))
 
 			# For more plots, no need to redo fits
 			this_fit_results = {}
@@ -660,22 +760,26 @@ if __name__ == "__main__":
 		f_bjetplusx_tight.Close()
 		f_jetht_tight.Close()
 
-	if args.btwp:
-		wps = ["tight", "medium", "loose"]
-		hists = {}
-		for wp in wps:
-			if wp == "loose":
-				f = TFile("InclusiveBHistograms_2012.root", "READ")
-				h = f.Get("BHistograms/h_pfjet_mjj")
-			else:
-				f = TFile("BJetPlusX_" + wp + "_2012.root", "READ")
-				h = f.Get("BHistograms/h_pfjet_mjj")
-			if not h:
-				print "Couldn't find BHistograms/h_pfjet_mjj for wp " + wp
-				sys.exit(1)
-			h.Rebin(20)
-			hists[wp] = Blind(h)
-			hists[wp].SetName(hists[wp].GetName() + "_" + wp)
-			hists[wp].SetDirectory(0)
-			f.Close()
-		BTagWPPlot(hists, "loose", "btwp", log=True, x_range=[0., 3000.])
+	if args.csv:
+		analyses = ["trigbbh_CSVL", "trigbbh_CSVM", "trigbbh_CSVT"]
+		legend_entries = {"trigbbh_CSVL":"CSVL", "trigbbh_CSVM":"CSVM", "trigbbh_CSVT":"CSVT"}
+		data_histograms = {}
+		for analysis in analyses:
+			f = TFile(analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012"), "READ")
+			data_histograms[analysis] = f.Get("BHistograms/h_pfjet_mjj")
+			if not data_histograms[analysis]:
+				print "Failed to get histogram BHistograms/h_pfjet_mjj from file " + analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012")
+			data_histograms[analysis].SetDirectory(0)
+
+		plot_compare(analyses, data_histograms, "CSVX_data", nominal_name="trigbbh_CSVL", legend_entries=legend_entries, log=True, log_ratio=True, x_range=[0., 1500.])
+
+		for signal_model in ["Hbb", "RSG"]:
+			for mass_point in [300, 600, 900, 1200]:
+				signal_histograms = {}
+				for analysis in analyses:
+					f = TFile(analysis_config.get_b_histogram_filename(analysis, analysis_config.simulation.get_signal_tag(signal_model, mass_point, "FULLSIM")), "READ")
+					signal_histograms[analysis] = f.Get("BHistograms/h_pfjet_mjj")
+				plot_compare(analyses, signal_histograms, "CSVX_" + signal_model + "_" + str(mass_point), nominal_name="trigbbh_CSVL", legend_entries=legend_entries, log=True, log_ratio=False, x_range=[0., 1500.])
+
+
+

@@ -1,6 +1,7 @@
 # Signal samples
-signal_models = ["RSG", "Hbb", "Zprime"] # Zprime
-signal_masses = [300, 600, 750, 900, 1200]
+signal_models = ["RSG", "Hbb"] # Zprime
+signal_masses = [750]
+#signal_masses = [300, 600, 750, 900, 1200]
 #signal_masses = [600, 900, 1200]
 #signal_masses = [300]
 
@@ -10,6 +11,9 @@ output_tags["Hbb"] = "GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_@SIMT
 output_tags["RSG"] = "RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_@SIMTYPE@"
 output_tags["Zprime"] = "ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@"
 def GetOutputTag(p_model, p_mass_point, p_simtype):
+	return output_tags[p_model].replace("@MASS@", str(p_mass_point)).replace("@SIMTYPE@", p_simtype)
+
+def get_signal_tag(p_model, p_mass_point, p_simtype):
 	return output_tags[p_model].replace("@MASS@", str(p_mass_point)).replace("@SIMTYPE@", p_simtype)
 
 signal_samples = {}
@@ -33,16 +37,16 @@ for signal_model in signal_models:
 
 # Text files listing the bulk private MC production
 private_mc_file_lists = {}
-private_mc_file_lists["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_300_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_600_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_750_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_900_v1_2.txt"
-private_mc_file_lists["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_1200_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_300_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_600_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_750_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_900_v1_2.txt"
-private_mc_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_1200_v1_2.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_300_v1_3.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_600_v1_3.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_750_v1_3.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_900_v1_3.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_1200_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_300_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_600_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_750_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_900_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_1200_v1_3.txt"
 
 
 # Fast sim configuration

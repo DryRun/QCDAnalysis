@@ -21,6 +21,9 @@ using namespace std;
 BTriggerEfficiency::BTriggerEfficiency(edm::ParameterSet const& cfg) 
 {
 	input_file_names_  = cfg.getParameter<std::vector<std::string> > ("file_names");
+	for (auto& it : input_file_names_) {
+		std::cout << "[BTriggerEfficiency::BTriggerEfficiency] DEBUG : Input file " << it << std::endl;
+	}
 	input_tree_name_  = cfg.getParameter<std::string> ("tree_name");
 	trigger_histogram_name_  = cfg.getParameter<std::string> ("trigger_histogram_name");
 	current_file_ = 0;
@@ -118,7 +121,8 @@ void BTriggerEfficiency::beginJob()
 	global_histograms_->AddTH1F("pass_nevents", "pass_nevents", "", 1, 0.5, 1.5);
 
 	// Get all trigger names and corresponding indices. Different versions of triggers are lumped together.
-	TFile *f = new TFile(TString(input_file_names_[0]), "READ");
+	//TFile *f = new TFile(TString(input_file_names_[0]), "READ");
+	TFile *f = TFile::Open(TString(input_file_names_[0]), "READ");
 	TH1F *h_trigger_names = (TH1F*)f->Get(trigger_histogram_name_);
 	if (!h_trigger_names) {
 		throw cms::Exception("[BTriggerEfficiency::beginJob] ERROR : ") << "Trigger name histogram (" << trigger_histogram_name_ << ") not found in input file." << std::endl;
@@ -154,8 +158,9 @@ void BTriggerEfficiency::beginJob()
 		histograms_reference_[it_trig1]->AddTFileService(&fs_);
 		histograms_reference_[it_trig1]->AddTH1D("nevents", "nevents", "", 1, 0.5, 1.5);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj", "pf_mjj", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
+		// Removed 6/21/16: prefer to specify the jet pT cuts in the cfg file, rather than hard-coding.
+		//histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
+		//histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_deltaeta", "pf_deltaeta", "#Delta#eta(jj)", 100, -10., 10.);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_eta1", "pf_eta1", "#eta (leading jet)", 100, -5., 5.);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_eta2", "pf_eta2", "#eta (subleading jet)", 100, -5., 5.);
@@ -166,8 +171,8 @@ void BTriggerEfficiency::beginJob()
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_btag_csv2", "pf_btag_csv2", "CSV (subleading jet)", 40, -2., 2.);
 
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj", "pf_mjj", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
+		//histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
+		//histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_deltaeta", "pf_deltaeta", "#Delta#eta(jj)", 100, -10., 10.);
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_eta1", "pf_eta1", "#eta (leading jet)", 100, -5., 5.);
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_eta2", "pf_eta2", "#eta (subleading jet)", 100, -5., 5.);
@@ -179,8 +184,8 @@ void BTriggerEfficiency::beginJob()
 
 		histograms_reference_[it_trig1]->AddTH1D("nevents_weighted", "nevents", "", 1, 0.5, 1.5);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_weighted", "pf_mjj", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_160_120_weighted", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_80_70_weighted", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
+		//histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_160_120_weighted", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
+		//histograms_reference_[it_trig1]->AddTH1D("pfjet_mjj_80_70_weighted", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_deltaeta_weighted", "pf_deltaeta", "#Delta#eta(jj)", 100, -10., 10.);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_eta1_weighted", "pf_eta1", "#eta (leading jet)", 100, -5., 5.);
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_eta2_weighted", "pf_eta2", "#eta (subleading jet)", 100, -5., 5.);
@@ -191,8 +196,8 @@ void BTriggerEfficiency::beginJob()
 		histograms_reference_[it_trig1]->AddTH1D("pfjet_btag_csv2_weighted", "pf_btag_csv2", "CSV (subleading jet)", 40, -2., 2.);
 
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_weighted", "pf_mjj", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_160_120_weighted", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
-		histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_80_70_weighted", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
+		//histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_160_120_weighted", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
+		//histograms_reference_[it_trig1]->AddTH1D("fatjet_mjj_80_70_weighted", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_deltaeta_weighted", "pf_deltaeta", "#Delta#eta(jj)", 100, -10., 10.);
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_eta1_weighted", "pf_eta1", "#eta (leading jet)", 100, -5., 5.);
 		histograms_reference_[it_trig1]->AddTH1D("fatjet_eta2_weighted", "pf_eta2", "#eta (subleading jet)", 100, -5., 5.);
@@ -213,8 +218,8 @@ void BTriggerEfficiency::beginJob()
 			histograms_test_[it_trig1][it_trig2]->AddPrefix("h_test" + it_trig2 + "_ref" + it_trig1 + "_");
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("nevents", "nevents", "", 1, 0.5, 1.5);
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_mjj", "pf_mjj", "m_{jj} [GeV]", 2000, 0., 2000.);
-			histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
-			histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
+			//histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
+			//histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_deltaeta", "pf_deltaeta", "#Delta#eta(jj)", 100, -10., 10.);
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_eta1", "pf_eta1", "#eta (leading jet)", 100, -5., 5.);
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_eta2", "pf_eta2", "#eta (subleading jet)", 100, -5., 5.);
@@ -225,8 +230,8 @@ void BTriggerEfficiency::beginJob()
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("pfjet_btag_csv2", "pf_btag_csv2", "CSV (subleading jet)", 40, -2., 2.);
 
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_mjj", "pf_mjj", "m_{jj} [GeV]", 2000, 0., 2000.);
-			histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
-			histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
+			//histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_mjj_160_120", "pf_mjj_160_120", "m_{jj} [GeV]", 2000, 0., 2000.);
+			//histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_mjj_80_70", "pf_mjj_80_70", "m_{jj} [GeV]", 2000, 0., 2000.);
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_deltaeta", "pf_deltaeta", "#Delta#eta(jj)", 100, -10., 10.);
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_eta1", "pf_eta1", "#eta (leading jet)", 100, -5., 5.);
 			histograms_test_[it_trig1][it_trig2]->AddTH1D("fatjet_eta2", "pf_eta2", "#eta (subleading jet)", 100, -5., 5.);
@@ -273,7 +278,7 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 	// Get total number of events
 	int total_events = 0;
 	for (auto& it_filename : input_file_names_) {
-		TFile *f = new TFile(TString(it_filename), "READ");
+		TFile *f = TFile::Open(TString(it_filename), "READ");
 		tree_ = (TTree*)f->Get(input_tree_name_);
 		total_events += tree_->GetEntriesFast();
 		f->Close();
@@ -283,7 +288,7 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 
 
 	for (auto& it_filename : input_file_names_) {
-		TFile *f = new TFile(TString(it_filename), "READ");
+		TFile *f = TFile::Open(TString(it_filename), "READ");
 		tree_ = (TTree*)f->Get(input_tree_name_);
 		event_ = new QCDEvent();
 		tree_->SetBranchStatus("*", 1);
@@ -435,14 +440,14 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 						histograms_reference_[ref_trigger]->GetTH1D("nevents")->Fill(1);
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj")->Fill(pf_mjj);
 						histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj")->Fill(fat_mjj);
-						if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.2 && TMath::Abs(pf_eta2) < 2.2) {
-							histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_160_120")->Fill(pf_mjj);
-							histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_160_120")->Fill(fat_mjj);
-						}
-						if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
-							histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_80_70")->Fill(pf_mjj);
-							histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_80_70")->Fill(fat_mjj);
-						}
+						//if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.2 && TMath::Abs(pf_eta2) < 2.2) {
+						//	histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_160_120")->Fill(pf_mjj);
+						//	histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_160_120")->Fill(fat_mjj);
+						//}
+						//if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
+						//	histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_80_70")->Fill(pf_mjj);
+						//	histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_80_70")->Fill(fat_mjj);
+						//}
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_deltaeta")->Fill(pf_deltaeta);
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_eta1")->Fill(pf_eta1);
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_eta2")->Fill(pf_eta2);
@@ -465,14 +470,14 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 						histograms_reference_[ref_trigger]->GetTH1D("nevents_weighted")->Fill(1, ref_prescale);
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_weighted")->Fill(pf_mjj, ref_prescale);
 						histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_weighted")->Fill(fat_mjj, ref_prescale);
-						if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.2 && TMath::Abs(pf_eta2) < 2.2) {
-							histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_160_120_weighted")->Fill(pf_mjj, ref_prescale);
-							histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_160_120_weighted")->Fill(fat_mjj, ref_prescale);
-						}
-						if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
-							histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_80_70_weighted")->Fill(pf_mjj, ref_prescale);
-							histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_80_70_weighted")->Fill(fat_mjj, ref_prescale);
-						}
+						//if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.2 && TMath::Abs(pf_eta2) < 2.2) {
+						//	histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_160_120_weighted")->Fill(pf_mjj, ref_prescale);
+						//	histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_160_120_weighted")->Fill(fat_mjj, ref_prescale);
+						//}
+						//if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
+						//	histograms_reference_[ref_trigger]->GetTH1D("pfjet_mjj_80_70_weighted")->Fill(pf_mjj, ref_prescale);
+						//	histograms_reference_[ref_trigger]->GetTH1D("fatjet_mjj_80_70_weighted")->Fill(fat_mjj, ref_prescale);
+						//}
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_deltaeta_weighted")->Fill(pf_deltaeta, ref_prescale);
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_eta1_weighted")->Fill(pf_eta1, ref_prescale);
 						histograms_reference_[ref_trigger]->GetTH1D("pfjet_eta2_weighted")->Fill(pf_eta2, ref_prescale);
@@ -508,14 +513,14 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("nevents")->Fill(1);
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_mjj")->Fill(pf_mjj);
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("fatjet_mjj")->Fill(fat_mjj);
-								if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.2 && TMath::Abs(pf_eta2) < 2.2) {
-									histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_mjj_160_120")->Fill(pf_mjj);
-									histograms_test_[ref_trigger][test_trigger]->GetTH1D("fatjet_mjj_160_120")->Fill(fat_mjj);
-								}
-								if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
-									histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_mjj_80_70")->Fill(pf_mjj);
-									histograms_test_[ref_trigger][test_trigger]->GetTH1D("fatjet_mjj_80_70")->Fill(fat_mjj);
-								}
+								//if (pf_pt1 > 160. && pf_pt2 > 120. && TMath::Abs(pf_eta1) < 2.2 && TMath::Abs(pf_eta2) < 2.2) {
+								//	histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_mjj_160_120")->Fill(pf_mjj);
+								//	histograms_test_[ref_trigger][test_trigger]->GetTH1D("fatjet_mjj_160_120")->Fill(fat_mjj);
+								//}
+								//if (pf_pt1 > 80. && pf_pt2 > 70. && TMath::Abs(pf_eta1) < 1.7 && TMath::Abs(pf_eta2) < 1.7) {
+								//	histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_mjj_80_70")->Fill(pf_mjj);
+								//	histograms_test_[ref_trigger][test_trigger]->GetTH1D("fatjet_mjj_80_70")->Fill(fat_mjj);
+								//}
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_deltaeta")->Fill(fat_deltaeta);
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_eta1")->Fill(fat_eta1);
 								histograms_test_[ref_trigger][test_trigger]->GetTH1D("pfjet_eta2")->Fill(fat_eta2);

@@ -23,10 +23,12 @@ files_QCDBEventTree = {
 	# Signal MCRSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM
 	"RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM.txt",
 	"RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM.txt",
 	"RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM.txt",
 	"RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM.txt",
 	"GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	"GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 }
@@ -105,13 +107,15 @@ analysis_cfgs["trigbbl_CSVT"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/s
 analysis_cfgs["trigjetht_CSVL"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVL_cfg.py"
 analysis_cfgs["trigjetht_CSVM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVM_cfg.py"
 analysis_cfgs["trigjetht_CSVT"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVT_cfg.py"
+analysis_cfgs["trigeff_trigbbh"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbh_cfg.py"
+analysis_cfgs["trigeff_trigbbl"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbl_cfg.py"
 
 # Limit setting paths
 limit_paths = {}
 limit_paths["limits"] = "/uscms_data/d1/dryu/Dijets/EightTeeEeVeeBee/Results/Limits/"
-limit_paths["datacards"] = paths["limits"] + "/datacards/"
-limit_paths["workspaces"] = paths["limits"] + "/workspaces/"
-limit_paths["condor"] = paths["limits"] + "/condor/"
+limit_paths["datacards"] = limit_paths["limits"] + "/datacards/"
+limit_paths["workspaces"] = limit_paths["limits"] + "/workspaces/"
+limit_paths["condor"] = limit_paths["limits"] + "/condor/"
 limit_paths["resonance_shapes"] = "/uscms_data/d1/dryu/Dijets/EightTeeEeVeeBee/Results/ResonanceShapes/"
 
 # Get the path to a workspace. 

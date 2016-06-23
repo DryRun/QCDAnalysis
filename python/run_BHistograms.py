@@ -13,6 +13,7 @@ import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_source=None):
 	if not data_source:
 		print "[RunBHistogramsEOS] ERROR : Please specify data_source = collision_data or simulation"
+		sys.exit(1)
 
 	# Create working directory and cd
 	start_directory = os.getcwd()
@@ -81,10 +82,11 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 	command += " --submit-file=submit_" + analysis + "_" + sample + ".jdl "
 	#command += " --output-file=" + output_prefix + "_" + sample + ".root "
 	command += " --output-tag=BHistograms_" + sample + " "
-	command += " --run /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
+	command += " --run "
+	command += "  /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
 	command += " dataSource=simulation "
 	command += " dataType=signal "
-	command += " signalMass=" + str(analysis_config.signal_sample_masses[sample]) + " "
+	command += " signalMass=" + str(analysis_config.simulation.signal_sample_masses[sample]) + " "
 	#command += "inputFiles=" + os.path.basename(input_files[sample])
 	output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
 	command += " outputFile=" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
@@ -115,13 +117,13 @@ if __name__ == "__main__":
 			samples = [args.data]
 		first = True
 		for sample in samples:
-			RunBHistogramsEOS(args.analysis, sample, retar=first)
+			RunBHistogramsEOS(args.analysis, sample, retar=first, data_source="collision_data")
 			if first:
 				first=False
 
 	elif args.signal:
-		if args.signal in analysis_config.signal_models:
-			samples = analysis_config.signal_samples[args.signal]
+		if args.signal in analysis_config.simulation.signal_models:
+			samples = analysis_config.simulation.signal_samples[args.signal]
 		else:
 			samples = [args.signal]
 		first = True
