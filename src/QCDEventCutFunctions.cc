@@ -72,24 +72,37 @@ namespace QCDEventCutFunctions {
 
 	bool MinLeadingPFJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		bool pass = true;
-		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 0)) {
+		int leading_pt_index;
+		if (p_data.pfjet(0).ptCor() > p_data.pfjet(1).ptCor()) {
+			leading_pt_index = 0;
+		} else {
+			leading_pt_index = 1;
+		}
+		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, leading_pt_index)) {
 			pass = false;
 			p_event_selector->SetReturnData("MinLeadingPFJetPt", 0.);
 		} else {
-			pass = p_data.calojet(0).ptCor() > p_event_selector->GetCutParameters("MinLeadingPFJetPt")[0];
-			p_event_selector->SetReturnData("MinLeadingPFJetPt", p_data.calojet(0).ptCor());
+			pass = p_data.pfjet(leading_pt_index).ptCor() > p_event_selector->GetCutParameters("MinLeadingPFJetPt")[0];
+			p_event_selector->SetReturnData("MinLeadingPFJetPt", p_data.pfjet(leading_pt_index).ptCor());
 		}
 		return pass;
 	}
 
 	bool MinSubleadingPFJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		bool pass = true;
-		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, 1)) {
+		int subleading_pt_index;
+		if (p_data.pfjet(0).ptCor() <= p_data.pfjet(1).ptCor()) {
+			subleading_pt_index = 0;
+		} else {
+			subleading_pt_index = 1;
+		}
+
+		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kPFJet, subleading_pt_index)) {
 			pass = false;
 			p_event_selector->SetReturnData("MinSubleadingPFJetPt", 0.);
 		} else {
-			pass = p_data.calojet(1).ptCor() > p_event_selector->GetCutParameters("MinSubleadingPFJetPt")[0];
-			p_event_selector->SetReturnData("MinSubleadingPFJetPt", p_data.calojet(1).ptCor());
+			pass = p_data.pfjet(subleading_pt_index).ptCor() > p_event_selector->GetCutParameters("MinSubleadingPFJetPt")[0];
+			p_event_selector->SetReturnData("MinSubleadingPFJetPt", p_data.pfjet(subleading_pt_index).ptCor());
 		}
 		return pass;
 	}
@@ -100,8 +113,8 @@ namespace QCDEventCutFunctions {
 			pass = false;
 			p_event_selector->SetReturnData("MaxLeadingPFJetEta", -100.);
 		} else {
-			pass = TMath::Abs(p_data.calojet(0).eta()) < p_event_selector->GetCutParameters("MaxLeadingPFJetEta")[0];
-			p_event_selector->SetReturnData("MaxLeadingPFJetEta", p_data.calojet(0).eta());
+			pass = TMath::Abs(p_data.pfjet(0).eta()) < p_event_selector->GetCutParameters("MaxLeadingPFJetEta")[0];
+			p_event_selector->SetReturnData("MaxLeadingPFJetEta", p_data.pfjet(0).eta());
 		}
 		return pass;
 	}
@@ -112,32 +125,45 @@ namespace QCDEventCutFunctions {
 			pass = false;
 			p_event_selector->SetReturnData("MaxSubleadingPFJetEta", -100.);
 		} else {
-			pass = TMath::Abs(p_data.calojet(1).eta()) < p_event_selector->GetCutParameters("MaxSubleadingPFJetEta")[0];
-			p_event_selector->SetReturnData("MaxSubleadingPFJetEta", p_data.calojet(1).eta());
+			pass = TMath::Abs(p_data.pfjet(1).eta()) < p_event_selector->GetCutParameters("MaxSubleadingPFJetEta")[0];
+			p_event_selector->SetReturnData("MaxSubleadingPFJetEta", p_data.pfjet(1).eta());
 		}
 		return pass;
 	}
 
 	bool MinLeadingCaloJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		bool pass = true;
-		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kCaloJet, 0)) {
+		int leading_pt_index;
+		if (p_data.calojet(0).ptCor() > p_data.calojet(1).ptCor()) {
+			leading_pt_index = 0;
+		} else {
+			leading_pt_index = 1;
+		}
+		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kCaloJet, leading_pt_index)) {
 			pass = false;
 			p_event_selector->SetReturnData("MinLeadingCaloJetPt", 0.);
 		} else {
-			pass = p_data.calojet(0).ptCor() > p_event_selector->GetCutParameters("MinLeadingCaloJetPt")[0];
-			p_event_selector->SetReturnData("MinLeadingCaloJetPt", p_data.calojet(0).ptCor());
+			pass = p_data.calojet(leading_pt_index).ptCor() > p_event_selector->GetCutParameters("MinLeadingCaloJetPt")[0];
+			p_event_selector->SetReturnData("MinLeadingCaloJetPt", p_data.calojet(leading_pt_index).ptCor());
 		}
 		return pass;
 	}
 
 	bool MinSubleadingCaloJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		bool pass = true;
-		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kCaloJet, 1)) {
+		int subleading_pt_index;
+		if (p_data.calojet(0).ptCor() <= p_data.calojet(1).ptCor()) {
+			subleading_pt_index = 0;
+		} else {
+			subleading_pt_index = 1;
+		}
+
+		if (!p_event_selector->GetObjectPass(ObjectIdentifiers::kCaloJet, subleading_pt_index)) {
 			pass = false;
 			p_event_selector->SetReturnData("MinSubleadingCaloJetPt", 0.);
 		} else {
-			pass = p_data.calojet(1).ptCor() > p_event_selector->GetCutParameters("MinSubleadingCaloJetPt")[0];
-			p_event_selector->SetReturnData("MinSubleadingCaloJetPt", p_data.calojet(1).ptCor());
+			pass = p_data.calojet(subleading_pt_index).ptCor() > p_event_selector->GetCutParameters("MinSubleadingCaloJetPt")[0];
+			p_event_selector->SetReturnData("MinSubleadingCaloJetPt", p_data.calojet(subleading_pt_index).ptCor());
 		}
 		return pass;
 	}
@@ -199,6 +225,7 @@ namespace QCDEventCutFunctions {
 			p_event_selector->SetReturnData("PFDijetMinDeltaEta", p_data.pfjet(0).eta() - p_data.pfjet(1).eta());
 			pass = TMath::Abs(p_data.pfjet(0).eta() - p_data.pfjet(1).eta()) > p_event_selector->GetCutParameters("PFDijetMinDeltaEta")[0];
 		}
+		p_event_selector->SetReturnData("PFMjj", p_data.pfmjj());
 		return pass;
 	}
 
@@ -211,6 +238,7 @@ namespace QCDEventCutFunctions {
 			p_event_selector->SetReturnData("PFDijetMaxDeltaEta", p_data.pfjet(0).eta() - p_data.pfjet(1).eta());
 			pass = TMath::Abs(p_data.pfjet(0).eta() - p_data.pfjet(1).eta()) < p_event_selector->GetCutParameters("PFDijetMaxDeltaEta")[0];
 		}
+		p_event_selector->SetReturnData("PFMjj", p_data.pfmjj());
 		return pass;
 	}
 
@@ -456,12 +484,25 @@ namespace QCDEventCutFunctions {
 
 	// Fat jet cuts
 	bool MinLeadingPFFatJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
-		p_event_selector->SetReturnData("MinLeadingPFFatJetPt", p_data.fatjet(0).pt());
-		return (p_data.fatjet(0).pt() > p_event_selector->GetCutParameters("MinLeadingPFFatJetPt")[0]);
+		int leading_pt_index;
+		if (p_data.fatjet(0).pt() > p_data.fatjet(1).pt()) {
+			leading_pt_index = 0;
+		} else {
+			leading_pt_index = 1;
+		}
+
+		p_event_selector->SetReturnData("MinLeadingPFFatJetPt", p_data.fatjet(leading_pt_index).pt());
+		return (p_data.fatjet(leading_pt_index).pt() > p_event_selector->GetCutParameters("MinLeadingPFFatJetPt")[0]);
 	}
 	bool MinSubleadingPFFatJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
-		p_event_selector->SetReturnData("MinSubleadingPFFatJetPt", p_data.fatjet(1).pt());
-		return (p_data.fatjet(1).pt() > p_event_selector->GetCutParameters("MinSubleadingPFFatJetPt")[0]);
+		int subleading_pt_index;
+		if (p_data.fatjet(0).pt() <= p_data.fatjet(1).pt()) {
+			subleading_pt_index = 0;
+		} else {
+			subleading_pt_index = 1;
+		}
+		p_event_selector->SetReturnData("MinSubleadingPFFatJetPt", p_data.fatjet(subleading_pt_index).pt());
+		return (p_data.fatjet(subleading_pt_index).pt() > p_event_selector->GetCutParameters("MinSubleadingPFFatJetPt")[0]);
 	}
 	bool MaxLeadingPFFatJetEta(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		p_event_selector->SetReturnData("MaxLeadingPFFatJetEta", p_data.fatjet(0).eta());
@@ -608,6 +649,38 @@ namespace QCDEventCutFunctions {
 		return btag < p_event_selector->GetCutParameters("SubleadingBTagPFFat")[0];
 	}
 
+	bool MinNCSVL(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		int n_csvl = 0;
+		for (int i_jet = 0; i_jet <= 1; ++i_jet) {
+			if (p_data.pfjet(i_jet).btag_csv() > 0.244) {
+				++n_csvl;
+			}
+		}
+		p_event_selector->SetReturnData("MinNCSVL", n_csvl);
+		return n_csvl >= p_event_selector->GetCutParameters("MinNCSVL")[0];
+	}
+	bool MinNCSVM(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		int n_csvm = 0;
+		for (int i_jet = 0; i_jet <= 1; ++i_jet) {
+			if (p_data.pfjet(i_jet).btag_csv() > 0.679) {
+				++n_csvm;
+			}
+		}
+		p_event_selector->SetReturnData("MinNCSVM", n_csvm);
+		return n_csvm >= p_event_selector->GetCutParameters("MinNCSVM")[0];
+	}
+	bool MinNCSVT(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		int n_csvt = 0;
+		for (int i_jet = 0; i_jet <= 1; ++i_jet) {
+			if (p_data.pfjet(i_jet).btag_csv() > 0.898) {
+				++n_csvt;
+			}
+		}
+		p_event_selector->SetReturnData("MinNCSVT", n_csvt);
+		return n_csvt >= p_event_selector->GetCutParameters("MinNCSVT")[0];
+	}
+
+
 	void Configure(EventSelector<QCDEvent>* p_event_selector) {
 		p_event_selector->AddCutFunction("Trigger", &Trigger);
 		p_event_selector->AddCutFunction("TriggerOR", &TriggerOR);
@@ -656,6 +729,9 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddCutFunction("SubleadingBTagPFFat", &SubleadingBTagPFFat);
 		p_event_selector->AddCutFunction("LeadingBVetoPFFat", &LeadingBVetoPFFat);
 		p_event_selector->AddCutFunction("SubleadingBVetoPFFat", &SubleadingBVetoPFFat);
+		p_event_selector->AddCutFunction("MinNCSVT", &MinNCSVT);
+		p_event_selector->AddCutFunction("MinNCSVM", &MinNCSVM);
+		p_event_selector->AddCutFunction("MinNCSVL", &MinNCSVL);
 
 		// N-1 histograms
 		p_event_selector->AddNMinusOneHistogram("MaxMetOverSumEt", "E_{T}^{miss} / #SigmaE_{T}", 40, 0., 2.);
@@ -673,6 +749,8 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddNMinusOneHistogram("MaxSubleadingCaloJetEta", "Jet #eta", 100, -5., 5.);
 		p_event_selector->AddNMinusOneHistogram("PFDijetMinDeltaEta", "Dijet #Delta#eta", 100, -5., 5.);
 		p_event_selector->AddNMinusOneHistogram("PFDijetMaxDeltaEta", "Dijet #Delta#eta", 100, -5., 5.);
+		p_event_selector->AddNMinusOne2DHistogram("PFDijetMinDeltaEta", "PFMjj", "Dijet #Delta#eta", 100, -5., 5., "m_{jj}", 400, 0., 2000.);
+		p_event_selector->AddNMinusOne2DHistogram("PFDijetMaxDeltaEta", "PFMjj", "Dijet #Delta#eta", 100, -5., 5., "m_{jj}", 400, 0., 2000.);
 		p_event_selector->AddNMinusOneHistogram("MinPFMjj", "m_{jj} [GeV]", 2000, 0., 2000.);
 		p_event_selector->AddNMinusOneHistogram("MaxPFMjj", "m_{jj} [GeV]", 2000, 0., 2000.);
 		p_event_selector->AddNMinusOneHistogram("MinCaloMjj", "m_{jj} [GeV]", 2000, 0., 2000.);
@@ -699,6 +777,9 @@ namespace QCDEventCutFunctions {
 		p_event_selector->AddNMinusOneHistogram("SubleadingBTagPFFat", "Discriminant", 2000, -100., 100.);
 		p_event_selector->AddNMinusOneHistogram("LeadingBVetoPFFat", "Discriminant", 2000, -100., 100.);
 		p_event_selector->AddNMinusOneHistogram("SubleadingBVetoPFFat", "Discriminant", 2000, -100., 100.);
+		p_event_selector->AddNMinusOneHistogram("MinNCSVT", "NCSVT", 4, -0.5, 3.5);
+		p_event_selector->AddNMinusOneHistogram("MinNCSVM", "NCSVM", 4, -0.5, 3.5);
+		p_event_selector->AddNMinusOneHistogram("MinNCSVL", "NCSVL", 4, -0.5, 3.5);
 
 		p_event_selector->SetName("QCDEventSelector");
 		p_event_selector->SetObjectName("Event");
