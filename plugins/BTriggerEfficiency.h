@@ -69,6 +69,8 @@ class BTriggerEfficiency : public edm::EDAnalyzer
     int n_pass_;
 
     // Cut values
+    double fatjet_delta_eta_cut_;
+
     std::vector<TString> dijet_cuts_;
     std::map<TString, std::vector<double> > dijet_cut_parameters_;
     std::map<TString, std::vector<TString> > dijet_cut_descriptors_;

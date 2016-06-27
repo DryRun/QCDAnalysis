@@ -23,6 +23,7 @@ BHistograms::BHistograms(edm::ParameterSet const& cfg)
 	input_file_names_  = cfg.getParameter<std::vector<std::string> > ("file_names");
 	input_tree_name_  = cfg.getParameter<std::string> ("tree_name");
 	trigger_histogram_name_  = cfg.getParameter<std::string> ("trigger_histogram_name");
+	fatjet_delta_eta_cut_ = cfg.getParameter<double>("fatjet_delta_eta_cut");
 	current_file_ = 0;
 	n_total_ = 0;
 	n_pass_ = 0;
@@ -264,6 +265,9 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 			decade = k;          
 			tree_->GetEntry(entry);
 
+			// Sort jets by b tag rather than pT
+			event_->sortPFJetsBTagCSV();
+
 			// Object selection
 			dijet_selector_->ClassifyObjects(event_->pfjets());
 			pfjet_selector_->ClassifyObjects(event_->pfjets());
@@ -286,11 +290,11 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 					reco::Particle::LorentzVector lv_pfjet = event_->pfjet(jet_index).p4() * event_->pfjet(jet_index).cor();
 					double dR1 = deltaR(lv_fatjet[0], lv_pfjet);
 					double dR2 = deltaR(lv_fatjet[1], lv_pfjet);
-					if ((dR1 <= dR2) && (dR1 < 1.1)) {
+					if ((dR1 <= dR2) && (dR1 < fatjet_delta_eta_cut_)) {
 						lv_fatjet[0] += lv_pfjet;
 						sum_pt[0] += lv_pfjet.pt();
 						dsum_pt[0] += lv_pfjet.pt() * event_->pfjet(jet_index).cor();
-					} else if (dR2 < 1.1) {
+					} else if (dR2 < fatjet_delta_eta_cut_) {
 						lv_fatjet[1] += lv_pfjet;
 						sum_pt[1] += lv_pfjet.pt();
 						dsum_pt[1] += lv_pfjet.pt() * event_->pfjet(jet_index).cor();

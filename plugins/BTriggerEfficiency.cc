@@ -39,6 +39,8 @@ BTriggerEfficiency::BTriggerEfficiency(edm::ParameterSet const& cfg)
 	}
 
 	// Cuts
+	fatjet_delta_eta_cut_ = cfg.getParameter<double>("fatjet_delta_eta_cut");
+
 	std::vector<edm::ParameterSet> dijet_vps = cfg.getParameter<std::vector<edm::ParameterSet> >("dijet_cuts");
 	for (auto& it_cut : dijet_vps) {
 		std::string cut_name = it_cut.getParameter<std::string>("name");
@@ -328,11 +330,11 @@ void BTriggerEfficiency::analyze(edm::Event const& evt, edm::EventSetup const& i
 					reco::Particle::LorentzVector lv_pfjet = event_->pfjet(jet_index).p4() * event_->pfjet(jet_index).cor();
 					double dR1 = deltaR(lv_fatjet[0], lv_pfjet);
 					double dR2 = deltaR(lv_fatjet[1], lv_pfjet);
-					if ((dR1 <= dR2) && (dR1 < 1.1)) {
+					if ((dR1 <= dR2) && (dR1 < fatjet_delta_eta_cut_)) {
 						lv_fatjet[0] += lv_pfjet;
 						sum_pt[0] += lv_pfjet.pt();
 						dsum_pt[0] += lv_pfjet.pt() * event_->pfjet(jet_index).cor();
-					} else if (dR2 < 1.1) {
+					} else if (dR2 < fatjet_delta_eta_cut_) {
 						lv_fatjet[1] += lv_pfjet;
 						sum_pt[1] += lv_pfjet.pt();
 						dsum_pt[1] += lv_pfjet.pt() * event_->pfjet(jet_index).cor();

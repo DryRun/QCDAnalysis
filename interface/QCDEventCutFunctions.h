@@ -65,6 +65,9 @@ namespace QCDEventCutFunctions {
 	bool LeadingBVetoCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool SubleadingBVetoPF(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool SubleadingBVetoCalo(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinNCSVL(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinNCSVM(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool MinNCSVT(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 
 	// Fat jet cuts. Think about whether to use normal or fat jets for these!
 	bool MinLeadingPFFatJetPt(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);

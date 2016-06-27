@@ -26,10 +26,9 @@ class QCDEvent
       void setGenJets(const std::vector<LorentzVector>& fGenJets);
       void setL1Obj(const std::vector<std::vector<LorentzVector> >& fL1Obj);
       void setHLTObj(const std::vector<std::vector<LorentzVector> >& fHLTObj);
-      void setPrescales(const std::vector<std::vector<std::pair<std::string, int> > >& fPreL1, const std::vector<int>& fPreHLT) {L1Prescale_ = fPreL1; HLTPrescale_ = fPreHLT;}
+      void setPrescales(const std::vector<int>& fPreL1, const std::vector<int>& fPreHLT) {L1Prescale_ = fPreL1; HLTPrescale_ = fPreHLT;}
       void setTrigDecision(const std::vector<int>& fTrigDecision) {TriggerDecision_ = fTrigDecision;}                           
       //------------ Get methods ------------------------------- 
-      std::vector<int>& TriggerDecision() { return TriggerDecision_; }
       unsigned int nTriggers()                         const {return TriggerDecision_.size();}
       unsigned int nL1Obj(int i)                       const {return L1Obj_[i].size();}
       unsigned int nHLTObj(int i)                      const {return HLTObj_[i].size();}
@@ -37,28 +36,19 @@ class QCDEvent
       unsigned int nFatJets()                          const {return FatJets_.size();}
       unsigned int nCaloJets()                         const {return CaloJets_.size();}
       unsigned int nGenJets()                          const {return GenJets_.size();}
-      int nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets) const;
-      int fired(int i)                                 const {
-            if ((unsigned int)i >= TriggerDecision_.size()) {
-                  std::cerr << "[QCDEvent::fired] ERROR : Requested trigger index " << i << " is out of range. Printing TriggerDecision_." << std::endl;
-                  for (unsigned int i_trig = 0; i_trig < TriggerDecision_.size(); ++i_trig) {
-                        std::cerr << "[QCDEvent::fired] ERROR : \t" << i_trig << " = " << TriggerDecision_[i_trig] << std::endl;
-                  }
-            }
-            return TriggerDecision_[i];
-      }
-      std::vector<std::pair<std::string, int> > preL1(int i) const {return L1Prescale_[i];}
-      int minPreL1(int i);
+      int nGoodJets(int unc, int id, float ymax, float ptmin, std::vector<QCDJet> jets);
+      int fired(int i)                                 const {return TriggerDecision_[i];}
+      int preL1(int i)                                 const {return L1Prescale_[i];}
       int preHLT(int i)                                const {return HLTPrescale_[i];}
-      float pfmjj() const;
-      float calomjj() const;
-      float genmjj() const; 
-      float pfmjjcor(int unc) const;
-      float pfmjjcor(int unc,int src) const;
-      float fatmjjcor(int unc) const;
-      float calomjjcor(int unc) const;
-      float pfmjjgen() const;
-      float calomjjgen() const;
+      float pfmjj();
+      float calomjj();
+      float genmjj(); 
+      float pfmjjcor(int unc);
+      float pfmjjcor(int unc,int src);
+      float fatmjjcor(int unc);
+      float calomjjcor(int unc);
+      float pfmjjgen();
+      float calomjjgen();
       const QCDMET&        calomet()                   const {return CaloMet_;}
       const QCDMET&        pfmet()                     const {return PFMet_;} 
       const LorentzVector& hltobj(int itrig, int iobj) const {return (HLTObj_[itrig])[iobj];}  
@@ -68,17 +58,8 @@ class QCDEvent
       const QCDJet&        fatjet(int i)               const {return FatJets_[i];}
       const QCDCaloJet&    calojet(int i)              const {return CaloJets_[i];}
       const QCDEventHdr&   evtHdr()                    const {return EvtHdr_;}
-      const std::vector<QCDCaloJet>& calojets()   const {return CaloJets_;}
-      const std::vector<QCDPFJet>& pfjets()   const {return PFJets_;}
-      const std::vector<QCDJet>& fatjets()   const {return FatJets_;}
-
-      void sortPFJetsBTagCSV();
-
+ 
     private:
-    static bool sort_pfjets_btag_csv(QCDPFJet j1, QCDPFJet j2) {
-      return j1.btag_csv() > j2.btag_csv();
-    }
-
       //---- event header (contains all the event info) --------------
       QCDEventHdr                              EvtHdr_;
       //---- CALO met object -----------------------------------------
@@ -88,7 +69,7 @@ class QCDEvent
       //---- trigger decision vector --------------------------------- 
       std::vector<int>                         TriggerDecision_;
       //---- L1 prescale vector --------------------------------------
-      std::vector<std::vector<std::pair<std::string, int> > > L1Prescale_;
+      std::vector<int>                         L1Prescale_;
       //---- HLT prescale vector -------------------------------------
       std::vector<int>                         HLTPrescale_;
       //---- HLT objects ---------------------------------------------  
