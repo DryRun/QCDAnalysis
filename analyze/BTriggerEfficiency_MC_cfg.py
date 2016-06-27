@@ -39,6 +39,7 @@ process.BHistograms    = cms.EDAnalyzer('BTriggerEfficiency',
 	trigger_histogram_name = cms.string('ak5/TriggerNames'),
 	data_source            = cms.string('mc'),    
 	max_events             = cms.int32(-1)
+	fatjet_delta_eta_cut   = cms.double(1.1),
 )
 
 process.p = cms.Path(process.BHistograms)

@@ -136,6 +136,7 @@ process.BHistograms    = cms.EDAnalyzer('InclusiveBHistograms',
 	pfjet_cuts             = pfjet_cuts,
 	calojet_cuts           = calojet_cuts,
 	event_cuts             = event_cuts,
+	fatjet_delta_eta_cut  = cms.double(1.1),
 )
 
 process.p = cms.Path(process.BHistograms)

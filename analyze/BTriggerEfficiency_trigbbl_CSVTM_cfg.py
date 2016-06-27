@@ -15,6 +15,19 @@ options.register('outputFile',
 	VarParsing.VarParsing.varType.string,
 	"Output file"
 )
+options.register('dataSource',
+	'collision_data',
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.string,
+	'collision_data or simulation'
+	)
+options.register('dataType',
+	'data',
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.string,
+	'data, signal, or background'
+	)
+
 options.parseArguments()
 
 
@@ -58,7 +71,7 @@ dijet_cuts = cms.VPSet(
 	),
 	cms.PSet(
 		name        = cms.string("MaxAbsEta"),
-		parameters  = cms.vdouble(2.2),
+		parameters  = cms.vdouble(1.7),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
@@ -70,11 +83,6 @@ dijet_cuts = cms.VPSet(
 		name        = cms.string("MaxMuonEnergyFraction"),
 		parameters  = cms.vdouble(0.8),
 		descriptors = cms.vstring()
-	),
-	cms.PSet(
-		name = cms.string("MinBTagWeight"),
-		parameters = cms.vdouble(0.244),
-		descriptors = cms.vstring("csv")
 	)
 )
 
@@ -119,13 +127,23 @@ event_cuts = cms.VPSet(
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
+		name        = cms.string("MinNCSVM"),
+		parameters  = cms.vdouble(2),
+		descriptors = cms.vstring()
+	),
+	cms.PSet(
+		name        = cms.string("MinNCSVT"),
+		parameters  = cms.vdouble(1),
+		descriptors = cms.vstring()
+	),
+	cms.PSet(
 		name        = cms.string("MinLeadingPFJetPt"),
-		parameters  = cms.vdouble(160.),
+		parameters  = cms.vdouble(80.),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
 		name        = cms.string("MinSubleadingPFJetPt"),
-		parameters  = cms.vdouble(120.),
+		parameters  = cms.vdouble(70.),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
