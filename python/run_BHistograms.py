@@ -90,7 +90,7 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 	#command += "inputFiles=" + os.path.basename(input_files[sample])
 	output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
 	command += " outputFile=" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
-	#print command
+	print command
 	os.system(command)
 	os.system("rm -f tmp.txt")
 	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".sh", 'w')
@@ -108,6 +108,7 @@ if __name__ == "__main__":
 	parser.add_argument('analysis', type=str, help='Name of analysis chain (see analysis_configuration_8TeV.py)')
 	parser.add_argument('--data', type=str, help='Run data sample. Specify the sample name, e.g. BJetsPlusX_2012')
 	parser.add_argument('--signal', type=str, help='Run signal MC jobs. Specify the model (Hbb, Zprime, RSG) or specific sample')
+	parser.add_argument('--noretar', action='store_true', help='Force no retar')
 	args = parser.parse_args()
 
 	if args.data:
@@ -117,7 +118,7 @@ if __name__ == "__main__":
 			samples = [args.data]
 		first = True
 		for sample in samples:
-			RunBHistogramsEOS(args.analysis, sample, retar=first, data_source="collision_data")
+			RunBHistogramsEOS(args.analysis, sample, retar=(first and not args.noretar), data_source="collision_data")
 			if first:
 				first=False
 
@@ -128,6 +129,6 @@ if __name__ == "__main__":
 			samples = [args.signal]
 		first = True
 		for sample in samples:
-			RunBHistogramsSignal(args.analysis, sample, retar=first)
+			RunBHistogramsSignal(args.analysis, sample, retar=(first and not args.noretar))
 			if first:
 				first = False

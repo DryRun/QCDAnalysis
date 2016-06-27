@@ -1,7 +1,6 @@
 # Signal samples
 signal_models = ["RSG", "Hbb"] # Zprime
-signal_masses = [750]
-#signal_masses = [300, 600, 750, 900, 1200]
+signal_masses = [300, 600, 750, 900, 1200]
 #signal_masses = [600, 900, 1200]
 #signal_masses = [300]
 

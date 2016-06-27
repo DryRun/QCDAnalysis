@@ -294,13 +294,27 @@ def trigger_threshold_plot(test_hist, ref_hist, save_tag, x_range=None):
 	l = TLegend(0.65, 0.7, 0.93, 0.9)
 	l.SetFillColor(0)
 	l.SetBorderSize(0)
+
+	# Frame
+	if x_range:
+		x_min = x_range[0]
+		x_max = x_range[1]
+	else:
+		x_min = test_hist.GetXaxis().GetXmin()
+		x_max = test_hist.GetXaxis().GetXmax()
+	frame = TH1F("frame", "frame", 100, x_min, x_max)
+	frame.SetMinimum(0.)
+	frame.SetMaximum(0.2)
+	frame.GetXaxis().SetTitle("m_{jj} [GeV]")
+	frame.Draw("axis")
+
 	inefficiency_hist.SetLineColor(seaborn.GetColorRoot("dark", 2))
 	inefficiency_hist.SetLineWidth(2)
 	inefficiency_hist.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
 	inefficiency_hist.SetMarkerStyle(20)
 	inefficiency_hist.SetMinimum(-0.2)
 	inefficiency_hist.SetMaximum(1.2)
-	inefficiency_hist.Draw("pl")
+	inefficiency_hist.Draw("plhist same")
 	l.AddEntry(inefficiency_hist, "Trigger inefficiency", "pl")
 
 	stat_unc_hist.SetLineColor(seaborn.GetColorRoot("dark", 3))
@@ -309,7 +323,7 @@ def trigger_threshold_plot(test_hist, ref_hist, save_tag, x_range=None):
 	stat_unc_hist.SetMarkerStyle(24)
 	stat_unc_hist.SetMinimum(-0.2)
 	stat_unc_hist.SetMaximum(1.2)
-	stat_unc_hist.Draw("pl same")
+	stat_unc_hist.Draw("plhist same")
 	l.AddEntry(stat_unc_hist, "Stat uncertainty", "pl")
 
 	l.Draw()
@@ -339,21 +353,23 @@ def trigger_jet_leg_turnon(ref_hist, test_hist, save_tag):
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Trigger efficiency histograms')
-	parser.add_argument('input_file', type=str, required=True, help='File containing output of BTriggerEfficiency')
-	parser.add_argument('save_tag', type=str, required=True, help='Save tag')
+	parser.add_argument('input_file', type=str, help='File containing output of BTriggerEfficiency')
+	parser.add_argument('save_tag', type=str, help='Save tag')
 	parser.add_argument('--eff_plot', action='store_true', help='Make trigger efficiency plots for a number of variables')
 	parser.add_argument('--threshold_plot', action='store_true', help='Make trigger threshold vs stat unc plot.')
-	parser.add_argument('--jet_legs', action='store_true', nargs=2, help='Make efficiency vs. jet pT plots.')
+	parser.add_argument('--jet_legs', action='store_true', help='Make efficiency vs. jet pT plots.')
 	args = parser.parse_args()
 
 	if args.eff_plot:
 		EfficiencyPlots(args.input_file, args.save_tag)
 	if args.threshold_plot:
-		reference_trigger = "HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV"
 		f = TFile(args.input_file, "READ")
-		for test_trigger in ["HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose", "HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV"]:
-			for var in ["pfjet_mjj", "fatjet_mjj"]:
-				ref_hist = f.Get("BTriggerEfficiency/h_ref" + reference_trigger + "_pfjet_mjj")
-				test_hist = f.Get("BTriggerEfficiency/h_test" + test_trigger + "_ref" + reference_trigger + "_pfjet_mjj")
-				trigger_threshold_plot(test_hist, ref_hist, "trigger_threshold_" + test_trigger + "_" + var)
+		for var in ["pfjet_mjj", "fatjet_mjj"]:
+			reference_trigger = "HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV"
+			ref_hist = f.Get("BHistograms/h_ref" + reference_trigger + "_" + var)
+			ref_hist.Rebin(20)
+			for test_trigger in ["HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose", "HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV"]:
+				test_hist = f.Get("BHistograms/h_test" + test_trigger + "_ref" + reference_trigger + "_" + var)
+				test_hist.Rebin(20)
+				trigger_threshold_plot(test_hist, ref_hist, "trigger_threshold_" + args.save_tag + "_test" + test_trigger + "_" + var, x_range=[100, 800])
 

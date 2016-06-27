@@ -63,11 +63,11 @@ def DoSignalFit(hist, fit_range=None):
 	fit.SetParLimits(3, 1., 1000.)
 	fit.SetParameter(4, hist.GetMaximum())
 
-	hist.Fit(fit, "RI0")
-	if fit.GetNDF() > 0:
-		print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
-	else:
-		print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = NAN"
+	hist.Fit(fit, "QRI0")
+	#if fit.GetNDF() > 0:
+	#	print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
+	#else:
+	#	print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = NAN"
 	return {"fit":fit, "fit_ratio":MakeFitPullHistogram(hist, fit)}
 
 def DoMjjBackgroundFit(hist, blind=True, fit_min=500., fit_max=2000., rebin=20):
@@ -89,9 +89,9 @@ def DoMjjBackgroundFit(hist, blind=True, fit_min=500., fit_max=2000., rebin=20):
 	fit.SetParLimits(1, -25., 25.)
 	fit.SetParLimits(2, -25., 25.)
 	fit.SetParLimits(3, -5., 5.)
-	hist.Fit(fit, "ER0I")
+	hist.Fit(fit, "QR0")
 	fit_ratio = MakeFitPullHistogram(hist, fit)
-	print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
+	#print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
 
 	return {"fit":fit, "fit_ratio":fit_ratio}
 
