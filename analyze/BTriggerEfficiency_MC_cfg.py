@@ -15,6 +15,25 @@ options.register('outputFile',
 	VarParsing.VarParsing.varType.string,
 	"Output file"
 )
+options.register('dataSource',
+	'collision_data',
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.string,
+	'collision_data or simulation'
+	)
+options.register('dataType',
+	'data',
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.string,
+	'data, signal, or background'
+	)
+options.register('signalMass',
+	750.,
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.float,
+	'Signal mass hypothesis (only necessary for running over signal)'
+	)
+
 options.parseArguments()
 
 

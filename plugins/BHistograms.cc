@@ -88,6 +88,19 @@ BHistograms::BHistograms(edm::ParameterSet const& cfg)
 			event_cut_descriptors_[cut_name].push_back(it_str);
 		}
 	}
+
+	if (data_source_ == ObjectIdentifiers::kSimulation) {
+		std::map<TString, ObjectIdentifiers::BTagWP> btag_string_to_enum;
+		btag_string_to_enum["CSVL"] = ObjectIdentifiers::kCSVL;
+		btag_string_to_enum["CSVM"] = ObjectIdentifiers::kCSVM;
+		btag_string_to_enum["CSVT"] = ObjectIdentifiers::kCSVT;
+		btag_scale_factors_[ObjectIdentifiers::kCSVL] = new TF1("sf_csvl", "0.997942*((1.+(0.00923753*x))/(1.+(0.0096119*x)))", 0., 800.);
+		btag_scale_factors_[ObjectIdentifiers::kCSVM] = new TF1("sf_csvm", "(0.938887+(0.00017124*x))+(-2.76366e-07*(x*x))", 0., 800.);
+		btag_scale_factors_[ObjectIdentifiers::kCSVT] = new TF1("sf_csvt", "(0.927563+(1.55479e-05*x))+(-1.90666e-07*(x*x))", 0., 800.);
+		btag_configuration_ = std::pair<ObjectIdentifiers::BTagWP, ObjectIdentifiers::BTagWP>(btag_string_to_enum[cfg.getParameter<std::string>("btag_wp_1")], btag_string_to_enum[cfg.getParameter<std::string>("btag_wp_2")]);
+	}
+
+	systematic_ = Systematics::kCentral;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -206,6 +219,15 @@ void BHistograms::beginJob()
 		calojet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
 		fatjet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
 	}
+
+	// B tag SFs
+	if (data_source_ == ObjectIdentifiers::kSimulation) {
+
+		std::vector<ObjectIdentifiers::BTagWP> btag_working_points;
+		btag_working_points.push_back(ObjectIdentifiers::kCSVL);
+		btag_working_points.push_back(ObjectIdentifiers::kCSVM);
+		btag_working_points.push_back(ObjectIdentifiers::kCSVT);
+	}
 }
 
 
@@ -266,7 +288,7 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 			tree_->GetEntry(entry);
 
 			// Sort jets by b tag rather than pT
-			event_->sortPFJetsBTagCSV();
+			//event_->sortPFJetsBTagCSV();
 
 			// Object selection
 			dijet_selector_->ClassifyObjects(event_->pfjets());
@@ -350,6 +372,7 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				++n_pass_;
 				// Get prescale
 				double prescale = 1.;
+
 				//if (data_source_ == ObjectIdentifiers::kCollisionData) {
 				//	int hlt_index = (int)event_selector_->GetReturnData("TriggerOR");
 				//	double prescale_L1 = event_->minPreL1(hlt_index);
@@ -357,57 +380,66 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				//} else if (data_source_ == ObjectIdentifiers::kSimulation) {
 				//	prescale = 1;
 				//}
+				
+				// Simulation weights. 
+				double weight = prescale;
+
+				// - B tag SFs
+				if (data_source_ == ObjectIdentifiers::kSimulation) {
+					weight *= getEventBTagSF();
+				}
+
 				global_histograms_->GetTH1F("pass_nevents")->Fill(1);
-				global_histograms_->GetTH1F("pass_nevents_weighted")->Fill(1, prescale);
+				global_histograms_->GetTH1F("pass_nevents_weighted")->Fill(1, weight);
 
 				//double pf_mjj = (event_->pfjet(0).p4() + event_->pfjet(1).p4()).mass();
 				double pf_deltaeta = event_->pfjet(0).eta() - event_->pfjet(1).eta();
 				double pf_btag_csv1 = event_->pfjet(0).btag_csv();
 				double pf_btag_csv2 = event_->pfjet(1).btag_csv();
-				pfjet_histograms_->GetTH1D("mjj")->Fill(event_->pfmjjcor(0), prescale);
-				pfjet_histograms_->GetTH1D("deltaeta")->Fill(pf_deltaeta, prescale);
-				pfjet_histograms_->GetTH1D("pt1")->Fill(event_->pfjet(0).pt(), prescale);
-				pfjet_histograms_->GetTH1D("pt2")->Fill(event_->pfjet(1).pt(), prescale);
-				pfjet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->pfjet(0).pt(), event_->pfjet(1).pt(), prescale);
-				pfjet_histograms_->GetTH1D("eta1")->Fill(event_->pfjet(0).eta(), prescale);
-				pfjet_histograms_->GetTH1D("eta2")->Fill(event_->pfjet(1).eta(), prescale);
-				pfjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->pfmjjcor(0), pf_deltaeta, prescale);
-				pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, prescale);
+				pfjet_histograms_->GetTH1D("mjj")->Fill(event_->pfmjjcor(0), weight);
+				pfjet_histograms_->GetTH1D("deltaeta")->Fill(pf_deltaeta, weight);
+				pfjet_histograms_->GetTH1D("pt1")->Fill(event_->pfjet(0).ptCor(), weight);
+				pfjet_histograms_->GetTH1D("pt2")->Fill(event_->pfjet(1).ptCor(), weight);
+				pfjet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(1).ptCor(), weight);
+				pfjet_histograms_->GetTH1D("eta1")->Fill(event_->pfjet(0).eta(), weight);
+				pfjet_histograms_->GetTH1D("eta2")->Fill(event_->pfjet(1).eta(), weight);
+				pfjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->pfmjjcor(0), pf_deltaeta, weight);
+				pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, weight);
 				if (data_type_ == ObjectIdentifiers::kSignal) {
-					pfjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, prescale);
+					pfjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);
 				}
 
 				//double calo_mjj = (event_->calojet(0).p4() + event_->calojet(1).p4()).mass();
 				double calo_deltaeta = event_->calojet(0).eta() - event_->calojet(1).eta();
 				double calo_btag_csv1 = event_->calojet(0).btag_csv();
 				double calo_btag_csv2 = event_->calojet(1).btag_csv();
-				calojet_histograms_->GetTH1D("mjj")->Fill(event_->calomjjcor(0), prescale);
-				calojet_histograms_->GetTH1D("deltaeta")->Fill(calo_deltaeta, prescale);
-				calojet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->calomjjcor(0), calo_deltaeta, prescale);
-				calojet_histograms_->GetTH2F("btag_csv")->Fill(calo_btag_csv1, calo_btag_csv2, prescale);
-				calojet_histograms_->GetTH1D("pt1")->Fill(event_->calojet(0).pt(), prescale);
-				calojet_histograms_->GetTH1D("pt2")->Fill(event_->calojet(1).pt(), prescale);
-				calojet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->calojet(0).pt(), event_->calojet(1).pt(), prescale);
-				calojet_histograms_->GetTH1D("eta1")->Fill(event_->calojet(0).eta(), prescale);
-				calojet_histograms_->GetTH1D("eta2")->Fill(event_->calojet(1).eta(), prescale);
+				calojet_histograms_->GetTH1D("mjj")->Fill(event_->calomjjcor(0), weight);
+				calojet_histograms_->GetTH1D("deltaeta")->Fill(calo_deltaeta, weight);
+				calojet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->calomjjcor(0), calo_deltaeta, weight);
+				calojet_histograms_->GetTH2F("btag_csv")->Fill(calo_btag_csv1, calo_btag_csv2, weight);
+				calojet_histograms_->GetTH1D("pt1")->Fill(event_->calojet(0).ptCor(), weight);
+				calojet_histograms_->GetTH1D("pt2")->Fill(event_->calojet(1).ptCor(), weight);
+				calojet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->calojet(0).ptCor(), event_->calojet(1).ptCor(), weight);
+				calojet_histograms_->GetTH1D("eta1")->Fill(event_->calojet(0).eta(), weight);
+				calojet_histograms_->GetTH1D("eta2")->Fill(event_->calojet(1).eta(), weight);
 				if (data_type_ == ObjectIdentifiers::kSignal) {
-					calojet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, prescale);
+					calojet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);
 				}
 
 				double fat_deltaeta = event_->fatjet(0).eta() - event_->fatjet(1).eta();
 				double fat_btag_csv1 = event_->fatjet(0).btag_csv();
 				double fat_btag_csv2 = event_->fatjet(1).btag_csv();
-				fatjet_histograms_->GetTH1D("mjj")->Fill(event_->fatmjjcor(0), prescale);
-				fatjet_histograms_->GetTH1D("deltaeta")->Fill(fat_deltaeta, prescale);
-				fatjet_histograms_->GetTH1D("pt1")->Fill(event_->fatjet(0).pt(), prescale);
-				fatjet_histograms_->GetTH1D("pt2")->Fill(event_->fatjet(1).pt(), prescale);
-				fatjet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->fatjet(0).pt(), event_->fatjet(1).pt(), prescale);
-				fatjet_histograms_->GetTH1D("eta1")->Fill(event_->fatjet(0).eta(), prescale);
-				fatjet_histograms_->GetTH1D("eta2")->Fill(event_->fatjet(1).eta(), prescale);
-				fatjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->fatmjjcor(0), fat_deltaeta, prescale);
-				fatjet_histograms_->GetTH2F("btag_csv")->Fill(fat_btag_csv1, fat_btag_csv2, prescale);
+				fatjet_histograms_->GetTH1D("mjj")->Fill(event_->fatmjjcor(0), weight);
+				fatjet_histograms_->GetTH1D("deltaeta")->Fill(fat_deltaeta, weight);
+				fatjet_histograms_->GetTH1D("pt1")->Fill(event_->fatjet(0).ptCor(), weight);
+				fatjet_histograms_->GetTH1D("pt2")->Fill(event_->fatjet(1).ptCor(), weight);
+				fatjet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->fatjet(0).ptCor(), event_->fatjet(1).ptCor(), weight);
+				fatjet_histograms_->GetTH1D("eta1")->Fill(event_->fatjet(0).eta(), weight);
+				fatjet_histograms_->GetTH1D("eta2")->Fill(event_->fatjet(1).eta(), weight);
+				fatjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->fatmjjcor(0), fat_deltaeta, weight);
+				fatjet_histograms_->GetTH2F("btag_csv")->Fill(fat_btag_csv1, fat_btag_csv2, weight);
 				if (data_type_ == ObjectIdentifiers::kSignal) {
-					fatjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, prescale);
+					fatjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);
 				}
 			}
 		}
@@ -417,6 +449,33 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 		delete event_;
 		event_ = 0;
 	} // End loop over input files
+}
+
+double BHistograms::getEventBTagSF() {
+	double sf1 = 1.;
+	double sf2 = 1.;
+	if (event_->pfjet(0).btag_csv() > event_->pfjet(1).btag_csv()) {
+		sf1 = btag_scale_factors_[btag_configuration_.first]->Eval(event_->pfjet(0).pt());
+		sf2 = btag_scale_factors_[btag_configuration_.second]->Eval(event_->pfjet(1).pt());
+		if (systematic_ == Systematics::kBTagSFOfflineUp) {
+			sf1 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
+			sf2 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
+		} else if (systematic_ == Systematics::kBTagSFOfflineDown) {
+			sf1 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
+			sf2 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
+		}
+	} else {
+		sf1 = btag_scale_factors_[btag_configuration_.first]->Eval(event_->pfjet(1).pt());
+		sf2 = btag_scale_factors_[btag_configuration_.second]->Eval(event_->pfjet(0).pt());
+		if (systematic_ == Systematics::kBTagSFOfflineUp) {
+			sf1 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
+			sf2 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
+		} else if (systematic_ == Systematics::kBTagSFOfflineDown) {
+			sf1 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
+			sf2 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
+		}
+	}
+	return sf1 * sf2;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 

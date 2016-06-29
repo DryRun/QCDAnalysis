@@ -75,25 +75,36 @@ if __name__ == "__main__":
 	for model in ["Hbb", "RSG"]:
 		for mass_point in [600, 750, 900, 1200]:
 			f1 = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", analysis_config.simulation.get_signal_tag(model, mass_point, "FULLSIM")), "READ")
-			print "B-fat jet file: " + analysis_config.get_b_histogram_filename("trigbbh_CSVTM_bfat", analysis_config.simulation.get_signal_tag(model, mass_point, "FULLSIM"))
 			f2 = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM_bfat", analysis_config.simulation.get_signal_tag(model, mass_point, "FULLSIM")))
+			
 			histograms = {}
 			histograms["ak5"] = f1.Get("BHistograms/h_pfjet_mjj")
 			histograms["ak5"].SetName("h_ak5_" + model + "_" + str(mass_point))
 			histograms["ak5"].SetDirectory(0)
+
 			histograms["Fat, #DeltaR=1.1, p_{T}=30 GeV"] = f1.Get("BHistograms/h_fatjet_mjj")
 			histograms["Fat, #DeltaR=1.1, p_{T}=30 GeV"].SetName("h_fat1p1_" + model + "_" + str(mass_point))
 			histograms["Fat, #DeltaR=1.1, p_{T}=30 GeV"].SetDirectory(0)
+			
 			histograms["Fat, #DeltaR=0.8, p_{T}=15 GeV"] = f2.Get("BHistograms/h_fatjet_mjj")
 			histograms["Fat, #DeltaR=0.8, p_{T}=15 GeV"].SetName("h_fat0p8_" + model + "_" + str(mass_point))
 			histograms["Fat, #DeltaR=0.8, p_{T}=15 GeV"].SetDirectory(0)
 
+			#f_ptordered = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", analysis_config.simulation.get_signal_tag(model, mass_point, "FULLSIM")).replace("BHistograms/", "BHistograms/PtOrdered/"), "READ")
+			#histograms["ak5, p_{T} order"] = f_ptordered.Get("BHistograms/h_pfjet_mjj")
+			#histograms["ak5, p_{T} order"].SetName("h_ptordered")
+			#histograms["ak5, p_{T} order"].SetDirectory(0)
+			#for bin in xrange(1, histograms["ak5"].GetNbinsX() + 1):
+			#	histograms["ak5, p_{T} order"].SetBinContent(bin, histograms["ak5, p_{T} order"].GetBinContent(bin) / 2)
+			#	histograms["ak5, p_{T} order"].SetBinError(bin, histograms["ak5, p_{T} order"].GetBinError(bin) / 2)
+
 			# Rebin and normalize
 			for name, hist in histograms.iteritems():
 				hist.Rebin(20)
-				hist.Scale(1. / hist.Integral())
+				#hist.Scale(1. / hist.Integral())
 
-			mass_peak_plot(["ak5", "Fat, #DeltaR=1.1, p_{T}=30 GeV"], histograms, model + "_" + str(mass_point), x_range=[mass_point - 400., mass_point + 300.], log=False)
-			mass_peak_plot(["ak5", "Fat, #DeltaR=1.1, p_{T}=30 GeV", "Fat, #DeltaR=0.8, p_{T}=15 GeV"], histograms, model + "_" + str(mass_point), x_range=[mass_point - 300., mass_point + 300.], log=False)
+			#mass_peak_plot(["ak5", "Fat, #DeltaR=1.1, p_{T}=30 GeV"], histograms, model + "_" + str(mass_point), x_range=[mass_point - 400., mass_point + 300.], log=False)
+			mass_peak_plot(["ak5", "Fat, #DeltaR=1.1, p_{T}=30 GeV", "Fat, #DeltaR=0.8, p_{T}=15 GeV"], histograms, model + "_" + str(mass_point), x_range=[mass_point - 600., mass_point + 400.], log=False)
+			#mass_peak_plot(["ak5", "ak5, p_{T} order"], histograms, "btag_vs_pt_order_" + model + "_" + str(mass_point), x_range=[mass_point - 300., mass_point + 300.], log=False)
 			f1.Close()
 			f2.Close()

@@ -189,6 +189,18 @@ n_gen_events["ZprimeToBB_M_1100_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
 n_gen_events["ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
 n_gen_events["ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6_FASTSIM"] = 5000
 
+pat_file_lists = {}
+pat_file_lists["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_RSG_600.txt"
+pat_file_lists["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_RSG_750.txt"
+pat_file_lists["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_RSG_900.txt"
+pat_file_lists["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_RSG_1200.txt"
+pat_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_Hbb_600.txt"
+pat_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_Hbb_750.txt"
+pat_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_Hbb_900.txt"
+pat_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_Hbb_1200.txt"
+
+
+
 if __name__ == "__main__":
 	import ROOT
 	from ROOT import *

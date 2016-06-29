@@ -3,6 +3,7 @@
 
 #include "TTree.h"
 #include "TH1F.h"
+#include "TF1.h"
 #include "TFile.h"
 
 #include "FWCore/Framework/interface/Event.h"
@@ -17,6 +18,7 @@
 #include "CMSDIJET/QCDAnalysis/interface/PFJetCutFunctions.h"
 #include "CMSDIJET/QCDAnalysis/interface/CaloJetCutFunctions.h"
 #include "CMSDIJET/QCDAnalysis/interface/QCDEventCutFunctions.h"
+#include "CMSDIJET/QCDAnalysis/interface/Systematics.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "MyTools/RootUtils/interface/HistogramManager.h"
@@ -33,6 +35,8 @@ class BHistograms : public edm::EDAnalyzer
 	virtual ~BHistograms() {}
 
   private:  
+	double getEventBTagSF();
+
 	int getBin(double x, const std::vector<double>& boundaries); 
 
 	//---- configurable parameters --------   
@@ -69,6 +73,7 @@ class BHistograms : public edm::EDAnalyzer
 	Root::HistogramManager* pfjet_histograms_;
 	Root::HistogramManager* calojet_histograms_;
 	Root::HistogramManager* fatjet_histograms_;
+	Systematics::Systematic_t systematic_;
 	
 	int n_total_;
 	int n_pass_;
@@ -92,6 +97,11 @@ class BHistograms : public edm::EDAnalyzer
 	std::map<TString, std::vector<double> > event_cut_parameters_;
 	std::map<TString, std::vector<TString> > event_cut_descriptors_;
 
+	// B tag SFs
+	std::pair<ObjectIdentifiers::BTagWP, ObjectIdentifiers::BTagWP> btag_configuration_;
+	//std::map<ObjectIdentifiers::BTagWP, TH2D*> btag_efficiency_histograms_;
+	std::map<ObjectIdentifiers::BTagWP, TF1*> btag_scale_factors_;
+	std::map<ObjectIdentifiers::BTagWP, TH1D*> btag_scale_factor_uncertainties_;
 };
 
 

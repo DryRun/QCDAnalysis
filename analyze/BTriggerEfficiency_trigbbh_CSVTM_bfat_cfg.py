@@ -27,6 +27,13 @@ options.register('dataType',
 	VarParsing.VarParsing.varType.string,
 	'data, signal, or background'
 	)
+options.register('signalMass',
+	750.,
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.float,
+	'Signal mass hypothesis (only necessary for running over signal)'
+	)
+
 options.parseArguments()
 
 
