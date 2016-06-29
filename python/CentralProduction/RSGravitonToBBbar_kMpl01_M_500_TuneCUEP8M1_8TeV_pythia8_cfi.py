@@ -16,7 +16,7 @@ generator = cms.EDFilter("Pythia8GeneratorFilter",
         processParameters = cms.vstring(
             'ExtraDimensionsG*:all = on',
             'ExtraDimensionsG*:kappaMG = 0.54',
-            '5100039:m0 = 400', 
+            '5100039:m0 = 500', 
             '5100039:onMode = off',
             '5100039:onIfAny = 5',            
             ),

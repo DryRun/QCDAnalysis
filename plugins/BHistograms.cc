@@ -188,6 +188,16 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
 	pfjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
 
+	if (data_source_ == ObjectIdentifiers::kSimulation) {
+		pfjet_histograms_->AddTH1D("mjj_BTagOfflineSFUp", "mjj_BTagOfflineSFUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_BTagOfflineSFDown", "mjj_BTagOfflineSFDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_JESUp", "mjj_JESUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_JESDown", "mjj_JESDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_JERUp", "mjj_JERUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_JERDown", "mjj_JERDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	}
+
+
 	calojet_histograms_ = new Root::HistogramManager();
 	calojet_histograms_->AddPrefix("h_calojet_");
 	calojet_histograms_->AddTFileService(&fs_);
@@ -213,11 +223,33 @@ void BHistograms::beginJob()
 	fatjet_histograms_->AddTH2D("pt1_vs_pt2", "pt1", "p_{T} (leading) [GeV]", 100, 0., 1000., "p_{T} (subleading) [GeV]", 100, 0., 1000.);
 	fatjet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
 	fatjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+	if (data_source_ == ObjectIdentifiers::kSimulation) {
+		fatjet_histograms_->AddTH1D("mjj_BTagOfflineSFUp", "mjj_BTagOfflineSFUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		fatjet_histograms_->AddTH1D("mjj_BTagOfflineSFDown", "mjj_BTagOfflineSFDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		fatjet_histograms_->AddTH1D("mjj_JESUp", "mjj_JESUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		fatjet_histograms_->AddTH1D("mjj_JESDown", "mjj_JESDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		fatjet_histograms_->AddTH1D("mjj_JERUp", "mjj_JERUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		fatjet_histograms_->AddTH1D("mjj_JERDown", "mjj_JERDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	}
 
 	if (data_type_ == ObjectIdentifiers::kSignal) {
 		pfjet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
 		calojet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
 		fatjet_histograms_->AddTH1D("mjj_over_M", "mjj_over_M", "m_{jj} / M_{X}", 75, 0., 1.5);
+
+		pfjet_histograms_->AddTH1D("mjj_over_M_BTagOfflineSFUp", "mjj_over_M_BTagOfflineSFUp", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		pfjet_histograms_->AddTH1D("mjj_over_M_BTagOfflineSFDown", "mjj_over_M_BTagOfflineSFDown", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		pfjet_histograms_->AddTH1D("mjj_over_M_JESUp", "mjj_over_M_JESUp", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		pfjet_histograms_->AddTH1D("mjj_over_M_JESDown", "mjj_over_M_JESDown", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		pfjet_histograms_->AddTH1D("mjj_over_M_JERUp", "mjj_over_M_JERUp", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		pfjet_histograms_->AddTH1D("mjj_over_M_JERDown", "mjj_over_M_JERDown", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		fatjet_histograms_->AddTH1D("mjj_over_M_BTagOfflineSFUp", "mjj_over_M_BTagOfflineSFUp", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		fatjet_histograms_->AddTH1D("mjj_over_M_BTagOfflineSFDown", "mjj_over_M_BTagOfflineSFDown", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		fatjet_histograms_->AddTH1D("mjj_over_M_JESUp", "mjj_over_M_JESUp", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		fatjet_histograms_->AddTH1D("mjj_over_M_JESDown", "mjj_over_M_JESDown", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		fatjet_histograms_->AddTH1D("mjj_over_M_JERUp", "mjj_over_M_JERUp", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+		fatjet_histograms_->AddTH1D("mjj_over_M_JERDown", "mjj_over_M_JERDown", "m_{jj} / M_{X}", 75, 0., 1.5); // GeV
+
 	}
 
 	// B tag SFs
@@ -408,6 +440,24 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				if (data_type_ == ObjectIdentifiers::kSignal) {
 					pfjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);
 				}
+				if (data_source_ == ObjectIdentifiers::kSimulation) {
+					double weight_BTagOfflineSFUp = prescale * getEventBTagSF(1);
+					double weight_BTagOfflineSFDown = prescale * getEventBTagSF(-1);
+					pfjet_histograms_->GetTH1D("mjj_BTagOfflineSFUp")->Fill(event_->pfmjjcor(0), weight_BTagOfflineSFUp);
+					pfjet_histograms_->GetTH1D("mjj_BTagOfflineSFDown")->Fill(event_->pfmjjcor(0), weight_BTagOfflineSFDown);
+					pfjet_histograms_->GetTH1D("mjj_JESUp")->Fill(event_->pfmjjcor(1), weight);
+					pfjet_histograms_->GetTH1D("mjj_JESDown")->Fill(event_->pfmjjcor(-1), weight);
+					pfjet_histograms_->GetTH1D("mjj_JERUp")->Fill(0.);
+					pfjet_histograms_->GetTH1D("mjj_JERDown")->Fill(0.);
+					if (data_source_ == ObjectIdentifiers::kSignal) {
+						pfjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFUp")->Fill(event_->pfmjjcor(0) / signal_mass_, weight_BTagOfflineSFUp);
+						pfjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFDown")->Fill(event_->pfmjjcor(0) / signal_mass_, weight_BTagOfflineSFDown);
+						pfjet_histograms_->GetTH1D("mjj_over_M_JESUp")->Fill(event_->pfmjjcor(1) / signal_mass_, weight);
+						pfjet_histograms_->GetTH1D("mjj_over_M_JESDown")->Fill(event_->pfmjjcor(-1) / signal_mass_, weight);
+						pfjet_histograms_->GetTH1D("mjj_over_M_JERUp")->Fill(0.);
+						pfjet_histograms_->GetTH1D("mjj_over_M_JERDown")->Fill(0.);
+					}
+				}
 
 				//double calo_mjj = (event_->calojet(0).p4() + event_->calojet(1).p4()).mass();
 				double calo_deltaeta = event_->calojet(0).eta() - event_->calojet(1).eta();
@@ -441,6 +491,25 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				if (data_type_ == ObjectIdentifiers::kSignal) {
 					fatjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);
 				}
+				if (data_source_ == ObjectIdentifiers::kSimulation) {
+					double weight_BTagOfflineSFUp = prescale * getEventBTagSF(1);
+					double weight_BTagOfflineSFDown = prescale * getEventBTagSF(-1);
+					fatjet_histograms_->GetTH1D("mjj_BTagOfflineSFUp")->Fill(event_->fatmjjcor(0), weight_BTagOfflineSFUp);
+					fatjet_histograms_->GetTH1D("mjj_BTagOfflineSFDown")->Fill(event_->fatmjjcor(0), weight_BTagOfflineSFDown);
+					fatjet_histograms_->GetTH1D("mjj_JESUp")->Fill(event_->fatmjjcor(1), weight);
+					fatjet_histograms_->GetTH1D("mjj_JESDown")->Fill(event_->fatmjjcor(-1), weight);
+					fatjet_histograms_->GetTH1D("mjj_JERUp")->Fill(0.);
+					fatjet_histograms_->GetTH1D("mjj_JERDown")->Fill(0.);
+					if (data_source_ == ObjectIdentifiers::kSignal) {
+						fatjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFUp")->Fill(event_->fatmjjcor(0) / signal_mass_, weight_BTagOfflineSFUp);
+						fatjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFDown")->Fill(event_->fatmjjcor(0) / signal_mass_, weight_BTagOfflineSFDown);
+						fatjet_histograms_->GetTH1D("mjj_over_M_JESUp")->Fill(event_->fatmjjcor(1) / signal_mass_, weight);
+						fatjet_histograms_->GetTH1D("mjj_over_M_JESDown")->Fill(event_->fatmjjcor(-1) / signal_mass_, weight);
+						fatjet_histograms_->GetTH1D("mjj_over_M_JERUp")->Fill(0.);
+						fatjet_histograms_->GetTH1D("mjj_over_M_JERDown")->Fill(0.);
+					}
+
+				}
 			}
 		}
 		f->Close();
@@ -451,28 +520,22 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 	} // End loop over input files
 }
 
-double BHistograms::getEventBTagSF() {
+double BHistograms::getEventBTagSF(int uncertainty) {
 	double sf1 = 1.;
 	double sf2 = 1.;
 	if (event_->pfjet(0).btag_csv() > event_->pfjet(1).btag_csv()) {
 		sf1 = btag_scale_factors_[btag_configuration_.first]->Eval(event_->pfjet(0).pt());
 		sf2 = btag_scale_factors_[btag_configuration_.second]->Eval(event_->pfjet(1).pt());
-		if (systematic_ == Systematics::kBTagSFOfflineUp) {
-			sf1 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
-			sf2 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
-		} else if (systematic_ == Systematics::kBTagSFOfflineDown) {
-			sf1 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
-			sf2 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
+		if (uncertainty) {
+			sf1 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
+			sf2 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
 		}
 	} else {
 		sf1 = btag_scale_factors_[btag_configuration_.first]->Eval(event_->pfjet(1).pt());
 		sf2 = btag_scale_factors_[btag_configuration_.second]->Eval(event_->pfjet(0).pt());
 		if (systematic_ == Systematics::kBTagSFOfflineUp) {
-			sf1 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
-			sf2 *= 1. + btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
-		} else if (systematic_ == Systematics::kBTagSFOfflineDown) {
-			sf1 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
-			sf2 *= 1. - btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
+			sf1 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
+			sf2 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
 		}
 	}
 	return sf1 * sf2;

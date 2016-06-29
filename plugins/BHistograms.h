@@ -35,7 +35,7 @@ class BHistograms : public edm::EDAnalyzer
 	virtual ~BHistograms() {}
 
   private:  
-	double getEventBTagSF();
+	double getEventBTagSF(int uncertainty = 0);
 
 	int getBin(double x, const std::vector<double>& boundaries); 
 
