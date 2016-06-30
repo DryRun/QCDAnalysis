@@ -139,7 +139,7 @@ event_cuts = cms.VPSet(
 	),
 	cms.PSet(
 		name        = cms.string("PFDijetMaxDeltaEta"),
-		parameters  = cms.vdouble(1.1),
+		parameters  = cms.vdouble(1.3),
 		descriptors = cms.vstring()
 	)
 )
@@ -160,6 +160,8 @@ process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	calojet_cuts           = calojet_cuts,
 	event_cuts             = event_cuts,
 	fatjet_delta_eta_cut  = cms.double(1.1),
+	btag_wp_1              = cms.string('CSVL'),
+	btag_wp_2              = cms.string('CSVL'),
 )
 
 process.p = cms.Path(process.BHistograms)

@@ -148,7 +148,7 @@ event_cuts = cms.VPSet(
 	),
 	cms.PSet(
 		name        = cms.string("PFDijetMaxDeltaEta"),
-		parameters  = cms.vdouble(1.1),
+		parameters  = cms.vdouble(1.3),
 		descriptors = cms.vstring()
 	)
 )
