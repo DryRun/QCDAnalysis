@@ -160,6 +160,8 @@ process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	calojet_cuts           = calojet_cuts,
 	event_cuts             = event_cuts,
 	fatjet_delta_eta_cut  = cms.double(1.1),
+	btag_wp_1              = cms.string('CSVT'),
+	btag_wp_2              = cms.string('CSVT'),
 )
 
 process.p = cms.Path(process.BHistograms)
