@@ -98,9 +98,62 @@ BHistograms::BHistograms(edm::ParameterSet const& cfg)
 		btag_scale_factors_[ObjectIdentifiers::kCSVM] = new TF1("sf_csvm", "(0.938887+(0.00017124*x))+(-2.76366e-07*(x*x))", 0., 800.);
 		btag_scale_factors_[ObjectIdentifiers::kCSVT] = new TF1("sf_csvt", "(0.927563+(1.55479e-05*x))+(-1.90666e-07*(x*x))", 0., 800.);
 		btag_configuration_ = std::pair<ObjectIdentifiers::BTagWP, ObjectIdentifiers::BTagWP>(btag_string_to_enum[cfg.getParameter<std::string>("btag_wp_1")], btag_string_to_enum[cfg.getParameter<std::string>("btag_wp_2")]);
-	}
 
-	systematic_ = Systematics::kCentral;
+		float bins[] = {20, 30, 40, 50, 60, 70, 80, 100, 120, 160, 210, 260, 320, 400, 500, 600, 800};
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL] = TH1D("btag_sf_unc_csvl", "btag_sf_unc_csvl", 16, bins);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(1, 0.033299);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(2, 0.0146768);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(3, 0.013803);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(4, 0.0170145);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(5, 0.0166976);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(6, 0.0137879);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(7, 0.0149072);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(8, 0.0153068);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(9, 0.0133077);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(10, 0.0123737);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(11, 0.0157152);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(12, 0.0175161);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(13, 0.0209241);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(14, 0.0278605);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(15, 0.0346928);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(16, 0.0350099);
+
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM] = TH1D("btag_sf_unc_csvm", "btag_sf_unc_csvm", 16, bins);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(1, 0.0415707);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(2, 0.0204209);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(3, 0.0223227);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(4, 0.0206655);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(5, 0.0199325);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(6, 0.0174121);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(7, 0.0202332);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(8, 0.0182446);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(9, 0.0159777);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(10, 0.0218531);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(11, 0.0204688);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(12, 0.0265191);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(13, 0.0313175);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(14, 0.0415417);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(15, 0.0740446);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(16, 0.0596716);
+
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT] = TH1D("btag_sf_unc_csvl", "btag_sf_unc_csvl", 16, bins);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(1, 0.0515703);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(2, 0.0264008);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(3, 0.0272757);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(4, 0.0275565);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(5, 0.0248745);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(6, 0.0218456);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(7, 0.0253845);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(8, 0.0239588);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(9, 0.0271791);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(10, 0.0273912);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(11, 0.0379822);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(12, 0.0411624);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(13, 0.0786307);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(14, 0.0866832);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(15, 0.0942053);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(16, 0.102403);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////

@@ -73,7 +73,6 @@ class BHistograms : public edm::EDAnalyzer
 	Root::HistogramManager* pfjet_histograms_;
 	Root::HistogramManager* calojet_histograms_;
 	Root::HistogramManager* fatjet_histograms_;
-	Systematics::Systematic_t systematic_;
 	
 	int n_total_;
 	int n_pass_;
