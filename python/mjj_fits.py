@@ -89,7 +89,7 @@ def DoMjjBackgroundFit(hist, blind=True, fit_min=500., fit_max=2000., rebin=20):
 	fit.SetParLimits(1, -25., 25.)
 	fit.SetParLimits(2, -25., 25.)
 	fit.SetParLimits(3, -5., 5.)
-	hist.Fit(fit, "QR0")
+	hist.Fit(fit, "QRI0")
 	fit_ratio = MakeFitPullHistogram(hist, fit)
 	#print "fit chi2/ndf = " + str(fit.GetChisquare()) + " / " + str(fit.GetNDF()) + " = " + str(fit.GetChisquare() / fit.GetNDF())
 

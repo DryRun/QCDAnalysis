@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import array
 import ROOT
 from ROOT import *
 
@@ -15,6 +16,11 @@ from CMSDIJET.QCDAnalysis.mjj_fits import *
 #import CMSDIJET.QCDAnalysis.simulation_configuration_8TeV
 #from CMSDIJET.QCDAnalysis.simulation_configuration_8TeV import *
 import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
+
+def ApplyDijetBinning(hist):
+	bins = array.array('d', [1, 3, 6, 10, 16, 23, 31, 40, 50, 61, 74, 88, 103, 119, 137, 156, 176, 197, 220, 244, 270, 296, 325, 354, 386, 419, 453, 489, 526, 565, 606, 649, 693, 740, 788, 838, 890, 944, 1000, 1058, 1118, 1181, 1246, 1313, 1383, 1455, 1530, 1607, 1687, 1770, 1856, 1945, 2037, 2132, 2231, 2332, 2438, 2546, 2659, 2775, 2895, 3019, 3147, 3279, 3416, 3558, 3704, 3854, 4010, 4171, 4337, 4509, 4686, 4869, 5058, 5253, 5455, 5663, 5877, 6099, 6328, 6564, 6808, 7060, 7320, 7589, 7866, 8000])
+	rebinned_hist = hist.Rebin(len(bins) - 1, hist.GetName() + "_rebinned", bins)
+	return rebinned_hist
 
 def Blind(hist, center=750., half_width=75.):
 	hist_blind = hist.Clone()
@@ -183,7 +189,8 @@ def MakeMjjPlot(data_hist, cached_fit_results=None, signal_histograms=None, sign
 	data_hist.SetMarkerStyle(20)
 	
 	frame = TH1D("frame", "frame", 100, x_min, x_max)
-	frame.GetYaxis().SetTitle("Events / " + str(int(data_hist.GetXaxis().GetBinWidth(1))) + " GeV")
+	#frame.GetYaxis().SetTitle("Events / " + str(int(data_hist.GetXaxis().GetBinWidth(1))) + " GeV")
+	frame.GetYaxis().SetTitle("Events / 1 GeV")
 	frame.GetXaxis().SetTitleSize(0)
 	frame.GetXaxis().SetLabelSize(0)
 	if log:
@@ -390,15 +397,16 @@ def MakeFatJetComparison(hist_pf, hist_fat, save_tag, fit_range=None, x_range=No
 
 	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
 
-def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=False):
-	print "Welcome to JetHTComparisonPlot"
+def AnalysisComparisonPlot(hist_num, hist_den, name_num, name_den, save_tag, x_range=None, log=False):
+	print "Welcome to AnalysisComparisonPlot"
+	print "[debug] name_num = " + name_num
 
 	if x_range:
 		x_min = x_range[0]
 		x_max = x_range[1]
 	else:
-		x_min = hist_bjetplusx.GetXaxis().GetXmin()
-		x_max = hist_bjetplusx.GetXaxis().GetXmax()
+		x_min = hist_num.GetXaxis().GetXmin()
+		x_max = hist_num.GetXaxis().GetXmax()
 
 	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
 	l = TLegend(0.55, 0.6, 0.88, 0.88)
@@ -426,28 +434,28 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 	frame_top.GetYaxis().SetLabelSize(0.04)
 	frame_top.GetYaxis().SetTitleSize(0.04)
 	#frame_top.GetYaxis().SetTitleOffset(0.85)
-	bin_width = hist_bjetplusx.GetXaxis().GetBinWidth(1)
+	bin_width = hist_num.GetXaxis().GetBinWidth(1)
 	frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
 	if log:
-		frame_top.SetMaximum(hist_jetht.GetMaximum() * 5.)
+		frame_top.SetMaximum(hist_den.GetMaximum() * 5.)
 		frame_top.SetMinimum(5.)
 	else:
-		frame_top.SetMaximum(hist_jetht.GetMaximum() * 1.7)
+		frame_top.SetMaximum(hist_den.GetMaximum() * 1.7)
 	frame_top.Draw("axis")
 
-	hist_bjetplusx.SetMarkerStyle(20)
-	hist_bjetplusx.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
-	hist_bjetplusx.SetLineColor(seaborn.GetColorRoot("dark", 0))
-	hist_bjetplusx.SetMarkerSize(1)
-	hist_bjetplusx.Draw("p e1 same")
-	l.AddEntry(hist_bjetplusx, "BJetPlusX", "pl")
+	hist_num.SetMarkerStyle(20)
+	hist_num.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
+	hist_num.SetLineColor(seaborn.GetColorRoot("dark", 0))
+	hist_num.SetMarkerSize(1)
+	hist_num.Draw("p e1 same")
+	l.AddEntry(hist_num, name_num, "pl")
 
-	hist_jetht.SetMarkerStyle(24)
-	hist_jetht.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
-	hist_jetht.SetLineColor(seaborn.GetColorRoot("dark", 2))
-	hist_jetht.SetMarkerSize(1)
-	hist_jetht.Draw("p e1 same")
-	l.AddEntry(hist_jetht, "JetHT", "pl")
+	hist_den.SetMarkerStyle(24)
+	hist_den.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
+	hist_den.SetLineColor(seaborn.GetColorRoot("dark", 2))
+	hist_den.SetMarkerSize(1)
+	hist_den.Draw("p e1 same")
+	l.AddEntry(hist_den, name_den, "pl")
 	l.Draw()
 
 	c.cd()
@@ -457,7 +465,7 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 	frame_bottom.SetMinimum(-0.2)
 	frame_bottom.SetMaximum(1.2)
 	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
-	frame_bottom.GetYaxis().SetTitle("BJetsPlusX / JetHT")
+	frame_bottom.GetYaxis().SetTitle(name_num + " / " + name_den)
 
 	frame_bottom.GetXaxis().SetLabelSize(0.04)
 	frame_bottom.GetXaxis().SetTitleSize(0.06)
@@ -483,8 +491,8 @@ def JetHTComparisonPlot(hist_bjetplusx, hist_jetht, save_tag, x_range=None, log=
 	zero.Draw("same")
 
 	# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
-	hist_ratio = hist_bjetplusx.Clone()
-	hist_ratio.Divide(hist_jetht)
+	hist_ratio = hist_num.Clone()
+	hist_ratio.Divide(hist_den)
 	hist_ratio.Draw("hist same")
 
 	c.SaveAs(analysis_config.figure_directory + "/" + save_tag + ".pdf")
@@ -593,19 +601,20 @@ if __name__ == "__main__":
 	parser.add_argument('--nmo', action='store_true', help='Make N-1 plots')
 	parser.add_argument('--peaks', action='store_true', help='Make signal peak plots')
 	parser.add_argument('--unblind', action='store_true', help='Unblind 750 region')
-	parser.add_argument('--jetht', action='store_true', help='BJetPlusX over JetHT plot')
+	parser.add_argument('--compare', type=str, nargs=4, help='Plot comparing two analyses. Arg = analysis(num), sample(num), analysis(den), sample(den).')
 	parser.add_argument('--csv', action='store_true', help='Plot comparing B tagging working points')
 	args = parser.parse_args()
 
 	analyses = args.analyses.split(",")
 	data_samples = args.data_samples.split(",")
 	signal_samples = []
-	if args.signal_samples:
-		signal_samples = args.signal_samples.split(",")
-	else:
+	if args.signal_samples == "all":
 		for signal_model in ["Hbb", "RSG"]:
-			for mass in [300, 600, 900, 1200]:
+			for mass in [600, 750, 900, 1200]:
 				signal_samples.append(analysis_config.simulation.get_signal_tag(signal_model, mass, "FULLSIM"))
+	elif args.signal_samples:
+		signal_samples = args.signal_samples.split(",")
+	
 
 	f_data = {}
 	f_signal = {}
@@ -619,37 +628,47 @@ if __name__ == "__main__":
 			f_signal[analysis][signal_sample] = TFile(analysis_config.get_b_histogram_filename(analysis, signal_sample), "READ")
 
 	if args.mjj:
-		save_file = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/mjj_fits.root", "RECREATE")
-		fit_minima = {"fatjet":600., "pfjet":500.}
-		for jet_type in ["fatjet", "pfjet"]:
+		for analysis in analyses:
+			for data_sample in data_samples:
+				save_file = TFile("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/mjj_fits_" + analysis + "_" + data_sample + ".root", "RECREATE")
+				if "trigbbl" in analysis:
+					fit_minima = {"pfjet":419.1}
+				elif "trigbbh" in analysis:
+					fit_minima = {"pfjet":526.1}
+				for jet_type in ["pfjet"]:
+					data_hist = f_data[analysis][data_sample].Get("BHistograms/h_" + jet_type + "_mjj")
+					data_hist.SetName(data_hist.GetName() + "_rebin" + analysis + data_sample)
+					bins = array.array('d', [1, 3, 6, 10, 16, 23, 31, 40, 50, 61, 74, 88, 103, 119, 137, 156, 176, 197, 220, 244, 270, 296, 325, 354, 386, 419, 453, 489, 526, 565, 606, 649, 693, 740, 788, 838, 890, 944, 1000, 1058, 1118, 1181, 1246, 1313, 1383, 1455, 1530, 1607, 1687, 1770, 1856, 1945, 2037, 2132, 2231, 2332, 2438, 2546, 2659, 2775, 2895, 3019, 3147, 3279, 3416, 3558, 3704, 3854, 4010, 4171, 4337, 4509, 4686, 4869, 5058, 5253, 5455, 5663, 5877, 6099, 6328, 6564, 6808, 7060, 7320, 7589, 7866, 8000])
+					data_hist = data_hist.Rebin(len(bins) - 1, data_hist.GetName(), bins)
+					x_bin_width = 1
+					for bin in xrange(1, data_hist.GetNbinsX() + 1):
+						data_hist.SetBinContent(bin, data_hist.GetBinContent(bin) / data_hist.GetXaxis().GetBinWidth(bin))
+						data_hist.SetBinError(bin, data_hist.GetBinError(bin) / data_hist.GetXaxis().GetBinWidth(bin))
+					#data_hist.Rebin(20)
+					data_hist.SetDirectory(0)
 
-			data_hist = f_data.Get("BHistograms/h_" + jet_type + "_mjj")
-			data_hist.SetName(data_hist.GetName() + "_data")
-			data_hist.Rebin(20)
-			data_hist.SetDirectory(0)
+					signal_histograms = []
+					for signal_sample in signal_samples:
+						signal_histograms.append(f_signal[signal_sample].Get("BHistograms/h_" + jet_type + "_mjj"))
+						input_nevents = (f_signal[signal_sample].Get("BHistograms/h_input_nevents")).Integral()
+						signal_histograms[-1].SetDirectory(0)
+						signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
+						signal_histograms[-1].Scale(19700 * signal_cross_sections["RSG"][signal_mass_point] / input_nevents)
+						signal_histograms[-1].Rebin(20)
+						signal_names.append("RSG to bb, m=" + str(int(signal_mass_point)) + " GeV")
+					MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_samples, x_range=[0., 1500.], save_tag=jet_type + "_mjj_" + analysis, log=False, fit_min=fit_minima[jet_type], fit_max=1200., save_file=save_file, blind=(not args.unblind))
 
-			signal_histograms = []
-			for signal_sample in signal_samples:
-				signal_histograms.append(f_signal[signal_sample].Get("BHistograms/h_" + jet_type + "_mjj"))
-				input_nevents = (f_signal[signal_sample].Get("BHistograms/h_input_nevents")).Integral()
-				signal_histograms[-1].SetDirectory(0)
-				signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
-				signal_histograms[-1].Scale(19700 * signal_cross_sections["RSG"][signal_mass_point] / input_nevents)
-				signal_histograms[-1].Rebin(20)
-				signal_names.append("RSG to bb, m=" + str(int(signal_mass_point)) + " GeV")
-			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_samples, x_range=[0., 2000.], save_tag=jet_type + "_mjj_" + args.analysis, log=False, fit_min=fit_minima[jet_type], fit_max=1500., save_file=save_file, blind=(not args.unblind))
-
-			# For more plots, no need to redo fits
-			this_fit_results = {}
-			this_fit_results["fit"] = save_file.Get(jet_type + "_mjj_" + args.analysis + "_fit")
-			this_fit_results["fit_ratio"] = save_file.Get(jet_type + "_mjj_" + args.analysis + "_fit_ratio")
-			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[0., 2000.], save_tag=jet_type + "_mjj_log_" + args.analysis, log=True, fit_min=fit_minima[jet_type], fit_max=1500., cached_fit_results=this_fit_results, blind=(not args.unblind))
-			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[500., 1000.], save_tag=jet_type + "_mjj_zoom_" + args.analysis, log=False, fit_min=fit_minima[jet_type], fit_max=1500., cached_fit_results=this_fit_results, blind=(not args.unblind))
-			MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_names, x_range=[500., 1000.], save_tag=jet_type + "_mjj_log_zoom_" + args.analysis, log=True, fit_min=fit_minima[jet_type], fit_max=1500., cached_fit_results=this_fit_results, blind=(not args.unblind))
+					# For more plots, no need to redo fits
+					this_fit_results = {}
+					this_fit_results["fit"] = save_file.Get(jet_type + "_mjj_" + analysis + "_fit")
+					this_fit_results["fit_ratio"] = save_file.Get(jet_type + "_mjj_" + analysis + "_fit_ratio")
+					MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_samples, x_range=[0., 1500.], save_tag=jet_type + "_mjj_log_" + analysis, log=True, fit_min=fit_minima[jet_type], fit_max=1200., cached_fit_results=this_fit_results, blind=(not args.unblind))
+					MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_samples, x_range=[250., 1250.], save_tag=jet_type + "_mjj_zoom_" + analysis, log=False, fit_min=fit_minima[jet_type], fit_max=1200., cached_fit_results=this_fit_results, blind=(not args.unblind))
+					MakeMjjPlot(data_hist, signal_histograms=signal_histograms, signal_names=signal_samples, x_range=[250., 1250.], save_tag=jet_type + "_mjj_log_zoom_" + analysis, log=True, fit_min=fit_minima[jet_type], fit_max=1200., cached_fit_results=this_fit_results, blind=(not args.unblind))
 
 	if args.nmo:
 		rebin = {}
-		rebin["PFFatDijetMaxDeltaEta"] = 4
+		rebin["PFDijetMaxDeltaEta"] = 4
 		rebin["MinLeadingPFJetPt"] = 20
 		rebin["MinSubleadingPFJetPt"] = 20
 		x_axis_titles = {}
@@ -657,108 +676,103 @@ if __name__ == "__main__":
 		x_axis_titles["MinLeadingPFJetPt"] = "Leading jet p_{T} [GeV]"
 		x_axis_titles["MinSubleadingPFJetPt"] = "Subleading jet p_{T} [GeV]"
 
-
-		# Get all N-1 histogram names
-		nmo_histogram_names = []
-		f_data.cd("BHistograms")
-		for key in gDirectory.GetListOfKeys():
-			if "nminusone" in key.GetName():
-				nmo_histogram_names.append(key.GetName())
-		print "Making N-1 plots for: "
-		print nmo_histogram_names
-		for signal_model in ["RSG", "Hbb"]:
-			for nmo_histogram_name in nmo_histogram_names:
-				variable_name = nmo_histogram_name.replace("h_nminusone_", "")
-				data_hist = f_data.Get("BHistograms/" + nmo_histogram_name)
-				data_hist.SetDirectory(0)
-				data_hist.SetName(data_hist.GetName() + "_data")
-				if variable_name in rebin.keys():
-					data_hist.Rebin(rebin[variable_name])
-				if data_hist.Integral() > 0:
-					data_hist.Scale(1. / data_hist.Integral())
-				else:
-					continue
-				signal_histograms = []
-				signal_names = []
-				for signal_mass_point in signal_mass_points:
-					signal_histograms.append(f_signal[signal_model][signal_mass_point].Get("BHistograms/" + nmo_histogram_name))
-					if not signal_histograms[-1]:
-						print "ERROR : Couldn't find histogram BHistograms/" + nmo_histogram_name + " in file " + f_signal[signal_model][signal_mass_point].GetPath()
-					signal_histograms[-1].SetDirectory(0)
-					signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
-					if variable_name in rebin.keys():
-						signal_histograms[-1].Rebin(rebin[variable_name])
-					if signal_histograms[-1].Integral() > 0:
-						signal_histograms[-1].Scale(1. / signal_histograms[-1].Integral())
-					if signal_model == "RSG":
-						signal_names.append("RS G#rightarrowb#bar{b}, m=" + str(int(signal_mass_point)) + " GeV")
-					elif signal_model == "Hbb":
-						signal_names.append("S#rightarrowb#bar{b}, m=" + str(int(signal_mass_point)) + " GeV")
-				if variable_name in x_axis_titles.keys():
-					this_x_title = x_axis_titles[variable_name]
-				else:
-					this_x_title=None
-				MakeNMinusOnePlot(data_hist, nmo_histogram_name[2:] + "_" + signal_model + "_" + args.analysis, signal_histograms=signal_histograms, signal_names=signal_names, x_title=this_x_title)
+		for analysis in analyses:
+			for data_sample in data_samples:
+				# Get all N-1 histogram names
+				nmo_histogram_names = []
+				f_data[analysis][data_sample].cd("BHistograms")
+				for key in gDirectory.GetListOfKeys():
+					if "nminusone" in key.GetName():
+						nmo_histogram_names.append(key.GetName())
+				print "Making N-1 plots for: "
+				print nmo_histogram_names
+				for signal_model in ["RSG", "Hbb"]:
+					for nmo_histogram_name in nmo_histogram_names:
+						variable_name = nmo_histogram_name.replace("h_nminusone_", "")
+						data_hist = f_data[analysis][data_sample].Get("BHistograms/" + nmo_histogram_name)
+						data_hist.SetDirectory(0)
+						data_hist.SetName(data_hist.GetName() + "_data")
+						if variable_name in rebin.keys():
+							data_hist.Rebin(rebin[variable_name])
+						if data_hist.Integral() > 0:
+							data_hist.Scale(1. / data_hist.Integral())
+						else:
+							continue
+						signal_histograms = []
+						signal_names = []
+						for signal_mass_point in [600, 750, 900, 1200]:
+							signal_sample = analysis_config.simulation.get_signal_tag(signal_model, signal_mass_point, "FULLSIM")
+							signal_histograms.append(f_signal[analysis][signal_sample].Get("BHistograms/" + nmo_histogram_name))
+							if not signal_histograms[-1]:
+								print "ERROR : Couldn't find histogram BHistograms/" + nmo_histogram_name + " in file " + f_signal[signal_model][signal_mass_point].GetPath()
+							signal_histograms[-1].SetDirectory(0)
+							signal_histograms[-1].SetName(signal_histograms[-1].GetName() + "_signal" + str(signal_mass_point))
+							if variable_name in rebin.keys():
+								signal_histograms[-1].Rebin(rebin[variable_name])
+							if signal_histograms[-1].Integral() > 0:
+								signal_histograms[-1].Scale(1. / signal_histograms[-1].Integral())
+							if signal_model == "RSG":
+								signal_names.append("RS G#rightarrowb#bar{b}, m=" + str(int(signal_mass_point)) + " GeV")
+							elif signal_model == "Hbb":
+								signal_names.append("S#rightarrowb#bar{b}, m=" + str(int(signal_mass_point)) + " GeV")
+						if variable_name in x_axis_titles.keys():
+							this_x_title = x_axis_titles[variable_name]
+						else:
+							this_x_title=None
+						MakeNMinusOnePlot(data_hist, nmo_histogram_name[2:] + "_" + signal_model + "_" + analysis + "_" + data_sample, signal_histograms=signal_histograms, signal_names=signal_names, x_title=this_x_title)
 
 	if args.peaks:
-		for signal_model in ["RSG", "Hbb"]:
-			for signal_mass_point in signal_mass_points:
-		
-				input_nevents = (f_signal[signal_model][signal_mass_point].Get("BHistograms/h_input_nevents")).Integral()
-				hist_pf = f_signal[signal_model][signal_mass_point].Get("BHistograms/h_pfjet_mjj")
-				hist_pf.SetDirectory(0)
-				hist_pf.SetName(hist_pf.GetName() + "_pf")
-				hist_pf.Rebin(20)
-				hist_pf.Scale(19700 * signal_cross_sections[GetOutputTag(signal_model, signal_mass_point, "FULLSIM")] / input_nevents)
-				hist_fat = f_signal[signal_model][signal_mass_point].Get("BHistograms/h_fatjet_mjj")
-				hist_fat.SetDirectory(0)
-				hist_fat.SetName(hist_fat.GetName() + "_fat")
-				hist_fat.Rebin(20)
-				hist_fat.Scale(19700 * signal_cross_sections[GetOutputTag(signal_model, signal_mass_point, "FULLSIM")] / input_nevents)
+		for analysis in analyses:
+			for signal_model in ["RSG", "Hbb"]:
+				for signal_mass_point in [600, 750, 900, 1200]:
+					signal_sample = analysis_config.simulation.get_signal_tag(signal_model, signal_mass_point, "FULLSIM")
+					input_nevents = (f_signal[analysis][signal_sample].Get("BHistograms/h_input_nevents")).Integral()
+					hist_pf = f_signal[analysis][signal_sample].Get("BHistograms/h_pfjet_mjj")
+					hist_pf.SetDirectory(0)
+					hist_pf.SetName(hist_pf.GetName() + "_pf")
+					hist_pf.Rebin(20)
+					hist_pf.Scale(19700 * analysis_config.simulation.signal_cross_sections[signal_sample] / input_nevents)
+					hist_fat = f_signal[analysis][signal_sample].Get("BHistograms/h_fatjet_mjj")
+					hist_fat.SetDirectory(0)
+					hist_fat.SetName(hist_fat.GetName() + "_fat")
+					hist_fat.Rebin(20)
+					hist_fat.Scale(19700 * analysis_config.simulation.signal_cross_sections[signal_sample] / input_nevents)
 
-				MakeFatJetComparison(hist_pf, hist_fat, "mjj_pf_vs_fat_" + signal_model + "_" + str(int(signal_mass_point)) + "_" + args.analysis, x_range=[signal_mass_point-400., signal_mass_point+400.], fit_range=[signal_mass_point - 300., signal_mass_point + 200.], log=False)
+					MakeFatJetComparison(hist_pf, hist_fat, "mjj_pf_vs_fat_" + signal_model + "_" + str(int(signal_mass_point)) + "_" + analysis, x_range=[signal_mass_point-400., signal_mass_point+400.], fit_range=[signal_mass_point - 300., signal_mass_point + 200.], log=False)
 
-	if args.jetht:
-		f_bjetplusx = TFile(analysis_config.files_InclusiveBHistograms["BJetPlusX_2012BCD"], "READ")
-		f_jetht = TFile(analysis_config.files_InclusiveBHistograms["JetHT_2012BCD"], "READ")
-		hist_pfjet_bjetplusx = f_bjetplusx.Get("BHistograms/h_pfjet_mjj")
-		hist_pfjet_bjetplusx.Rebin(20)
-		hist_pfjet_bjetplusx.SetName("hist_pfjet_bjetplusx")
-		hist_pfjet_jetht = f_jetht.Get("BHistograms/h_pfjet_mjj")
-		hist_pfjet_jetht.Rebin(20)
-		hist_pfjet_jetht.SetName("hist_pfjet_jetht")
-		JetHTComparisonPlot(hist_pfjet_bjetplusx, hist_pfjet_jetht, "BJetPlusX_over_JetHT_pfjet", log=True, x_range=[500., 3000.])
+	if args.compare:
+		legend_entries = []
+		for i in [0, 2]:
+			if "trigbbh" in args.compare[i]:
+				legend_entries.append("BJetPlusX, high mass")
+			elif "trigbbl" in args.compare[i]:
+				legend_entries.append("BJetPlusX, low mass")
+			elif "jetht" in args.compare[i]:
+				legend_entries.append("JetHT")
+		print legend_entries
 
-		hist_fatjet_bjetplusx = f_bjetplusx.Get("BHistograms/h_fatjet_mjj")
-		hist_fatjet_bjetplusx.Rebin(20)
-		hist_fatjet_bjetplusx.SetName("hist_fatjet_bjetplusx")
-		hist_fatjet_jetht = f_jetht.Get("BHistograms/h_fatjet_mjj")
-		hist_fatjet_jetht.Rebin(20)
-		hist_fatjet_jetht.SetName("hist_fatjet_jetht")
-		JetHTComparisonPlot(hist_fatjet_bjetplusx, hist_fatjet_jetht, "BJetPlusX_over_JetHT_fatjet", log=True, x_range=[750., 2000.])
-		f_bjetplusx.Close()
-		f_jetht.Close()
+		f_num = TFile(analysis_config.get_b_histogram_filename(args.compare[0], args.compare[1]), "READ")
+		f_den = TFile(analysis_config.get_b_histogram_filename(args.compare[2], args.compare[3]), "READ")
+		hist_pfjet_num = f_num.Get("BHistograms/h_pfjet_mjj")
+		hist_pfjet_num.SetName("hist_pfjet_num")
+		hist_pfjet_num = ApplyDijetBinning(hist_pfjet_num)
+		hist_pfjet_den = f_den.Get("BHistograms/h_pfjet_mjj")
+		hist_pfjet_den.SetName("hist_pfjet_den")
+		hist_pfjet_den = ApplyDijetBinning(hist_pfjet_den)
+		save_tag = args.compare[0] + "_" + args.compare[1] + "_over_" + args.compare[2] + "_" + args.compare[3] + "_pfjet"
+		AnalysisComparisonPlot(hist_pfjet_num, hist_pfjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[500., 2000.])
 
-		# With tight B tagging
-		f_bjetplusx_tight = TFile(analysis_config.files_InclusiveBHistograms["BJetPlusX_tight_2012BCD"], "READ")
-		f_jetht_tight = TFile(analysis_config.files_InclusiveBHistograms["JetHT_tight_2012BCD"], "READ")
-		hist_pfjet_bjetplusx_tight = f_bjetplusx_tight.Get("BHistograms/h_pfjet_mjj")
-		hist_pfjet_bjetplusx_tight.Rebin(20)
-		hist_pfjet_bjetplusx_tight.SetName("hist_pfjet_bjetplusx_tight")
-		hist_pfjet_jetht_tight = f_jetht_tight.Get("BHistograms/h_pfjet_mjj")
-		hist_pfjet_jetht_tight.Rebin(20)
-		hist_pfjet_jetht_tight.SetName("hist_pfjet_jetht_tight")
-		JetHTComparisonPlot(hist_pfjet_bjetplusx_tight, hist_pfjet_jetht_tight, "BJetPlusX_over_JetHT_pfjet_tight", log=True, x_range=[500., 3000.])
+		hist_fatjet_num = f_num.Get("BHistograms/h_fatjet_mjj")
+		hist_fatjet_num.SetName("hist_fatjet_num")
+		hist_fatjet_num = ApplyDijetBinning(hist_fatjet_num)
+		hist_fatjet_den = f_den.Get("BHistograms/h_fatjet_mjj")
+		hist_fatjet_den.SetName("hist_fatjet_den")
+		hist_fatjet_den = ApplyDijetBinning(hist_fatjet_den)
+		save_tag = args.compare[0] + "_" + args.compare[1] + "_over_" + args.compare[2] + "_" + args.compare[3] + "_fatjet"
+		AnalysisComparisonPlot(hist_fatjet_num, hist_fatjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[500., 2000.])
+		f_num.Close()
+		f_den.Close()
 
-		hist_fatjet_bjetplusx_tight = f_bjetplusx_tight.Get("BHistograms/h_fatjet_mjj")
-		hist_fatjet_bjetplusx_tight.Rebin(20)
-		hist_fatjet_bjetplusx_tight.SetName("hist_fatjet_bjetplusx_tight")
-		hist_fatjet_jetht_tight = f_jetht_tight.Get("BHistograms/h_fatjet_mjj")
-		hist_fatjet_jetht_tight.Rebin(20)
-		hist_fatjet_jetht_tight.SetName("hist_fatjet_jetht_tight")
-		JetHTComparisonPlot(hist_fatjet_bjetplusx_tight, hist_fatjet_jetht_tight, "BJetPlusX_over_JetHT_fatjet_tight", log=True, x_range=[500., 3000.])
-		f_bjetplusx_tight.Close()
-		f_jetht_tight.Close()
 
 	if args.csv:
 		analyses = ["trigbbh_CSVL", "trigbbh_CSVM", "trigbbh_CSVT"]

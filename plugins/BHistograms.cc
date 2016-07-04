@@ -100,7 +100,7 @@ BHistograms::BHistograms(edm::ParameterSet const& cfg)
 		btag_configuration_ = std::pair<ObjectIdentifiers::BTagWP, ObjectIdentifiers::BTagWP>(btag_string_to_enum[cfg.getParameter<std::string>("btag_wp_1")], btag_string_to_enum[cfg.getParameter<std::string>("btag_wp_2")]);
 
 		float bins[] = {20, 30, 40, 50, 60, 70, 80, 100, 120, 160, 210, 260, 320, 400, 500, 600, 800};
-		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL] = TH1D("btag_sf_unc_csvl", "btag_sf_unc_csvl", 16, bins);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL] = new TH1D("btag_sf_unc_csvl", "btag_sf_unc_csvl", 16, bins);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(1, 0.033299);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(2, 0.0146768);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(3, 0.013803);
@@ -118,7 +118,7 @@ BHistograms::BHistograms(edm::ParameterSet const& cfg)
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(15, 0.0346928);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVL]->SetBinContent(16, 0.0350099);
 
-		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM] = TH1D("btag_sf_unc_csvm", "btag_sf_unc_csvm", 16, bins);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM] = new TH1D("btag_sf_unc_csvm", "btag_sf_unc_csvm", 16, bins);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(1, 0.0415707);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(2, 0.0204209);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(3, 0.0223227);
@@ -136,7 +136,7 @@ BHistograms::BHistograms(edm::ParameterSet const& cfg)
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(15, 0.0740446);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVM]->SetBinContent(16, 0.0596716);
 
-		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT] = TH1D("btag_sf_unc_csvl", "btag_sf_unc_csvl", 16, bins);
+		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT] = new TH1D("btag_sf_unc_csvl", "btag_sf_unc_csvl", 16, bins);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(1, 0.0515703);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(2, 0.0264008);
 		btag_scale_factor_uncertainties_[ObjectIdentifiers::kCSVT]->SetBinContent(3, 0.0272757);
@@ -325,6 +325,7 @@ void BHistograms::endJob()
 	pfjet_selector_->SaveNMinusOneHistogram(&*fs_);
 	//delete event_;
 	//event_ = 0;
+	btag_scale_factor_uncertainties_.clear();
 	std::cout << "[BHistograms::endJob] INFO : Pass / Total = " << n_pass_ << " / " << n_total_ << std::endl;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -502,7 +503,7 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 					pfjet_histograms_->GetTH1D("mjj_JESDown")->Fill(event_->pfmjjcor(-1), weight);
 					pfjet_histograms_->GetTH1D("mjj_JERUp")->Fill(0.);
 					pfjet_histograms_->GetTH1D("mjj_JERDown")->Fill(0.);
-					if (data_source_ == ObjectIdentifiers::kSignal) {
+					if (data_type_ == ObjectIdentifiers::kSignal) {
 						pfjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFUp")->Fill(event_->pfmjjcor(0) / signal_mass_, weight_BTagOfflineSFUp);
 						pfjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFDown")->Fill(event_->pfmjjcor(0) / signal_mass_, weight_BTagOfflineSFDown);
 						pfjet_histograms_->GetTH1D("mjj_over_M_JESUp")->Fill(event_->pfmjjcor(1) / signal_mass_, weight);
@@ -553,7 +554,7 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 					fatjet_histograms_->GetTH1D("mjj_JESDown")->Fill(event_->fatmjjcor(-1), weight);
 					fatjet_histograms_->GetTH1D("mjj_JERUp")->Fill(0.);
 					fatjet_histograms_->GetTH1D("mjj_JERDown")->Fill(0.);
-					if (data_source_ == ObjectIdentifiers::kSignal) {
+					if (data_type_ == ObjectIdentifiers::kSignal) {
 						fatjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFUp")->Fill(event_->fatmjjcor(0) / signal_mass_, weight_BTagOfflineSFUp);
 						fatjet_histograms_->GetTH1D("mjj_over_M_BTagOfflineSFDown")->Fill(event_->fatmjjcor(0) / signal_mass_, weight_BTagOfflineSFDown);
 						fatjet_histograms_->GetTH1D("mjj_over_M_JESUp")->Fill(event_->fatmjjcor(1) / signal_mass_, weight);
@@ -586,7 +587,7 @@ double BHistograms::getEventBTagSF(int uncertainty) {
 	} else {
 		sf1 = btag_scale_factors_[btag_configuration_.first]->Eval(event_->pfjet(1).pt());
 		sf2 = btag_scale_factors_[btag_configuration_.second]->Eval(event_->pfjet(0).pt());
-		if (systematic_ == Systematics::kBTagSFOfflineUp) {
+		if (uncertainty) {
 			sf1 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
 			sf2 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
 		}
