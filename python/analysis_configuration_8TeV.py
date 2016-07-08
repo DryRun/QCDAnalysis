@@ -125,6 +125,11 @@ analysis_cfgs["trigjetht_CSVT"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/s
 analysis_cfgs["trigjetht_CSVML"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVML_cfg.py"
 analysis_cfgs["trigjetht_CSVTL"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVTL_cfg.py"
 analysis_cfgs["trigjetht_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVTM_cfg.py"
+analysis_cfgs["trigjetht200_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht200_CSVTM_cfg.py"
+analysis_cfgs["trigjetht250_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht250_CSVTM_cfg.py"
+analysis_cfgs["trigjetht300_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht300_CSVTM_cfg.py"
+analysis_cfgs["trigjetht350_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht350_CSVTM_cfg.py"
+analysis_cfgs["trigjetht400_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht400_CSVTM_cfg.py"
 
 analysis_cfgs["trigbbh_CSVTM_bfat"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVTM_bfat_cfg.py"
 analysis_cfgs["trigeff_trigbbh_CSVTM_bfat"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbh_CSVTM_bfat_cfg.py"

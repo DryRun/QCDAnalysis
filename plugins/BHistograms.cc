@@ -458,14 +458,24 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				++n_pass_;
 				// Get prescale
 				double prescale = 1.;
-
-				//if (data_source_ == ObjectIdentifiers::kCollisionData) {
-				//	int hlt_index = (int)event_selector_->GetReturnData("TriggerOR");
-				//	double prescale_L1 = event_->minPreL1(hlt_index);
-				//	prescale = event_->preHLT(hlt_index) * prescale_L1;
-				//} else if (data_source_ == ObjectIdentifiers::kSimulation) {
-				//	prescale = 1;
-				//}
+				if (data_source_ == ObjectIdentifiers::kCollisionData) {
+					for (auto& it_trig_index : event_selector_->GetCutParameters("TriggerOR")) {
+						double this_prescale = event_->preHLT(it_trig_index) * event_->minPreL1(it_trig_index);
+						if (this_prescale > 0) {
+							// Consistency check: code is not able to handle combining triggers with different prescales.
+							if (prescale > 1. && this_prescale != prescale) {
+								std::cerr << "[BHistograms::analyze] ERROR : Found more than one prescale!" << std::endl;
+								for (auto& it_trig_index2 : event_selector_->GetCutParameters("TriggerOR")) {
+									std::cout << "[BHistograms::analyze] ERROR : Index " << it_trig_index2 << " = " << h_trigger_names->GetXaxis()->GetBinLabel(it_trig_index2 + 1) << " has prescale " << event_->preHLT(it_trig_index2) * event_->minPreL1(it_trig_index2) << std::endl;
+								}
+								exit(1);
+							}
+							prescale = this_prescale;
+						}
+					}
+				} else if (data_source_ == ObjectIdentifiers::kSimulation) {
+					prescale = 1;
+				}
 				
 				// Simulation weights. 
 				double weight = prescale;

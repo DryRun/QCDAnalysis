@@ -492,8 +492,8 @@ def AnalysisComparisonPlot(hist_num, hist_den, name_num, name_den, save_tag, x_r
 
 	# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
 	hist_ratio = hist_num.Clone()
-	hist_ratio.Divide(hist_den)
-	hist_ratio.Draw("hist same")
+	hist_ratio.Divide(hist_num, hist_den, 1, 1, "B")
+	hist_ratio.Draw("p same")
 
 	c.SaveAs(analysis_config.figure_directory + "/" + save_tag + ".pdf")
 
@@ -760,7 +760,7 @@ if __name__ == "__main__":
 		hist_pfjet_den.SetName("hist_pfjet_den")
 		hist_pfjet_den = ApplyDijetBinning(hist_pfjet_den)
 		save_tag = args.compare[0] + "_" + args.compare[1] + "_over_" + args.compare[2] + "_" + args.compare[3] + "_pfjet"
-		AnalysisComparisonPlot(hist_pfjet_num, hist_pfjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[500., 2000.])
+		AnalysisComparisonPlot(hist_pfjet_num, hist_pfjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[890., 2000.])
 
 		hist_fatjet_num = f_num.Get("BHistograms/h_fatjet_mjj")
 		hist_fatjet_num.SetName("hist_fatjet_num")
@@ -769,7 +769,7 @@ if __name__ == "__main__":
 		hist_fatjet_den.SetName("hist_fatjet_den")
 		hist_fatjet_den = ApplyDijetBinning(hist_fatjet_den)
 		save_tag = args.compare[0] + "_" + args.compare[1] + "_over_" + args.compare[2] + "_" + args.compare[3] + "_fatjet"
-		AnalysisComparisonPlot(hist_fatjet_num, hist_fatjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[500., 2000.])
+		AnalysisComparisonPlot(hist_fatjet_num, hist_fatjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[890., 2000.])
 		f_num.Close()
 		f_den.Close()
 
