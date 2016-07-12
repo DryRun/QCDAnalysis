@@ -54,11 +54,25 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 		os.system(command)
 		subjob_index += 1
 
-	# Print merge command
+	# Postprocessing script
 	merge_command = "hadd " + analysis_config.get_b_histogram_filename(analysis, sample) + " " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + ".subjob*"
-	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".sh", 'w')
-	postprocessing_file.write("#!/bin/bash\n")
-	postprocessing_file.write(merge_command + "\n")
+	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".py", 'w')
+	postprocessing_file.write("import os\n")
+	postprocessing_file.write("import sys\n")
+	postprocessing_file.write("import glob\n")
+	postprocessing_file.write("log_files = glob.glob(" + working_directory + "/*stderr)\n")
+	postprocessing_file.write("failed_logs = []\n")
+	postprocessing_file.write("for log_file in log_files:\n")
+	postprocessing_file.write("\tlog_file_handle = open(log_file, 'r')\n")
+	postprocessing_file.write("\tfor line in log_file_handle:\n")
+	postprocessing_file.write("\t\tif \"FAILURE\" in line:\n")
+	postprocessing_file.write("\t\t\tfailed_logs.append(log_file)\n")
+	postprocessing_file.write("if len(failed_logs) == 0:\n")
+	postprocessing_file.write("\tos.system(\"" + merge_command + "\")\n")
+	postprocessing_file.write("else:\n")
+	postprocessing_file.write("\tprint(\"Some jobs failed. You need to retry them.\")")
+	postprocessing_file.write("\tfor failed_log in failed_logs:\n")
+	postprocessing_file.write("\t\tprint failed_log\n")
 	postprocessing_file.close()
 
 	# cd back

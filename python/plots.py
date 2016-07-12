@@ -16,19 +16,7 @@ from CMSDIJET.QCDAnalysis.mjj_fits import *
 #import CMSDIJET.QCDAnalysis.simulation_configuration_8TeV
 #from CMSDIJET.QCDAnalysis.simulation_configuration_8TeV import *
 import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
-
-def ApplyDijetBinning(hist):
-	bins = array.array('d', [1, 3, 6, 10, 16, 23, 31, 40, 50, 61, 74, 88, 103, 119, 137, 156, 176, 197, 220, 244, 270, 296, 325, 354, 386, 419, 453, 489, 526, 565, 606, 649, 693, 740, 788, 838, 890, 944, 1000, 1058, 1118, 1181, 1246, 1313, 1383, 1455, 1530, 1607, 1687, 1770, 1856, 1945, 2037, 2132, 2231, 2332, 2438, 2546, 2659, 2775, 2895, 3019, 3147, 3279, 3416, 3558, 3704, 3854, 4010, 4171, 4337, 4509, 4686, 4869, 5058, 5253, 5455, 5663, 5877, 6099, 6328, 6564, 6808, 7060, 7320, 7589, 7866, 8000])
-	rebinned_hist = hist.Rebin(len(bins) - 1, hist.GetName() + "_rebinned", bins)
-	return rebinned_hist
-
-def Blind(hist, center=750., half_width=75.):
-	hist_blind = hist.Clone()
-	for bin in xrange(1, hist_blind.GetNbinsX() + 1):
-		if TMath.Abs(hist_blind.GetBinCenter(bin) - center) < half_width:
-			hist_blind.SetBinContent(bin, 0.)
-			hist_blind.SetBinError(bin, 0.)
-	return hist_blind
+import CMSDIJET.QCDAnalysis.mjj_common as mjj_common
 
 # Attempt at a generic plot to compare stuff.
 def plot_compare(names, histograms, save_tag, nominal_name=None, legend_entries=None, log=True, log_ratio=False, x_range=None, y_range=None):
@@ -409,7 +397,7 @@ def AnalysisComparisonPlot(hist_num, hist_den, name_num, name_den, save_tag, x_r
 		x_max = hist_num.GetXaxis().GetXmax()
 
 	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
-	l = TLegend(0.55, 0.6, 0.88, 0.88)
+	l = TLegend(0.6, 0.6, 0.88, 0.88)
 	l.SetFillColor(0)
 	l.SetBorderSize(0)
 	top = TPad("top", "top", 0., 0.5, 1., 1.)
@@ -755,21 +743,21 @@ if __name__ == "__main__":
 		f_den = TFile(analysis_config.get_b_histogram_filename(args.compare[2], args.compare[3]), "READ")
 		hist_pfjet_num = f_num.Get("BHistograms/h_pfjet_mjj")
 		hist_pfjet_num.SetName("hist_pfjet_num")
-		hist_pfjet_num = ApplyDijetBinning(hist_pfjet_num)
+		hist_pfjet_num = mjj_common.apply_dijet_binning(hist_pfjet_num)
 		hist_pfjet_den = f_den.Get("BHistograms/h_pfjet_mjj")
 		hist_pfjet_den.SetName("hist_pfjet_den")
-		hist_pfjet_den = ApplyDijetBinning(hist_pfjet_den)
+		hist_pfjet_den = mjj_common.apply_dijet_binning(hist_pfjet_den)
 		save_tag = args.compare[0] + "_" + args.compare[1] + "_over_" + args.compare[2] + "_" + args.compare[3] + "_pfjet"
-		AnalysisComparisonPlot(hist_pfjet_num, hist_pfjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[890., 2000.])
+		AnalysisComparisonPlot(hist_pfjet_num, hist_pfjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[0., 2000.])
 
 		hist_fatjet_num = f_num.Get("BHistograms/h_fatjet_mjj")
 		hist_fatjet_num.SetName("hist_fatjet_num")
-		hist_fatjet_num = ApplyDijetBinning(hist_fatjet_num)
+		hist_fatjet_num = mjj_common.apply_dijet_binning(hist_fatjet_num)
 		hist_fatjet_den = f_den.Get("BHistograms/h_fatjet_mjj")
 		hist_fatjet_den.SetName("hist_fatjet_den")
-		hist_fatjet_den = ApplyDijetBinning(hist_fatjet_den)
+		hist_fatjet_den = mjj_common.apply_dijet_binning(hist_fatjet_den)
 		save_tag = args.compare[0] + "_" + args.compare[1] + "_over_" + args.compare[2] + "_" + args.compare[3] + "_fatjet"
-		AnalysisComparisonPlot(hist_fatjet_num, hist_fatjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[890., 2000.])
+		AnalysisComparisonPlot(hist_fatjet_num, hist_fatjet_den, legend_entries[0], legend_entries[1], save_tag, log=True, x_range=[0., 2000.])
 		f_num.Close()
 		f_den.Close()
 

@@ -27,6 +27,7 @@ BHistograms::BHistograms(edm::ParameterSet const& cfg)
 	current_file_ = 0;
 	n_total_ = 0;
 	n_pass_ = 0;
+	h_trigger_names_ = 0;
 	signal_mass_ = -1.;
 	if (cfg.getParameter<std::string>("data_source") == "collision_data") {
 		data_source_ = ObjectIdentifiers::kCollisionData;
@@ -187,19 +188,19 @@ void BHistograms::beginJob()
 			std::vector<TString> tmp_descriptors;
 			std::cout << "[BHistograms::beginJob] INFO : Opening " << input_file_names_[0] << std::endl;
 			TFile *f = TFile::Open(TString(input_file_names_[0]), "READ");
-			TH1F *h_trigger_names = (TH1F*)f->Get(trigger_histogram_name_);
-			for (int bin = 1; bin <= h_trigger_names->GetNbinsX(); ++bin) {
-				indices_to_triggers_[bin - 1] = h_trigger_names->GetXaxis()->GetBinLabel(bin);
+			h_trigger_names_ = (TH1F*)f->Get(trigger_histogram_name_);
+			for (int bin = 1; bin <= h_trigger_names_->GetNbinsX(); ++bin) {
+				indices_to_triggers_[bin - 1] = h_trigger_names_->GetXaxis()->GetBinLabel(bin);
 				std::cout << "[BHistograms::beginJob] INFO : Trigger index " << bin - 1 << " = " << indices_to_triggers_[bin - 1] << std::endl;
 			}
-			if (!h_trigger_names) {
+			if (!h_trigger_names_) {
 				throw cms::Exception("[BHistograms::beginJob] ERROR : ") << "Trigger name histogram (" << trigger_histogram_name_ << ") not found in input file." << std::endl;
 			}
 			for (auto& it_trig : event_cut_descriptors_[it_cut]) {
 				// Look up index from histogram
 				int hlt_index = -1;
-				for(int bin = 1; bin <= h_trigger_names->GetNbinsX(); ++bin) {
-					string ss = h_trigger_names->GetXaxis()->GetBinLabel(bin);
+				for(int bin = 1; bin <= h_trigger_names_->GetNbinsX(); ++bin) {
+					string ss = h_trigger_names_->GetXaxis()->GetBinLabel(bin);
 					if (it_trig.EqualTo(ss)) {
 						hlt_index = bin - 1; // Bins start from 1, while index starts from 0
 						break;
@@ -460,18 +461,23 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				double prescale = 1.;
 				if (data_source_ == ObjectIdentifiers::kCollisionData) {
 					for (auto& it_trig_index : event_selector_->GetCutParameters("TriggerOR")) {
-						double this_prescale = event_->preHLT(it_trig_index) * event_->minPreL1(it_trig_index);
-						if (this_prescale > 0) {
-							// Consistency check: code is not able to handle combining triggers with different prescales.
-							if (prescale > 1. && this_prescale != prescale) {
-								std::cerr << "[BHistograms::analyze] ERROR : Found more than one prescale!" << std::endl;
-								for (auto& it_trig_index2 : event_selector_->GetCutParameters("TriggerOR")) {
-									std::cout << "[BHistograms::analyze] ERROR : Index " << it_trig_index2 << " = " << h_trigger_names->GetXaxis()->GetBinLabel(it_trig_index2 + 1) << " has prescale " << event_->preHLT(it_trig_index2) * event_->minPreL1(it_trig_index2) << std::endl;
-								}
-								exit(1);
-							}
-							prescale = this_prescale;
+						// Check if the L1 and HLT were active
+						if (event_->minPreL1(it_trig_index) < 0) {
+							continue;
 						}
+						if (event_->preHLT(it_trig_index) < 0) {
+							continue;
+						}
+						double this_prescale = event_->preHLT(it_trig_index) * event_->minPreL1(it_trig_index);
+						// Consistency check: code is not able to handle combining triggers with different prescales.
+						if (prescale > 1. && this_prescale != prescale) {
+							std::cerr << "[BHistograms::analyze] ERROR : Found more than one prescale!" << std::endl;
+							for (auto& it_trig_index2 : event_selector_->GetCutParameters("TriggerOR")) {
+								std::cout << "[BHistograms::analyze] ERROR : Index " << it_trig_index2 << " = " << h_trigger_names_->GetXaxis()->GetBinLabel(it_trig_index2 + 1) << " has prescale " << event_->preHLT(it_trig_index2) * event_->minPreL1(it_trig_index2) << std::endl;
+							}
+							exit(1);
+						}
+						prescale = this_prescale;
 					}
 				} else if (data_source_ == ObjectIdentifiers::kSimulation) {
 					prescale = 1;
