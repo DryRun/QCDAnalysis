@@ -172,7 +172,7 @@ process.ak7 = cms.EDAnalyzer('ProcessedTreeProducer',
     ## preselection cuts #########################
     maxY            = cms.double(5.0), 
     minPFPt         = cms.double(20),
-    minPFFatPt      = cms.double(30),
+    minPFFatPt      = cms.double(10),
     maxPFFatEta     = cms.double(2.5),
     minCaloPt       = cms.double(20),
     minGenPt        = cms.untracked.double(20),
