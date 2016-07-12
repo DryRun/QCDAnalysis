@@ -102,6 +102,7 @@ void ProcessedTreeProducer::beginJob()
 		mTriggerNamesHisto->Fill(triggerNames_[i].c_str(),1);
 	mTriggerPassHisto = fs->make<TH1F>("TriggerPass","TriggerPass",1,0,1);
 	mTriggerPassHisto->SetBit(TH1::kCanRebin);
+	mEventsProcessedHisto = fs->make<TH1F>("EventsProcessed", "EventsProcessed", 1, 0.5, 1.5);
 	isPFJecUncSet_ = false;
 	isCaloJecUncSet_ = false;
 	debug_counter = 0;
@@ -142,6 +143,7 @@ void ProcessedTreeProducer::beginRun(edm::Run const & iRun, edm::EventSetup cons
 //////////////////////////////////////////////////////////////////////////////////////////
 void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup const& iSetup) 
 { 
+	mEventsProcessedHisto->Fill(1);
 	++debug_counter;
 	vector<QCDCaloJet>    mCaloJets;
 	vector<QCDPFJet>      mPFJets;

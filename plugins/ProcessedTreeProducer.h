@@ -84,6 +84,7 @@ class ProcessedTreeProducer : public edm::EDAnalyzer
     edm::Service<TFileService> fs;
     TTree *mTree;
     TH1F *mTriggerPassHisto,*mTriggerNamesHisto; 
+    TH1F *mEventsProcessedHisto;
     //---- TREE variables --------
     QCDEvent *mEvent;
     int debug_counter;
