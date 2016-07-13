@@ -384,106 +384,137 @@ def MakeFatJetComparison(hist_pf, hist_fat, save_tag, fit_range=None, x_range=No
 	#Root.myText(0.15, 0.8, kBlack, "Mean/RMS (Fat) = " + str(round(fat_mean, 2)) + "/" + str(round(fat_rms, 2)), 0.4)
 
 	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
+	
 
-def AnalysisComparisonPlot(hist_num, hist_den, name_num, name_den, save_tag, x_range=None, log=False):
-	print "Welcome to AnalysisComparisonPlot"
-	print "[debug] name_num = " + name_num
 
-	if x_range:
-		x_min = x_range[0]
-		x_max = x_range[1]
-	else:
-		x_min = hist_num.GetXaxis().GetXmin()
-		x_max = hist_num.GetXaxis().GetXmax()
+class AnalysisComparisonPlot:
+	def __init__(self, hist_num, hist_den, name_num, name_den, save_tag, x_range=None, log=False):
+		self.hist_num = hist_num
+		self.hist_den = hist_den
+		self.name_num = name_num
+		self.name_den = name_den
+		self.save_tag = save_tag
+		self.lines = []
+		if x_range:
+			self.x_min = x_range[0]
+			self.x_max = x_range[1]
+		else:
+			self.x_min = hist_num.GetXaxis().GetXmin()
+			self.x_max = hist_num.GetXaxis().GetXmax()
 
-	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
-	l = TLegend(0.6, 0.6, 0.88, 0.88)
-	l.SetFillColor(0)
-	l.SetBorderSize(0)
-	top = TPad("top", "top", 0., 0.5, 1., 1.)
-	top.SetBottomMargin(0.03)
-	top.Draw()
-	if log:
-		top.SetLogy()
-	c.cd()
-	bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
-	bottom.SetTopMargin(0.02)
-	bottom.SetBottomMargin(0.2)
-	bottom.Draw()
-	ROOT.SetOwnership(c, False)
-	ROOT.SetOwnership(top, False)
-	ROOT.SetOwnership(bottom, False)
+		self.canvas = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
+		self.legend = TLegend(0.6, 0.6, 0.88, 0.88)
+		self.legend.SetFillColor(0)
+		self.legend.SetBorderSize(0)
+		self.top = TPad("top", "top", 0., 0.5, 1., 1.)
+		self.top.SetBottomMargin(0.03)
+		self.top.Draw()
+		if log:
+			self.top.SetLogy()
+		self.canvas.cd()
+		self.bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
+		self.bottom.SetTopMargin(0.02)
+		self.bottom.SetBottomMargin(0.2)
+		self.bottom.Draw()
+		ROOT.SetOwnership(self.canvas, False)
+		ROOT.SetOwnership(self.top, False)
+		ROOT.SetOwnership(self.bottom, False)
 
-	top.cd()
+		self.draw_done = False
 
-	frame_top = TH1D("frame_top", "frame_top", 100, x_min, x_max)
-	frame_top.GetXaxis().SetTitleSize(0)
-	frame_top.GetXaxis().SetLabelSize(0)
-	frame_top.GetYaxis().SetLabelSize(0.04)
-	frame_top.GetYaxis().SetTitleSize(0.04)
-	#frame_top.GetYaxis().SetTitleOffset(0.85)
-	bin_width = hist_num.GetXaxis().GetBinWidth(1)
-	frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
-	if log:
-		frame_top.SetMaximum(hist_den.GetMaximum() * 5.)
-		frame_top.SetMinimum(5.)
-	else:
-		frame_top.SetMaximum(hist_den.GetMaximum() * 1.7)
-	frame_top.Draw("axis")
+	def draw(self):
+		top.cd()
 
-	hist_num.SetMarkerStyle(20)
-	hist_num.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
-	hist_num.SetLineColor(seaborn.GetColorRoot("dark", 0))
-	hist_num.SetMarkerSize(1)
-	hist_num.Draw("p e1 same")
-	l.AddEntry(hist_num, name_num, "pl")
+		self.frame_top = TH1D("frame_top", "frame_top", 100, self.x_min, self.x_max)
+		self.frame_top.GetXaxis().SetTitleSize(0)
+		self.frame_top.GetXaxis().SetLabelSize(0)
+		self.frame_top.GetYaxis().SetLabelSize(0.04)
+		self.frame_top.GetYaxis().SetTitleSize(0.04)
+		#self.frame_top.GetYaxis().SetTitleOffset(0.85)
+		bin_width = self.hist_num.GetXaxis().GetBinWidth(1)
+		self.frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
+		if log:
+			self.frame_top.SetMaximum(self.hist_den.GetMaximum() * 5.)
+			self.frame_top.SetMinimum(5.)
+		else:
+			self.frame_top.SetMaximum(self.hist_den.GetMaximum() * 1.7)
+		self.frame_top.Draw("axis")
 
-	hist_den.SetMarkerStyle(24)
-	hist_den.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
-	hist_den.SetLineColor(seaborn.GetColorRoot("dark", 2))
-	hist_den.SetMarkerSize(1)
-	hist_den.Draw("p e1 same")
-	l.AddEntry(hist_den, name_den, "pl")
-	l.Draw()
+		self.hist_num.SetMarkerStyle(20)
+		self.hist_num.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
+		self.hist_num.SetLineColor(seaborn.GetColorRoot("dark", 0))
+		self.hist_num.SetMarkerSize(1)
+		self.hist_num.Draw("p e1 same")
+		self.legend.AddEntry(self.hist_num, self.name_num, "pl")
 
-	c.cd()
-	bottom.cd()
-	# Make frame
-	frame_bottom = TH1D("frame_bottom", "frame_bottom", 100, x_min, x_max)
-	frame_bottom.SetMinimum(-0.2)
-	frame_bottom.SetMaximum(1.2)
-	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
-	frame_bottom.GetYaxis().SetTitle(name_num + " / " + name_den)
+		self.hist_den.SetMarkerStyle(24)
+		self.hist_den.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
+		self.hist_den.SetLineColor(seaborn.GetColorRoot("dark", 2))
+		self.hist_den.SetMarkerSize(1)
+		self.hist_den.Draw("p e1 same")
+		self.legend.AddEntry(self.hist_den, self.name_den, "pl")
+		self.legend.Draw()
 
-	frame_bottom.GetXaxis().SetLabelSize(0.04)
-	frame_bottom.GetXaxis().SetTitleSize(0.06)
-	frame_bottom.GetXaxis().SetLabelOffset(0.01)
-	frame_bottom.GetXaxis().SetTitleOffset(1.1)
+		self.canvas.cd()
+		self.bottom.cd()
+		# Make frame
+		self.frame_bottom = TH1D("frame_bottom", "frame_bottom", 100, self.x_min, self.x_max)
+		self.frame_bottom.SetMinimum(-0.2)
+		self.frame_bottom.SetMaximum(1.2)
+		self.frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+		self.frame_bottom.GetYaxis().SetTitle(self.name_num + " / " + self.name_den)
 
-	frame_bottom.GetYaxis().SetLabelSize(0.04)
-	frame_bottom.GetYaxis().SetTitleSize(0.04)
-	frame_bottom.GetYaxis().SetTitleOffset(0.85)
+		self.frame_bottom.GetXaxis().SetLabelSize(0.04)
+		self.frame_bottom.GetXaxis().SetTitleSize(0.06)
+		self.frame_bottom.GetXaxis().SetLabelOffset(0.01)
+		self.frame_bottom.GetXaxis().SetTitleOffset(1.1)
 
-	frame_bottom.Draw("axis")
+		self.frame_bottom.GetYaxis().SetLabelSize(0.04)
+		self.frame_bottom.GetYaxis().SetTitleSize(0.04)
+		self.frame_bottom.GetYaxis().SetTitleOffset(0.85)
 
-	unity = TLine(x_min, 1., x_max, 1.)
-	unity.SetLineColor(kGray)
-	unity.SetLineStyle(2)
-	unity.SetLineWidth(2)
-	unity.Draw("same")
+		self.frame_bottom.Draw("axis")
 
-	zero = TLine(x_min, 0., x_max, 0.)
-	zero.SetLineColor(kBlack)
-	zero.SetLineStyle(1)
-	zero.SetLineWidth(2)
-	zero.Draw("same")
+		unity = TLine(self.x_min, 1., self.x_max, 1.)
+		unity.SetLineColor(kGray)
+		unity.SetLineStyle(2)
+		unity.SetLineWidth(2)
+		unity.Draw("same")
 
-	# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
-	hist_ratio = hist_num.Clone()
-	hist_ratio.Divide(hist_num, hist_den, 1, 1, "B")
-	hist_ratio.Draw("p same")
+		zero = TLine(self.x_min, 0., self.x_max, 0.)
+		zero.SetLineColor(kBlack)
+		zero.SetLineStyle(1)
+		zero.SetLineWidth(2)
+		zero.Draw("same")
 
-	c.SaveAs(analysis_config.figure_directory + "/" + save_tag + ".pdf")
+		# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
+		self.hist_ratio = self.hist_num.Clone()
+		self.hist_ratio.Divide(self.hist_num, self.hist_den, 1, 1, "B")
+		self.hist_ratio.Draw("p same")
+
+		self.canvas.cd()
+		self.draw_done = True
+
+	def draw_line(self, pad, x1, y1, x2, y2, style=2, color=kGray, width=1):
+		if not self.draw_done:
+			print "[AnalysisComparisonPlot::draw_line] ERROR : draw() must be called first"
+			return
+
+		if pad == "top":
+			self.top.cd()
+		elif pad == "bottom":
+			self.bottom.cd()
+		else:
+			print "[AnalysisComparisonPlot::draw_line] ERROR : pad must be top or bottom"
+		self.lines.append(TLine(x1, y1, x2, y2))
+		self.lines[-1].SetLineStyle(style)
+		self.lines[-1].SetLineColor(color)
+		self.lines[-1].SetLineWidth(width)
+		self.lines[-1].Draw("same")
+
+	def save(self):
+		self.canvas.cd()
+		self.canvas.SaveAs(analysis_config.figure_directory + "/" + self.save_tag + ".pdf")
 
 def BTagWPPlot(mjj_histograms, denominator_name, save_tag, x_range=None, log=False):
 	print "Welcome to BTagWPPlot"

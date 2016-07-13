@@ -232,6 +232,10 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 			for(unsigned int j=0; j<=moduleIndex; ++j) {
 				const string& moduleLabel(moduleLabels[j]);
 				const string  moduleType(hltConfig_.moduleType(moduleLabel));
+				if (debug_counter < 100) {
+					std::cout << "[debug] moduleLabel = " << moduleLabel << std::endl;
+					std::cout << "[debug] moduleType = " << moduleType << std::endl;
+				}
 				//--------check whether the module is packed up in TriggerEvent product
 				const unsigned int filterIndex(triggerEventHandle_->filterIndex(InputTag(moduleLabel,"",processName_)));
 				if (filterIndex<triggerEventHandle_->sizeFilters()) {
