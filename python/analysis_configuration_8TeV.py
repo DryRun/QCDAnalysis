@@ -31,6 +31,21 @@ files_QCDBEventTree = {
 	"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
+
+	# Background
+	"QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen.txt",
+	"QCD_Pt-15To30_bEnriched_TuneZ2star_8TeV-pythia6-evtgen":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-15To30_bEnriched_TuneZ2star_8TeV-pythia6-evtgen.txt",
+	"QCD_Pt-30To50_bEnriched_TuneZ2star_8TeV-pythia6-evtgen":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-30To50_bEnriched_TuneZ2star_8TeV-pythia6-evtgen.txt",
+	"QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-120to170_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-120to170_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-170to300_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-170to300_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-1800_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-1800_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-300to470_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-300to470_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-470to600_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-470to600_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-600to800_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-600to800_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6.txt",
+	"QCD_Pt-80to120_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-80to120_TuneZ2star_8TeV_pythia6.txt",
 }
 #for sample_name, sample_file_list in file_lists_QCDBEventTree.iteritems():
 #	f = open(sample_file_list, 'r')

@@ -115,6 +115,42 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 	# cd back
 	os.chdir(start_directory)
 
+def RunBHistogramsBackground(analysis, sample, files_per_job=1, retar=False, data_source=None):
+	# Create working directory and cd
+	start_directory = os.getcwd()
+	working_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
+	os.system("mkdir -pv " + working_directory)
+	os.chdir(working_directory)
+
+	command = "condor_cmsRun"
+	if retar:
+		command += " --retar "
+	#input_txt = open("tmp.txt", 'w')
+	#input_txt.write(analysis_config.files_QCDBEventTree[sample] + "\n")
+	#input_txt.close()
+	command += " --file-list=" + analysis_config.files_QCDBEventTree[sample] + " "
+	command += " --files-per-job=" + str(files_per_job)
+	command += " --submit-file=submit_" + analysis + "_" + sample + ".jdl "
+	#command += " --output-file=" + output_prefix + "_" + sample + ".root "
+	command += " --output-tag=BHistograms_" + sample + " "
+	command += " --run "
+	command += "  /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
+	command += " dataSource=simulation "
+	command += " dataType=background "
+	#command += "inputFiles=" + os.path.basename(input_files[sample])
+	output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
+	command += " outputFile=" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
+	print command
+	os.system(command)
+	os.system("rm -f tmp.txt")
+	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".sh", 'w')
+	postprocessing_file.write("#!/bin/bash\n")
+	postprocessing_file.write("hadd " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + " " + output_filename.replace("_\$\(Cluster\)_\$\(Process\)", "*") + "\n")
+	postprocessing_file.close()
+
+	# cd back
+	os.chdir(start_directory)
+
 
 if __name__ == "__main__":
 	import argparse
@@ -122,6 +158,7 @@ if __name__ == "__main__":
 	parser.add_argument('analysis', type=str, help='Name of analysis chain (see analysis_configuration_8TeV.py)')
 	parser.add_argument('--data', type=str, help='Run data sample. Specify the sample name, e.g. BJetsPlusX_2012')
 	parser.add_argument('--signal', type=str, help='Run signal MC jobs. Specify the model (Hbb, Zprime, RSG) or specific sample')
+	parser.add_argument('--background', type=str, help='Run background MC jobs. Specify the background (QCD, QCDB) or specific sample')
 	parser.add_argument('--noretar', action='store_true', help='Force no retar')
 	args = parser.parse_args()
 
@@ -146,3 +183,13 @@ if __name__ == "__main__":
 			RunBHistogramsSignal(args.analysis, sample, retar=(first and not args.noretar))
 			if first:
 				first = False
+	elif args.background:
+		if args.background in analysis_config.simulation.backgrounds:
+			samples = analysis_config.simulation.background_samples[args.background]
+		else:
+			samples = [args.background]
+		first = True
+		for sample in samples:
+			RunBHistogramsBackground(args.analysis, sample, retar = (first and not args.noretar))
+			if first:
+				first = True

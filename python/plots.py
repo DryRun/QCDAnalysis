@@ -406,13 +406,13 @@ class AnalysisComparisonPlot:
 		self.legend = TLegend(0.6, 0.6, 0.88, 0.88)
 		self.legend.SetFillColor(0)
 		self.legend.SetBorderSize(0)
-		self.top = TPad("top", "top", 0., 0.5, 1., 1.)
+		self.top = TPad("top_" + save_tag, "top", 0., 0.5, 1., 1.)
 		self.top.SetBottomMargin(0.03)
 		self.top.Draw()
 		if log:
 			self.top.SetLogy()
 		self.canvas.cd()
-		self.bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
+		self.bottom = TPad("bottom_" + save_tag, "bottom", 0., 0., 1., 0.5)
 		self.bottom.SetTopMargin(0.02)
 		self.bottom.SetBottomMargin(0.2)
 		self.bottom.Draw()
@@ -423,9 +423,9 @@ class AnalysisComparisonPlot:
 		self.draw_done = False
 
 	def draw(self):
-		top.cd()
+		self.top.cd()
 
-		self.frame_top = TH1D("frame_top", "frame_top", 100, self.x_min, self.x_max)
+		self.frame_top = TH1D("frame_top_" + self.save_tag, "frame_top", 100, self.x_min, self.x_max)
 		self.frame_top.GetXaxis().SetTitleSize(0)
 		self.frame_top.GetXaxis().SetLabelSize(0)
 		self.frame_top.GetYaxis().SetLabelSize(0.04)
@@ -458,7 +458,7 @@ class AnalysisComparisonPlot:
 		self.canvas.cd()
 		self.bottom.cd()
 		# Make frame
-		self.frame_bottom = TH1D("frame_bottom", "frame_bottom", 100, self.x_min, self.x_max)
+		self.frame_bottom = TH1D("frame_bottom_" + self.save_tag, "frame_bottom", 100, self.x_min, self.x_max)
 		self.frame_bottom.SetMinimum(-0.2)
 		self.frame_bottom.SetMaximum(1.2)
 		self.frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")

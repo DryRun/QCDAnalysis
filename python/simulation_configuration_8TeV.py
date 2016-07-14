@@ -34,6 +34,12 @@ for signal_model in signal_models:
 		signal_samples[signal_model].append(GetOutputTag(signal_model, signal_mass, simtype))
 		signal_sample_masses[GetOutputTag(signal_model, signal_mass, simtype)] = signal_mass
 
+backgrounds = ["QCD", "QCDB"]
+background_samples = {
+	"QCD":["QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6","QCD_Pt-120to170_TuneZ2star_8TeV_pythia6","QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6","QCD_Pt-170to300_TuneZ2star_8TeV_pythia6","QCD_Pt-1800_TuneZ2star_8TeV_pythia6","QCD_Pt-300to470_TuneZ2star_8TeV_pythia6","QCD_Pt-470to600_TuneZ2star_8TeV_pythia6","QCD_Pt-600to800_TuneZ2star_8TeV_pythia6","QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6","QCD_Pt-80to120_TuneZ2star_8TeV_pythia6"],
+	"QCDB":["QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-15To30_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-30To50_bEnriched_TuneZ2star_8TeV-pythia6-evtgen",],
+}
+
 # Text files listing the bulk private MC production
 private_mc_file_lists = {}
 private_mc_file_lists["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_300_v1_3.txt"
