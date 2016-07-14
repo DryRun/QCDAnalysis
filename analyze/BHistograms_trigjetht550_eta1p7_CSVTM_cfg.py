@@ -134,12 +134,12 @@ event_cuts = cms.VPSet(
 	),
 	cms.PSet(
 		name        = cms.string("MinLeadingPFJetPt"),
-		parameters  = cms.vdouble(160.),
+		parameters  = cms.vdouble(80.),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
 		name        = cms.string("MinSubleadingPFJetPt"),
-		parameters  = cms.vdouble(120.),
+		parameters  = cms.vdouble(70.),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
