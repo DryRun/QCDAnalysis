@@ -329,6 +329,7 @@ def trigger_threshold_plot(test_hist, ref_hist, save_tag, x_range=None):
 	l.Draw()
 	c.SaveAs(analysis_config.figure_directory + "/" + c.GetName() + ".pdf")
 
+
 # 2D jet leg turn-on plot. Cut is the lower edge of the bin.
 def trigger_jet_leg_turnon(ref_hist, test_hist, save_tag):
 	efficiency_hist = test_hist.Clone()
@@ -372,4 +373,3 @@ if __name__ == "__main__":
 				test_hist = f.Get("BHistograms/h_test" + test_trigger + "_ref" + reference_trigger + "_" + var)
 				test_hist.Rebin(20)
 				trigger_threshold_plot(test_hist, ref_hist, "trigger_threshold_" + args.save_tag + "_test" + test_trigger + "_" + var, x_range=[100, 800])
-

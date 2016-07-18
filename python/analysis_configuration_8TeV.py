@@ -193,6 +193,11 @@ limit_paths["workspaces"] = limit_paths["limits"] + "/workspaces/"
 limit_paths["condor"] = limit_paths["limits"] + "/condor/"
 limit_paths["resonance_shapes"] = "/uscms_data/d1/dryu/Dijets/EightTeeEeVeeBee/Results/ResonanceShapes/"
 
+# Trigger efficiency histograms
+trigger_efficiency_file = {}
+trigger_efficiency_file["trigbbh_CSVTM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/efficiency_trigbbh.root"
+trigger_efficiency_file["trigbbl_CSVTM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/efficiency_trigbbl.root"
+
 # Get the path to a workspace. 
 def get_workspace_filename(analysis_name, model):
 	return limit_paths["workspaces"] + "/workspace_" + analysis_name + "_" + model + ".root"

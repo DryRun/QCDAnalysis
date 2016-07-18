@@ -10,7 +10,8 @@ import sys
 sys.path.append('./')
 
 models = ['GluGluSpin0ToBBbar', 'RSGravitonToBBbar']
-masses = [300, 600, 750, 900, 1200]
+#masses = [300, 600, 750, 900, 1200]
+masses = [250, 400, 500]
 
 def get_dataset_name_pieces(model, mass, stage):
     if model == "GluGluSpin0ToBBbar":
@@ -32,7 +33,13 @@ actual_gensim_names = {
     'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-e0d918201161801092957f0f2442e35d/USER',
     'GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-9c1065b7a8ac99cb5a10424c07d5f182/USER',
     'GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_2-bf8f96f66e8acaa508f5131e44fbc297/USER',
-    'GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_1-76ca9f00fbd35571059515ca22287825/USER'
+    'GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar/dryu-GEN-SIM_v1_1-76ca9f00fbd35571059515ca22287825/USER',
+    'RSGravitonToBBbar_kMpl01_M_250_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_250_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-d92ccb491a895b220c6119db6ad77a82/USER',
+    'RSGravitonToBBbar_kMpl01_M_400_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_400_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-5f07103a518e2dfe4de1430df5a62586/USER',
+    'RSGravitonToBBbar_kMpl01_M_500_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_500_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-719abc4a2d7c82604a1c592c517786d2/USER',
+    'GluGluSpin0ToBBbar_M_250_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_250_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-9c0fe13af874239b82a452a1e99c1d07/USER',
+    'GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-5646f4c10e0952740354a58a642a4c32/USER',
+    'GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-5e3aeb3e064217e7dc300ff2c4d72ddc/USER',
 }
 
 actual_dr1_names = {
@@ -114,7 +121,7 @@ def sequence_GENSIM(model, mass,version='',submit=False):
     if version == "test":
         n_total = 1000
     else:
-        n_total = 100000
+        n_total = 20000
     create_GENSIM_crab(model, mass, 200, n_total, version)
     submit_GENSIM_crab(model, mass, submit)
 
