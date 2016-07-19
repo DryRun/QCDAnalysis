@@ -24,4 +24,4 @@ config.Data.publication = True
 config.Data.outputDatasetTag  = 'DIGI-RECO-1'
 
 config.section_("Site")
-config.Site.storageSite = 'T3_US_FNALLPC'
+config.Site.storageSite = 'T3_US_Brown'
