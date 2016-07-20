@@ -232,7 +232,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 			for(unsigned int j=0; j<=moduleIndex; ++j) {
 				const string& moduleLabel(moduleLabels[j]);
 				const string  moduleType(hltConfig_.moduleType(moduleLabel));
-				if (debug_counter < 100) {
+				if (debug_counter < 10) {
 					std::cout << "[debug] moduleLabel = " << moduleLabel << std::endl;
 					std::cout << "[debug] moduleType = " << moduleType << std::endl;
 				}
@@ -335,14 +335,46 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 
 	Handle<std::vector<PileupSummaryInfo> > PupInfo;
 	if (mIsMCarlo && mUseGenInfo) { 
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.1" << std::endl;
+		}
 		event.getByLabel("generator", hEventInfo);
-		mEvtHdr.setPthat(hEventInfo->binningValues()[0]);
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.2" << std::endl;
+			std::cout << "[ProcessedTreeProducer] DEBUG : hEventInfo->binningValues().size() = " << hEventInfo->binningValues().size() << std::endl;
+		}
+		if (hEventInfo->hasBinningValues()) {
+			mEvtHdr.setPthat(hEventInfo->binningValues()[0]);
+		} else {
+			mEvtHdr.setPthat(-1.);
+		}
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.3" << std::endl;
+		}
 		mEvtHdr.setWeight(hEventInfo->weight());
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.4" << std::endl;
+		}
 		event.getByLabel(mSrcPU, PupInfo);
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.5" << std::endl;
+		}
 		std::vector<PileupSummaryInfo>::const_iterator PUI;
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.6" << std::endl;
+		}
 		int nbx = PupInfo->size();
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.7" << std::endl;
+		}
 		int ootpuEarly(0),ootpuLate(0),intpu(0);
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.8" << std::endl;
+		}
 		float Tnpv = -1.; // new variable for computing pileup weight factor for the event
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.9" << std::endl;
+		}
 		for(PUI = PupInfo->begin(); PUI != PupInfo->end(); ++PUI) {
 			if (PUI->getBunchCrossing() < 0)
 				ootpuEarly += PUI->getPU_NumInteractions();
@@ -353,6 +385,9 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 				Tnpv = PUI->getTrueNumInteractions();
 			 } 
 		} 
+		if (debug_counter < 10) {
+			std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3.1" << std::endl;
+		}
 		 
 		mEvtHdr.setPU(nbx,ootpuEarly,ootpuLate,intpu);
 		mEvtHdr.setTrPu(Tnpv);
