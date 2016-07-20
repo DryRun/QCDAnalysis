@@ -285,6 +285,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 				std::cout << "\t" << it_trig.first << " => " << it_trig.second << std::endl;
 			}
 		}
+		std::cout << "[ProcessedTreeProducer] DEBUG : Done." << std::endl;
 	}
 	mEvent->setPrescales(L1Prescales,HLTPrescales);
 	mEvent->setL1Obj(mL1Objects);
@@ -296,6 +297,9 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	int VtxGood(0);
 	bool isPVgood(false);
 	float PVx(0),PVy(0),PVz(0),PVndof(0);
+	if (debug_counter < 10) {
+		std::cout << "[ProcessedTreeProducer] DEBUG : Flag 1" << std::endl;
+	}
 	for(VertexCollection::const_iterator i_vtx = recVtxs->begin(); i_vtx != recVtxs->end(); i_vtx++) {
 		int index = i_vtx-recVtxs->begin();
 		if (index == 0) {
@@ -311,6 +315,9 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 			VtxGood++;
 		}
 	}
+	if (debug_counter < 10) {
+		std::cout << "[ProcessedTreeProducer] DEBUG : Flag 2" << std::endl;
+	}
 	mEvtHdr.setVertices(recVtxs->size(),VtxGood);
 	mEvtHdr.setPV(isPVgood,PVndof,PVx,PVy,PVz);
 	//-------------- Rho ------------------------------------------------
@@ -322,6 +329,10 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	//-------------- Generator Info -------------------------------------
 	Handle<GenEventInfoProduct> hEventInfo;
 	//-------------- Simulated PU Info ----------------------------------
+	if (debug_counter < 10) {
+		std::cout << "[ProcessedTreeProducer] DEBUG : Flag 3" << std::endl;
+	}
+
 	Handle<std::vector<PileupSummaryInfo> > PupInfo;
 	if (mIsMCarlo && mUseGenInfo) { 
 		event.getByLabel("generator", hEventInfo);
@@ -354,6 +365,10 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		mEvtHdr.setTrPu(0);
 		mEvtHdr.setXsec(0.);
 	}
+	if (debug_counter < 10) {
+		std::cout << "[ProcessedTreeProducer] DEBUG : Flag 4" << std::endl;
+	}
+
 	//---------------- Jets ---------------------------------------------
 	mPFJEC   = JetCorrector::getJetCorrector(mPFJECservice,iSetup);
 	mCALOJEC = JetCorrector::getJetCorrector(mCaloJECservice,iSetup);
