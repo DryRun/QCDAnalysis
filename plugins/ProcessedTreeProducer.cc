@@ -152,6 +152,12 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	vector<LorentzVector> mGenJets;
 	QCDEventHdr mEvtHdr; 
 	QCDMET mCaloMet,mPFMet;
+
+	// Buggy event
+	if (event.id().run() == 414341002) {
+		return;
+	}
+
 	//-------------- Basic Event Info ------------------------------
 	mEvtHdr.setRun(event.id().run());
 	mEvtHdr.setEvt(event.id().event());
@@ -202,7 +208,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 
 
 	//------ loop over all trigger names ---------
-	if (debug_counter < 10) {
+	if (debug_counter < 2) {
 		std::cout << "[debug] triggerNames_.size() = " << triggerNames_.size() << std::endl;
 	}
 	for(unsigned itrig=0; itrig<triggerNames_.size(); itrig++) {
@@ -232,10 +238,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 			for(unsigned int j=0; j<=moduleIndex; ++j) {
 				const string& moduleLabel(moduleLabels[j]);
 				const string  moduleType(hltConfig_.moduleType(moduleLabel));
-				if (debug_counter < 10) {
-					std::cout << "[debug] moduleLabel = " << moduleLabel << std::endl;
-					std::cout << "[debug] moduleType = " << moduleType << std::endl;
-				}
+
 				//--------check whether the module is packed up in TriggerEvent product
 				const unsigned int filterIndex(triggerEventHandle_->filterIndex(InputTag(moduleLabel,"",processName_)));
 				if (filterIndex<triggerEventHandle_->sizeFilters()) {
@@ -277,7 +280,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		mHLTObjects.push_back(vvHLT);
 	}// loop over trigger names  
 	mEvent->setTrigDecision(Fired);
-	if (debug_counter < 10) {
+	if (debug_counter < 2) {
 		std::cout << "[ProcessedTreeProducer] DEBUG : Set trigger decision with Fired.size() = " << Fired.size() << std::endl;
 		std::cout << "[ProcessedTreeProducer] DEBUG : Printing L1 prescales:" << std::endl;
 		for (unsigned int i_trig = 0; i_trig < L1Prescales.size(); ++i_trig) {
@@ -327,7 +330,6 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	Handle<std::vector<PileupSummaryInfo> > PupInfo;
 	if (mIsMCarlo && mUseGenInfo) { 
 		event.getByLabel("generator", hEventInfo);
-		}
 		if (hEventInfo->hasBinningValues()) {
 			mEvtHdr.setPthat(hEventInfo->binningValues()[0]);
 		} else {
@@ -353,8 +355,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		mEvtHdr.setPU(nbx,ootpuEarly,ootpuLate,intpu);
 		mEvtHdr.setTrPu(Tnpv);
 		mEvtHdr.setXsec(mXsec);
-	} 
-	else {
+	} else {
 		mEvtHdr.setPthat(0);
 		mEvtHdr.setWeight(0); 
 		mEvtHdr.setPU(0,0,0,0);

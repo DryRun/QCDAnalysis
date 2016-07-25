@@ -14,6 +14,14 @@ options.register('maxEvents',
 	"Number of events to process"
 )
 
+options.register('skipEvents',
+	0,
+	VarParsing.VarParsing.multiplicity.singleton,
+	VarParsing.VarParsing.varType.int,
+	"Number of events to skip"
+)
+
+
 options.register('outputFile',
 	'file:QCDBEventTree.root',
 	VarParsing.VarParsing.multiplicity.singleton,
@@ -35,6 +43,22 @@ options.register('inputFiles',
 	VarParsing.VarParsing.varType.string,
 	"List of input files"
 )
+
+
+options.register('eventsToSkip',
+	'', #default value
+	VarParsing.VarParsing.multiplicity.list,
+	VarParsing.VarParsing.varType.string,
+	"Skip specific events"
+)
+
+options.register('lumisToSkip',
+	'',
+	VarParsing.VarParsing.multiplicity.list,
+	VarParsing.VarParsing.varType.string,
+	"Skip specific lumisections"
+)
+
 
 options.parseArguments()
 
@@ -99,6 +123,7 @@ process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
 process.maxEvents = cms.untracked.PSet(
 		input = cms.untracked.int32(options.maxEvents)
 )
+
 #############   Format MessageLogger #################
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 #############   Define the source file ###############
@@ -106,6 +131,12 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.source = cms.Source("PoolSource",
 	fileNames = input_files_vstring,
 )
+if options.eventsToSkip != '':
+	process.source.eventsToSkip = cms.untracked.VEventRange(options.eventsToSkip)
+if options.lumisToSkip != '':
+	process.source.lumisToSkip = cms.untracked.VLuminosityBlockRange(options.lumisToSkip)
+if options.skipEvents != 0:
+    process.source.skipEvents = cms.untracked.uint32(options.skipEvents)
 
 
 

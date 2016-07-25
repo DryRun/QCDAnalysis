@@ -34,19 +34,26 @@ for signal_model in signal_models:
 		signal_samples[signal_model].append(GetOutputTag(signal_model, signal_mass, simtype))
 		signal_sample_masses[GetOutputTag(signal_model, signal_mass, simtype)] = signal_mass
 
-backgrounds = ["QCD", "QCDB"]
+backgrounds = ["QCD", "QCDB", "TTJets"]
 background_samples = {
 	"QCD":["QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6","QCD_Pt-120to170_TuneZ2star_8TeV_pythia6","QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6","QCD_Pt-170to300_TuneZ2star_8TeV_pythia6","QCD_Pt-1800_TuneZ2star_8TeV_pythia6","QCD_Pt-300to470_TuneZ2star_8TeV_pythia6","QCD_Pt-470to600_TuneZ2star_8TeV_pythia6","QCD_Pt-600to800_TuneZ2star_8TeV_pythia6","QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6","QCD_Pt-80to120_TuneZ2star_8TeV_pythia6"],
 	"QCDB":["QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-15To30_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-30To50_bEnriched_TuneZ2star_8TeV-pythia6-evtgen",],
+	"TTJets":["TTJets_Hadronic", "TTJets_SemiLept"],
 }
 
 # Text files listing the bulk private MC production
 private_mc_file_lists = {}
+private_mc_file_lists["RSGravitonToBBbar_M_250_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_250_v1_3.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_400_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_400_v1_3.txt"
+private_mc_file_lists["RSGravitonToBBbar_M_500_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_500_v1_3.txt"
 private_mc_file_lists["RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_300_v1_3.txt"
 private_mc_file_lists["RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_600_v1_3.txt"
 private_mc_file_lists["RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_750_v1_3.txt"
 private_mc_file_lists["RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_900_v1_3.txt"
 private_mc_file_lists["RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_1200_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_250_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_250_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_400_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_500_v1_3.txt"
 private_mc_file_lists["GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_300_v1_3.txt"
 private_mc_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_600_v1_3.txt"
 private_mc_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_750_v1_3.txt"
@@ -144,6 +151,10 @@ signal_cross_sections["ZprimeToBB_M_1050_TuneD6T_8TeV_pythia6"] = 4.534e-10 * 10
 signal_cross_sections["ZprimeToBB_M_1100_TuneD6T_8TeV_pythia6"] = 3.633e-10 * 10**9
 signal_cross_sections["ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6"] = 2.96e-10 * 10**9
 signal_cross_sections["ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6"] = 2.392e-10 * 10**9
+
+background_cross_sections["TTJets_Hadronic"] = 252.89 * 0.68 * 0.68
+background_cross_sections["TTJets_SemiLept"] = 252.89 * 2 * 0.32 * 0.68
+background_cross_sections["TTJets_Leptonic"] = 252.89 * 0.32 * 0.32
 
 fullsim_datasets = {"GENSIM":{}, "DR1":{}, "DR2":{}}
 fullsim_datasets["GENSIM"] = {

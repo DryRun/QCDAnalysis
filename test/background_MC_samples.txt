@@ -15,3 +15,4 @@ QCD_Pt-50To150_bEnriched	/QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtge
 QCD_Pt-150_bEnriched 		/QCD_Pt-150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen//Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM
 TTJets_HadronicMGDecays	/TTJets_HadronicMGDecays_8TeV-madgraph/Summer12_DR53X-PU_RD1_START53_V7N-v1/AODSIM
 TTJets_SemiLeptMGDecays	/TTJets_SemiLeptMGDecays_8TeV-madgraph/Summer12_DR53X-PU_RD1_START53_V7N-v1/AODSIM
+TTJets_FullLeptMGDecays /TTJets_FullLeptMGDecays_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v2/AODSIM

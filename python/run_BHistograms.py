@@ -190,6 +190,6 @@ if __name__ == "__main__":
 			samples = [args.background]
 		first = True
 		for sample in samples:
-			RunBHistogramsBackground(args.analysis, sample, retar = (first and not args.noretar))
+			RunBHistogramsEOS(args.analysis, sample, retar = (first and not args.noretar), data_source="simulation")
 			if first:
 				first = True

@@ -3,11 +3,12 @@ sys.path.append("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/python/CMSDIJET/QCD
 import simulation_configuration_8TeV as simulation
 
 # Data samples
-data_samples = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D", "JetHT_2012B", "JetHT_2012C", "JetHT_2012D"]
+data_samples = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D", "JetHT_2012B", "JetHT_2012C", "JetHT_2012D", "SingleMu_2012A", "SingleMu_2012B", "SingleMu_2012C", "SingleMu_2012D"]
 data_supersamples = {}
 data_supersamples["BJetPlusX_2012"] = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D"]
 data_supersamples["BJetPlusX_2012BCD"] = ["BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D"]
 data_supersamples["JetHT_2012BCD"] = ["JetHT_2012B", "JetHT_2012C", "JetHT_2012D"]
+data_supersamples["SingleMu_2012"] = ["SingleMu_2012A", "SingleMu_2012B", "SingleMu_2012C", "SingleMu_2012D"]
 
 # Skimmed trees
 # - Data files are stored in .txt files (they have thousands of files, and reside on EOS)
@@ -19,6 +20,10 @@ files_QCDBEventTree = {
 	"JetHT_2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012B_v1_4_1.txt",
 	"JetHT_2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012C_v1_4_1.txt",
 	"JetHT_2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/condor/QCDBEventTree_JetHT_Run2012D_v1_4_1.txt",
+	"SingleMu_2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012A_v1_4_1.txt",
+	"SingleMu_2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012B_v1_4_1.txt",
+	"SingleMu_2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012C_v1_4_1.txt",
+	"SingleMu_2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012D_v1_4_1.txt",
 
 	# Signal MCRSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM
 	"RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM.txt",
@@ -46,6 +51,9 @@ files_QCDBEventTree = {
 	"QCD_Pt-600to800_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-600to800_TuneZ2star_8TeV_pythia6.txt",
 	"QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6.txt",
 	"QCD_Pt-80to120_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-80to120_TuneZ2star_8TeV_pythia6.txt",
+
+	"TTJets_Hadronic":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/TTJets_Had.txt",
+	"TTJets_SemiLept":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/TTJets_SemiLep.txt",
 }
 #for sample_name, sample_file_list in file_lists_QCDBEventTree.iteritems():
 #	f = open(sample_file_list, 'r')
