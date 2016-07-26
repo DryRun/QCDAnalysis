@@ -152,6 +152,7 @@ signal_cross_sections["ZprimeToBB_M_1100_TuneD6T_8TeV_pythia6"] = 3.633e-10 * 10
 signal_cross_sections["ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6"] = 2.96e-10 * 10**9
 signal_cross_sections["ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6"] = 2.392e-10 * 10**9
 
+background_cross_sections = {}
 background_cross_sections["TTJets_Hadronic"] = 252.89 * 0.68 * 0.68
 background_cross_sections["TTJets_SemiLept"] = 252.89 * 2 * 0.32 * 0.68
 background_cross_sections["TTJets_Leptonic"] = 252.89 * 0.32 * 0.32

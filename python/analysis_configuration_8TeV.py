@@ -23,7 +23,7 @@ files_QCDBEventTree = {
 	"SingleMu_2012A":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012A_v1_4_1.txt",
 	"SingleMu_2012B":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012B_v1_4_1.txt",
 	"SingleMu_2012C":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012C_v1_4_1.txt",
-	"SingleMu_2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012D_v1_4_1.txt",
+	"SingleMu_2012D":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_SingleMu_Run2012D_v1_4_2.txt",
 
 	# Signal MCRSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM
 	"RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_300_TuneZ2star_8TeV_pythia8_FULLSIM.txt",
@@ -192,6 +192,8 @@ analysis_cfgs["trigjetht650_eta1p7"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_pat
 analysis_cfgs["trigbbh_CSVTM_bfat"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVTM_bfat_cfg.py"
 analysis_cfgs["trigeff_trigbbh_CSVTM_bfat"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbh_CSVTM_bfat_cfg.py"
 
+analysis_cfgs["mu_lowmass_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_mu_lowmass_CSVTM_cfg.py"
+analysis_cfgs["mu_highmass_CSVTM"] = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_mu_highmass_CSVTM_cfg.py"
 
 # Limit setting paths
 limit_paths = {}
