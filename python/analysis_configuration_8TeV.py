@@ -52,8 +52,9 @@ files_QCDBEventTree = {
 	"QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6.txt",
 	"QCD_Pt-80to120_TuneZ2star_8TeV_pythia6":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-80to120_TuneZ2star_8TeV_pythia6.txt",
 
-	"TTJets_Hadronic":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/TTJets_Had.txt",
-	"TTJets_SemiLept":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/TTJets_SemiLep.txt",
+	"TTJets_Hadronic":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/TTJets_Had.txt",
+	"TTJets_SemiLept":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/TTJets_SemiLep.txt",
+	"TTJets_Leptonic":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/TTJets_Lep.txt",
 }
 #for sample_name, sample_file_list in file_lists_QCDBEventTree.iteritems():
 #	f = open(sample_file_list, 'r')

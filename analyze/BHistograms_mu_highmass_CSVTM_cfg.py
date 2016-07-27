@@ -110,7 +110,7 @@ event_cuts = cms.VPSet(
 	cms.PSet(
 		name        = cms.string("TriggerOR"),
 		parameters  = cms.vdouble(),
-		descriptors = cms.vstring('HLT_Mu24_CentralPFJet30_CentralPFJet25_v1', 'HLT_Mu24_CentralPFJet30_CentralPFJet25_v2', 'HLT_Mu24_CentralPFJet30_CentralPFJet25_v3', 'HLT_Mu24_CentralPFJet30_CentralPFJet25_v4')
+		descriptors = cms.vstring('HLT_Mu24_CentralPFJet30_CentralPFJet25_v1', 'HLT_Mu24_CentralPFJet30_CentralPFJet25_v2', 'HLT_Mu24_CentralPFJet30_CentralPFJet25_v3', 'HLT_Mu24_CentralPFJet30_CentralPFJet25_v4', 'HLT_Mu18_CentralPFJet30_CentralPFJet25_v1')
 	),
 	cms.PSet(
 		name        = cms.string("MaxMetOverSumEt"),

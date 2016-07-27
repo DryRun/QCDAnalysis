@@ -35,10 +35,10 @@ for signal_model in signal_models:
 		signal_sample_masses[GetOutputTag(signal_model, signal_mass, simtype)] = signal_mass
 
 backgrounds = ["QCD", "QCDB", "TTJets"]
-background_samples = {
+background_supersamples = {
 	"QCD":["QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6","QCD_Pt-120to170_TuneZ2star_8TeV_pythia6","QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6","QCD_Pt-170to300_TuneZ2star_8TeV_pythia6","QCD_Pt-1800_TuneZ2star_8TeV_pythia6","QCD_Pt-300to470_TuneZ2star_8TeV_pythia6","QCD_Pt-470to600_TuneZ2star_8TeV_pythia6","QCD_Pt-600to800_TuneZ2star_8TeV_pythia6","QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6","QCD_Pt-80to120_TuneZ2star_8TeV_pythia6"],
 	"QCDB":["QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-15To30_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-30To50_bEnriched_TuneZ2star_8TeV-pythia6-evtgen",],
-	"TTJets":["TTJets_Hadronic", "TTJets_SemiLept"],
+	"TTJets":["TTJets_Hadronic", "TTJets_SemiLept", "TTJets_Leptonic"],
 }
 
 # Text files listing the bulk private MC production
@@ -156,6 +156,12 @@ background_cross_sections = {}
 background_cross_sections["TTJets_Hadronic"] = 252.89 * 0.68 * 0.68
 background_cross_sections["TTJets_SemiLept"] = 252.89 * 2 * 0.32 * 0.68
 background_cross_sections["TTJets_Leptonic"] = 252.89 * 0.32 * 0.32
+
+background_cross_section_uncertainties = {}
+background_cross_section_uncertainties["TTJets_Hadronic"] = 0.1
+background_cross_section_uncertainties["TTJets_SemiLept"] = 0.1
+background_cross_section_uncertainties["TTJets_Leptonic"] = 0.1
+
 
 fullsim_datasets = {"GENSIM":{}, "DR1":{}, "DR2":{}}
 fullsim_datasets["GENSIM"] = {
