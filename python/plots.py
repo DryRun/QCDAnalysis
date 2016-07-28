@@ -459,8 +459,8 @@ class AnalysisComparisonPlot:
 		self.bottom.cd()
 		# Make frame
 		self.frame_bottom = TH1D("frame_bottom_" + self.save_tag, "frame_bottom", 100, self.x_min, self.x_max)
-		self.frame_bottom.SetMinimum(-0.2)
-		self.frame_bottom.SetMaximum(1.2)
+		self.frame_bottom.SetMinimum(0)
+		self.frame_bottom.SetMaximum(2)
 		self.frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
 		self.frame_bottom.GetYaxis().SetTitle(self.name_num + " / " + self.name_den)
 
