@@ -158,6 +158,7 @@ background_cross_sections["TTJets_SemiLept"] = 252.89 * 2 * 0.32 * 0.68
 background_cross_sections["TTJets_Leptonic"] = 252.89 * 0.32 * 0.32
 
 background_cross_section_uncertainties = {}
+background_cross_section_uncertainties["TTJets"] = 0.1
 background_cross_section_uncertainties["TTJets_Hadronic"] = 0.1
 background_cross_section_uncertainties["TTJets_SemiLept"] = 0.1
 background_cross_section_uncertainties["TTJets_Leptonic"] = 0.1
