@@ -364,6 +364,10 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		mEvtHdr.setXsec(0.);
 	}
 
+	//---------------- Muons ---------------------------------------------
+	Hanle<MuonCollection> muons;
+	event.getByLabel("")
+	
 	//---------------- Jets ---------------------------------------------
 	mPFJEC   = JetCorrector::getJetCorrector(mPFJECservice,iSetup);
 	mCALOJEC = JetCorrector::getJetCorrector(mCaloJECservice,iSetup);
