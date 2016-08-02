@@ -366,6 +366,7 @@ if __name__ == "__main__":
 	if args.threshold_plot:
 		f = TFile(args.input_file, "READ")
 		for var in ["pfjet_mjj", "fatjet_mjj"]:
+			#reference_trigger = "HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV"
 			reference_trigger = "HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV"
 			ref_hist = f.Get("BHistograms/h_ref" + reference_trigger + "_" + var)
 			ref_hist.Rebin(20)

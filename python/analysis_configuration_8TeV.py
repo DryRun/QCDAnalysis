@@ -140,6 +140,7 @@ analysis_cfgs["trigbbl_CSVT"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/s
 analysis_cfgs["trigbbl_CSVTM"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVTM_cfg.py"
 analysis_cfgs["trigbbl_CSVTL"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVTL_cfg.py"
 analysis_cfgs["trigbbl_CSVML"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVML_cfg.py"
+analysis_cfgs["trigbbll_CSVTM"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbll_CSVTM_cfg.py"
 
 analysis_cfgs["trigeff_trigbbh_CSVL"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbh_CSVL_cfg.py"
 analysis_cfgs["trigeff_trigbbl_CSVL"]   = "/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbl_CSVL_cfg.py"
