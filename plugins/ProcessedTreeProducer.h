@@ -9,6 +9,7 @@
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "JetMETCorrections/Objects/interface/JetCorrector.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+#include "CMSDIJET/QCDAnalysis/interface/Muon.h"
 #include "CMSDIJET/QCDAnalysis/interface/QCDJet.h"
 #include "CMSDIJET/QCDAnalysis/interface/QCDEvent.h"
 #include "CMSDIJET/QCDAnalysis/interface/QCDEventHdr.h"
