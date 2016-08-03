@@ -24,6 +24,7 @@
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
+#include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/JetReco/interface/Jet.h"
 #include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
@@ -40,6 +41,7 @@
 #include "DataFormats/METReco/interface/HcalNoiseSummary.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/MuonReco/interface/MuonSelectors.h"
 
 #include "DataFormats/BTauReco/interface/JetTag.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavour.h"
@@ -146,11 +148,12 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 { 
 	mEventsProcessedHisto->Fill(1);
 	++debug_counter;
-	vector<QCDCaloJet>    mCaloJets;
-	vector<QCDPFJet>      mPFJets;
-	vector<QCDJet>        mPFFatJets;
-	vector<QCDPFJet>      tmpPFJets;
-	vector<LorentzVector> mGenJets;
+	std::vector<QCDCaloJet>    mCaloJets;
+	std::vector<QCDPFJet>      mPFJets;
+	std::vector<QCDJet>        mPFFatJets;
+	std::vector<QCDPFJet>      tmpPFJets;
+	std::vector<LorentzVector> mGenJets;
+	std::vector<QCDMuon> mMuons;
 	QCDEventHdr mEvtHdr; 
 	QCDMET mCaloMet,mPFMet;
 
@@ -365,8 +368,24 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	}
 
 	//---------------- Muons ---------------------------------------------
-	Hanle<MuonCollection> muons;
-	event.getByLabel("")
+	Handle<reco::MuonCollection> muons;
+	event.getByLabel("muons", muons);
+	for (MuonCollection::const_iterator it_muon = muons->begin(); it_muon != muons->end(); ++it_muon) {
+		QCDMuon this_muon;
+     	this_muon.setP4(this_muon.p4());
+     	//this_muon.setGen(LorentzVector fP4, float fgenR);
+     	this_muon.setIsLooseMuon(muon::isLooseMuon((*it_muon)));
+     	this_muon.setIsTightMuon(muon::isTightMuon((*it_muon), (*recVtxs)[0]));
+     	this_muon.setIsolationR03(it_muon->isolationR03());
+     	this_muon.setIsolationR05(it_muon->isolationR05());
+     	this_muon.setPfIsolationR03(it_muon->pfIsolationR03());
+     	//this_muon.setPfMeanDRIsoProfileR03(it_muon->pfMeanDRIsoProfileR03());
+     	//this_muon.setPfSumDRIsoProfileR03(it_muon->pfSumDRIsoProfileR03());
+     	this_muon.setPfIsolationR04(it_muon->pfIsolationR04());
+     	//this_muon.setPfMeanDRIsoProfileR04(it_muon->pfMeanDRIsoProfileR04());
+     	//this_muon.setPfSumDRIsoProfileR04(it_muon->pfSumDRIsoProfileR04());
+		mMuons.push_back(this_muon);
+	}
 	
 	//---------------- Jets ---------------------------------------------
 	mPFJEC   = JetCorrector::getJetCorrector(mPFJECservice,iSetup);
@@ -906,6 +925,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	mEvent->setPFJets(mPFJets);
 	mEvent->setFatJets(mPFFatJets);
 	mEvent->setGenJets(mGenJets);
+	mEvent->setMuons(mMuons);
 	mEvent->setCaloMET(mCaloMet);
 	mEvent->setPFMET(mPFMet);
 	mEvent->setL1Obj(mL1Objects);

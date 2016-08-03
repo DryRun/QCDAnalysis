@@ -34,11 +34,11 @@ class QCDMuon
      const reco::MuonIsolation isolationR03() const {return isolationR03_;}
      const reco::MuonIsolation isolationR05() const {return isolationR05_;}
      const reco::MuonPFIsolation pfIsolationR03() const {return pfIsolationR03_;}
-     const reco::MuonPFIsolation pfMeanDRIsoProfileR03() const {return pfMeanDRIsoProfileR03_;}
-     const reco::MuonPFIsolation pfSumDRIsoProfileR03() const {return pfSumDRIsoProfileR03_;}
+     //const reco::MuonPFIsolation pfMeanDRIsoProfileR03() const {return pfMeanDRIsoProfileR03_;}
+     //const reco::MuonPFIsolation pfSumDRIsoProfileR03() const {return pfSumDRIsoProfileR03_;}
      const reco::MuonPFIsolation pfIsolationR04() const {return pfIsolationR04_;}
-     const reco::MuonPFIsolation pfMeanDRIsoProfileR04() const {return pfMeanDRIsoProfileR04_;}
-     const reco::MuonPFIsolation pfSumDRIsoProfileR04() const {return pfSumDRIsoProfileR04_;}
+     //const reco::MuonPFIsolation pfMeanDRIsoProfileR04() const {return pfMeanDRIsoProfileR04_;}
+     //const reco::MuonPFIsolation pfSumDRIsoProfileR04() const {return pfSumDRIsoProfileR04_;}
 
    private:
      //------ jet 4-momentum vector------------------

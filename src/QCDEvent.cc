@@ -43,6 +43,12 @@ void QCDEvent::setGenJets(const std::vector<LorentzVector>& fGenJets)
 		GenJets_.push_back(fGenJets[i]);
 	}
 }
+void QCDEvent::setMuons(const std::vector<QCDMuon>& fMuons) {
+	muons_.clear();
+	for (unsigned i = 0; i < fMuons.size(); ++i) {
+		muons_.push_back(fMuons[i]);
+	}
+}
 //---------------------------------------------------
 void QCDEvent::setL1Obj(const std::vector<std::vector<LorentzVector> >& fL1Obj)       
 {
