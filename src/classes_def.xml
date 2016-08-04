@@ -1,6 +1,7 @@
 <lcgdict>
 <selection>
   <class name="QCDMET"/>
+  <class name="QCDMuon"/>
   <class name="QCDJet"/>
   <class name="QCDCaloJet"/>
   <class name="QCDPFJet"/>

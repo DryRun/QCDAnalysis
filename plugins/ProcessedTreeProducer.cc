@@ -372,7 +372,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	event.getByLabel("muons", muons);
 	for (MuonCollection::const_iterator it_muon = muons->begin(); it_muon != muons->end(); ++it_muon) {
 		QCDMuon this_muon;
-     	this_muon.setP4(this_muon.p4());
+     	this_muon.setP4(it_muon->p4());
      	//this_muon.setGen(LorentzVector fP4, float fgenR);
      	this_muon.setIsLooseMuon(muon::isLooseMuon((*it_muon)));
      	this_muon.setIsTightMuon(muon::isTightMuon((*it_muon), (*recVtxs)[0]));
@@ -688,6 +688,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 		if (qcdpfjet.ptCor() >= mMinPFFatPt && fabs(qcdpfjet.eta()) < mMaxPFFatEta && qcdpfjet.isLooseID())
 			tmpPFJets.push_back(qcdpfjet);
 	}
+
 	//----------- PFFatJets ----------------------
 	sort(tmpPFJets.begin(),tmpPFJets.end(),sort_pfjets);
 	if (tmpPFJets.size()>1) {
@@ -918,6 +919,7 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 	mPFMet.setVar((*pfmet)[0].et(),(*pfmet)[0].sumEt(),(*pfmet)[0].phi());
 	mCaloMet.setVar((*calomet)[0].et(),(*calomet)[0].sumEt(),(*calomet)[0].phi());
 	//-------------- fill the tree -------------------------------------  
+	
 	sort(mCaloJets.begin(),mCaloJets.end(),sort_calojets);
 	sort(mPFJets.begin(),mPFJets.end(),sort_pfjets);
 	mEvent->setEvtHdr(mEvtHdr);
