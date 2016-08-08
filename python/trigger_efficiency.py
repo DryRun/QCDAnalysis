@@ -16,13 +16,13 @@ gStyle.SetPalette(1)
 import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 
 
-def make_efficiency_histogram(test_hist, ref_hist, output_file):
+def make_efficiency_histogram(test_hist, ref_hist, output_file=None):
 	efficiency_hist = test_hist.Clone()
 	efficiency_hist.SetName("h_trigger_efficiency")
 	for bin in xrange(1, test_hist.GetNbinsX() + 1):
 		num = test_hist.GetBinContent(bin)
 		den = ref_hist.GetBinContent(bin)
-		if den > 0:
+		if den > 0 and num <= den:
 			eff = num / den
 			d_eff = (eff * (1. - eff) / den)**0.5
 		else:
@@ -30,8 +30,10 @@ def make_efficiency_histogram(test_hist, ref_hist, output_file):
 			d_eff = 0.
 		efficiency_hist.SetBinContent(bin, eff)
 		efficiency_hist.SetBinError(bin, d_eff)
-	output_file.cd()
-	efficiency_hist.Write()
+	if output_file:
+		output_file.cd()
+		efficiency_hist.Write()
+	return efficiency_hist
 
 def fit_efficiency(histogram, fit_range, save_tag):
 	fits = {}
@@ -99,9 +101,78 @@ def fit_efficiency(histogram, fit_range, save_tag):
 		ROOT.SetOwnership(top, False)
 		ROOT.SetOwnership(bottom, False)
 
+def trigger_efficiency_plot(ref_hist, test_hist, save_tag):
+	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
+	l = TLegend(0.68, 0.66, 0.9, 0.88)
+	l.SetFillColor(0)
+	l.SetBorderSize(0)
+	top = TPad("top_" + save_tag, "top_" + save_tag, 0., 0.5, 1., 1.)
+	top.SetBottomMargin(0.03)
+	top.Draw()
+	top.SetLogy()
+	top.cd()
+
+	frame = TH1D("frame", "frame", 100, 0., 750.)
+	frame.SetMinimum(1.)
+	frame.SetMaximum(1.e6)
+	frame.GetXaxis().SetLabelSize(0)
+	frame.GetXaxis().SetTitleSize(0)
+	frame.Draw("axis")
+
+	ref_hist.SetMarkerStyle(25)
+	ref_hist.SetMarkerColor(seaborn.GetColorRoot("dark", 0))
+	ref_hist.SetLineColor(seaborn.GetColorRoot("dark", 0))
+	ref_hist.Draw("p same")
+
+	test_hist.SetMarkerStyle(20)
+	test_hist.SetMarkerColor(seaborn.GetColorRoot("dark", 2))
+	test_hist.SetLineColor(seaborn.GetColorRoot("dark", 2))
+	test_hist.Draw("p same")
+
+	l.AddEntry(ref_hist, "Reference", "lp")
+	l.AddEntry(test_hist, "Test", "lp")
+	l.Draw()
+
+	c.cd()
+	bottom = TPad("bottom_" + save_tag, "bottom_" + save_tag, 0., 0, 1., 0.5)
+	bottom.SetTopMargin(0.02)
+	bottom.SetBottomMargin(0.2)
+	bottom.Draw()
+	bottom.cd()
+	efficiency_hist = make_efficiency_histogram(test_hist, ref_hist, output_file=None)
+	frame_bottom = TH1D("frame_bottom", "frame_bottom", 100, 0., 750.)
+	frame_bottom.SetMinimum(0.25)
+	frame_bottom.SetMaximum(1.1)
+	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+	frame_bottom.GetYaxis().SetTitle("Efficiency")
+	frame_bottom.Draw("axis")
+	lines = {}
+	for eff in [0.9, 0.95, 0.99, 1.]:
+		lines[eff] = TLine(0., eff, 750., eff)
+		lines[eff].SetLineColor(kGray)
+		lines[eff].SetLineStyle(2)
+		lines[eff].SetLineWidth(1)
+		lines[eff].Draw("same")
+	efficiency_hist.SetMarkerStyle(20)
+	efficiency_hist.SetMarkerSize(0)
+	efficiency_hist.SetMarkerColor(1)
+	efficiency_hist.SetLineColor(1)
+	efficiency_hist.SetLineStyle(0)
+	efficiency_hist.SetLineWidth(2)
+	efficiency_hist.Draw("hist same")
+
+	c.cd()
+	c.SaveAs(analysis_config.figure_directory + "/" + c.GetName() + ".pdf")
+
+	ROOT.SetOwnership(top, False)
+	ROOT.SetOwnership(bottom, False)
+	ROOT.SetOwnership(c, False)
+
+
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description="Run and plot fits")
+	parser.add_argument("--plot", action='store_true', help='Make basic trigger efficiency plot')
 	parser.add_argument("--efficiency", action='store_true', help='Make efficiency histograms')
 	parser.add_argument("--fit", action='store_true', help='Fit and plot efficiency histograms')
 	args = parser.parse_args()
@@ -119,6 +190,21 @@ if __name__ == "__main__":
 		"trigbbh_CSVTM":"HLT_Jet160Eta2p4_Jet120Eta2p4_DiBTagIP3DFastPVLoose",
 		"trigbbl_CSVTM":"HLT_Jet80Eta1p7_Jet70Eta1p7_DiBTagIP3DFastPV",
 	}
+
+	if args.plot:
+		for analysis in analyses:
+			f = TFile(trigeff_files[analysis], "READ")
+			if analysis == "trigbbh_CSVTM":
+				reference_trigger = "HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV"
+			elif analysis == "trigbbl_CSVTM":
+				reference_trigger = "HLT_Jet60Eta1p7_Jet53Eta1p7_DiBTagIP3DFastPV"
+			ref_hist = f.Get("BHistograms/h_ref" + reference_trigger + "_pfjet_mjj")
+			test_hist = f.Get("BHistograms/h_test" + test_triggers[analysis] + "_ref" + reference_trigger + "_pfjet_mjj")
+			ref_hist.Rebin(10)
+			test_hist.Rebin(10)
+			trigger_efficiency_plot(ref_hist, test_hist, "trigger_efficiency_" + analysis)
+			f.Close()
+
 	if args.efficiency:
 		for analysis in analyses:
 			f = TFile(trigeff_files[analysis], "READ")
