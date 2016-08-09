@@ -219,3 +219,12 @@ trigger_efficiency_file["trigbbl_CSVTM"] = "/uscms/home/dryu/Dijets/data/EightTe
 # Get the path to a workspace. 
 def get_workspace_filename(analysis_name, model):
 	return limit_paths["workspaces"] + "/workspace_" + analysis_name + "_" + model + ".root"
+
+
+# Bias studies
+bias_study_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Fits/BiasStudies/"
+def get_bias_study_directory(model, analysis, mass, mu):
+	return bias_study_directory + "/" + model + "_" + analysis + "/m" + str(mass) + "_mu" + str(mu) + "/"
+
+def get_bias_study_results(model, analysis, mass, mu, f_gen, f_test):
+	return get_bias_study_directory(model, analysis, mass, mu) + "/mlfit" + model + "_" + analysis + "_m" + str(mass) + "_gen_" + f_gen + "_fit_" + f_test + "_mu" + str(mu) 

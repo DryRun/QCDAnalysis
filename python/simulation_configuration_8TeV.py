@@ -5,6 +5,11 @@ signal_masses = [250, 400, 500]
 #signal_masses = [600, 900, 1200]
 #signal_masses = [300]
 
+limit_signal_masses = {
+	"trigbbl_CSVTM":range(400, 950, 50),
+	"trigbbh_CSVTM":range(550, 1250, 50)
+}
+
 output_tags = {}
 #output_tags["Hbb"] = "HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@"
 output_tags["Hbb"] = "GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_@SIMTYPE@"
