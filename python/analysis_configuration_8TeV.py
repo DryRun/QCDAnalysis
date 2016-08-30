@@ -227,4 +227,11 @@ def get_bias_study_directory(model, analysis, mass, mu):
 	return bias_study_directory + "/" + model + "_" + analysis + "/m" + str(mass) + "_mu" + str(mu) + "/"
 
 def get_bias_study_results(model, analysis, mass, mu, f_gen, f_test):
-	return get_bias_study_directory(model, analysis, mass, mu) + "/mlfit" + model + "_" + analysis + "_m" + str(mass) + "_gen_" + f_gen + "_fit_" + f_test + "_mu" + str(mu) 
+	return get_bias_study_directory(model, analysis, mass, mu) + "/mlfit" + model + "_" + analysis + "_m" + str(mass) + "_gen_" + f_gen + "_fit_" + f_test + "_mu" + str(mu) + ".root"
+
+def get_signal_fit_file(analysis, model, mass, fit_function, interpolated=False):
+	path = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Fits/Signal/" + fit_function + "/fit_" + analysis + "_" + model + "_m" + str(mass)
+	if interpolated:
+		path += "_interpolated"
+	path += ".root"
+	return path
