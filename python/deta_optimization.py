@@ -108,28 +108,32 @@ def deta_optimization(signal_hist, background_hist, save_tag):
 
 
 if __name__ == "__main__":
-	analysis = "trigbbh_CSVTM"
-	for model in ["Hbb", "RSG"]:
-		for mass in [600, 750, 900, 1200]:
-			print "On " + model + " / " + str(mass)
+	for analysis in ["trigbbh_CSVTM", "trigbbl_CSVTM"]:
+		for model in ["Hbb", "RSG"]:
+			if analysis == "trigbbh_CSVTM":
+				masses = [600, 750, 900, 1200]
+			elif analysis == "trigbbl_CSVTM":
+				masses = [400, 500, 600]
+			for mass in masses:
+				print "On " + model + " / " + str(mass)
 
-			signal_file = TFile(analysis_config.get_b_histogram_filename(analysis, analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM")), "READ")
-			signal_histogram = signal_file.Get("BHistograms/h_nminusone_PFDijetMaxDeltaEta_vs_PFMjj")
-			xsec = 1. # 1 pb placeholder
-			ngenevt = signal_file.Get("BHistograms/h_input_nevents").Integral()
-			signal_histogram.Scale(19700. * xsec / ngenevt)
+				signal_file = TFile(analysis_config.get_b_histogram_filename(analysis, analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM")), "READ")
+				signal_histogram = signal_file.Get("BHistograms/h_nminusone_PFDijetMaxDeltaEta_vs_PFMjj")
+				xsec = 1. # 1 pb placeholder
+				ngenevt = signal_file.Get("BHistograms/h_input_nevents").Integral()
+				signal_histogram.Scale(19700. * xsec / ngenevt)
 
-			print "Background file " + analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012")
-			background_file = TFile(analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012"), "READ")
-			background_histogram = background_file.Get("BHistograms/h_nminusone_PFDijetMaxDeltaEta_vs_PFMjj")
+				print "Background file " + analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012")
+				background_file = TFile(analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012"), "READ")
+				background_histogram = background_file.Get("BHistograms/h_nminusone_PFDijetMaxDeltaEta_vs_PFMjj")
 
-			signal_histogram_mjj = signal_histogram.ProjectionY()
-			signal_fit_results = DoSignalFit(signal_histogram_mjj, fit_range=[mass-150., mass+150.])
-			signal_x0 = signal_fit_results["fit"].GetParameter(2)
-			signal_sigma = signal_fit_results["fit"].GetParameter(3)
-			print "\tWindow = [" + str(signal_x0 - signal_sigma) + ", " + str(signal_x0 + signal_sigma) + "]"
+				signal_histogram_mjj = signal_histogram.ProjectionY()
+				signal_fit_results = DoSignalFit(signal_histogram_mjj, fit_range=[mass-150., mass+150.])
+				signal_x0 = signal_fit_results["fit"].GetParameter(2)
+				signal_sigma = signal_fit_results["fit"].GetParameter(3)
+				print "\tWindow = [" + str(signal_x0 - signal_sigma) + ", " + str(signal_x0 + signal_sigma) + "]"
 
-			low_bin = signal_histogram.GetYaxis().FindBin(signal_x0 - signal_sigma)
-			high_bin = signal_histogram.GetYaxis().FindBin(signal_x0 + signal_sigma)
+				low_bin = signal_histogram.GetYaxis().FindBin(signal_x0 - signal_sigma)
+				high_bin = signal_histogram.GetYaxis().FindBin(signal_x0 + signal_sigma)
 
-			deta_optimization(signal_histogram.ProjectionX("signal_deta", low_bin, high_bin), background_histogram.ProjectionX("background_deta", low_bin, high_bin), model + "_" + str(mass))
+				deta_optimization(signal_histogram.ProjectionX("signal_deta", low_bin, high_bin), background_histogram.ProjectionX("background_deta", low_bin, high_bin), model + "_" + analysis + "_" + str(mass))

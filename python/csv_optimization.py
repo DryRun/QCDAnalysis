@@ -49,27 +49,37 @@ def significance(analyses, signal_histograms, data_histograms, signal_mass, fit_
 
 if __name__ == "__main__":
 	for model in ["Hbb", "RSG"]:
-		for mass in [600, 900, 1200]:
-			signal_histograms = {}
-			data_histograms = {}
-			for analysis in ["trigbbh_CSVL", "trigbbh_CSVM", "trigbbh_CSVT", "trigbbh_CSVTL", "trigbbh_CSVTM", "trigbbh_CSVML"]:
-				signal_sample = analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM")
-				#print "Signal file: " + analysis_config.get_b_histogram_filename(analysis, signal_sample)
-				signal_histogram_file = TFile(analysis_config.get_b_histogram_filename(analysis, signal_sample), "READ")
-				#print "Data file: " + analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012")
-				data_histogram_file = TFile(analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012"), "READ")
-				signal_histograms[analysis] = signal_histogram_file.Get("BHistograms/h_pfjet_mjj")
-				if not signal_histograms[analysis]:
-					print "ERROR : Couldn't find signal histogram BHistograms/h_pfjet_mjj in file " + analysis_config.get_b_histogram_filename(analysis, signal_sample)
-					continue
-				signal_histograms[analysis].SetDirectory(0)
-				ngenevt = signal_histogram_file.Get("BHistograms/h_input_nevents").Integral()
-				xsec = 1. # 1 pb placeholder
-				signal_histograms[analysis].Scale(19700. * xsec / ngenevt)
-				data_histograms[analysis] = data_histogram_file.Get("BHistograms/h_pfjet_mjj")
-				data_histograms[analysis].SetDirectory(0)
-				if not data_histograms[analysis]:
-					print "ERROR : Couldn't find data histogram"
-					continue
-			significance(["trigbbh_CSVL", "trigbbh_CSVM", "trigbbh_CSVT", "trigbbh_CSVTL", "trigbbh_CSVTM", "trigbbh_CSVML"], signal_histograms, data_histograms, mass, "trigbbh_CSVL")
+		#for analysis_base in ["trigbbh", "trigbbl"]:
+		for analysis_base in ["trigbbl"]:
+			if analysis_base == "trigbbh":
+				masses = [600, 750, 900, 1200]
+			elif analysis_base == "trigbbl":
+				masses = [400, 600, 750, 900]
+			analyses = [analysis_base + "_" + x for x in ["CSVL", "CSVM", "CSVT", "CSVTL", "CSVTM", "CSVML"]]
+			for mass in masses:
+				signal_histograms = {}
+				data_histograms = {}
+				for analysis in analyses:
+					signal_sample = analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM")
+					#print "Signal file: " + analysis_config.get_b_histogram_filename(analysis, signal_sample)
+					signal_histogram_file = TFile(analysis_config.get_b_histogram_filename(analysis, signal_sample), "READ")
+					#print "Data file: " + analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012")
+					data_histogram_file = TFile(analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012"), "READ")
+					signal_histograms[analysis] = signal_histogram_file.Get("BHistograms/h_pfjet_mjj")
+					if not signal_histograms[analysis]:
+						print "ERROR : Couldn't find signal histogram BHistograms/h_pfjet_mjj in file " + analysis_config.get_b_histogram_filename(analysis, signal_sample)
+						continue
+					signal_histograms[analysis].SetDirectory(0)
+					ngenevt = signal_histogram_file.Get("BHistograms/h_input_nevents").Integral()
+					xsec = 1. # 1 pb placeholder
+					signal_histograms[analysis].Scale(19700. * xsec / ngenevt)
+					print "[debug] Data file " + analysis_config.get_b_histogram_filename(analysis, "BJetPlusX_2012")
+					data_histograms[analysis] = data_histogram_file.Get("BHistograms/h_pfjet_mjj")
+					data_histograms[analysis].SetDirectory(0)
+					if not data_histograms[analysis]:
+						print "ERROR : Couldn't find data histogram"
+						sys.exit(1)
+					data_input_nevt = data_histogram_file.Get("BHistograms/h_input_nevents").Integral()
+					print "DEBUG : Analysis " + analysis + ", mass " + str(mass) + " input_nevents = " + str(data_input_nevt)
+				significance(analyses, signal_histograms, data_histograms, mass, analyses[0])
 
