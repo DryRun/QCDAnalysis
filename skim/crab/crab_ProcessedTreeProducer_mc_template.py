@@ -5,12 +5,13 @@
 #Configurables
 
 dataset = '__DATASET__'
-tag = "v1_4"
+#tag = "v1_4"
+tag = "vTEST"
 
 ##________________________________________________________________________________||
 
 jobname = "QCDBEvent"
-jobname += dataset[1:].replace('/','_').replace(':','_').replace('AODSIM','').replace('-evtgen','').replace('__','_')
+jobname += dataset[1:].replace('/','_').replace(':','_').replace('AODSIM','').replace('Summer12DR53X-PU_S10_START53_V19-v2','').replace('-pythia8','').replace('-evtgen','').replace('__','_')
 jobname += "_" + tag
 ##________________________________________________________________________________||
 
@@ -25,18 +26,19 @@ config.General.transferOutputs = True
 config.General.transferLogs = False
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/ProcessedTreeProducer_mc_BJetPlusX_cfg.py'
+config.JobType.psetName = '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/ProcessedTreeProducer_mc_BJetPlusX_cfg.py'
 config.JobType.pyCfgParams = ['outputFile=QCDBEventTree.root']
-config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/Summer12_V2_DATA_AK5PF_UncertaintySources.txt', '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/Summer12_V2_DATA_AK7PF_UncertaintySources.txt']
+config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer12_V2_DATA_AK5PF_UncertaintySources.txt', '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer12_V2_DATA_AK7PF_UncertaintySources.txt']
 
 config.Data.inputDataset = dataset
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'FileBased'
-#config.Data.totalUnits = 20
+config.Data.totalUnits = 10
 config.Data.unitsPerJob = 2
 #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt'
 config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.publication = True
 config.Data.outputDatasetTag = 'QCDBEventTree___NAME___' + tag
 
-config.Site.storageSite = "T3_US_FNALLPC"
+#config.Site.storageSite = "T3_US_FNALLPC"
+config.Site.storageSite = "T3_US_Brown"
