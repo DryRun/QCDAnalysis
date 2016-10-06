@@ -7,6 +7,8 @@ import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 # - Two functions, RunData and RunSignal, setup the condor submission of 'cmsRun analysis_cfg.py inputFiles=<> outputFile=<>'. 
 # - The functions have to be separate because the data skim files reside on EOS and have to be chopped up into subjobs, while the signal skims are in single files.
 
+dijet_directory = "/home/dryu/Dijets"
+
 # RunData
 # - Input files are on EOS, so you can't do the normal files-per-job mechanism (this cp's the files to the worker node, which is bad for EOS). 
 # - Instead, do the subjobbing manually. 
@@ -17,7 +19,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 
 	# Create working directory and cd
 	start_directory = os.getcwd()
-	working_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
+	working_directory = dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
 	os.system("mkdir -pv " + working_directory)
 	os.chdir(working_directory)
 
@@ -40,7 +42,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 			command += " --retar "
 		command += " --submit-file=submit_" + analysis + "_" + sample + ".subjob" + str(subjob_index) + ".jdl "
 		command += " --output-tag=BHistograms_" + sample + ".subjob" + str(subjob_index) + " "
-		command += " --run /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis]
+		command += " --run " + dijet_directory + "/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis]
 		command += " dataSource=" + data_source
 		command += " dataType=data inputFiles="
 		for input_file in this_job_files:
@@ -81,7 +83,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_source=None):
 	# Create working directory and cd
 	start_directory = os.getcwd()
-	working_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
+	working_directory = dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
 	os.system("mkdir -pv " + working_directory)
 	os.chdir(working_directory)
 
@@ -97,7 +99,7 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 	#command += " --output-file=" + output_prefix + "_" + sample + ".root "
 	command += " --output-tag=BHistograms_" + sample + " "
 	command += " --run "
-	command += "  /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
+	command += "  " + dijet_directory + "/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
 	command += " dataSource=simulation "
 	command += " dataType=signal "
 	command += " signalMass=" + str(analysis_config.simulation.signal_sample_masses[sample]) + " "
@@ -118,7 +120,7 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 def RunBHistogramsBackground(analysis, sample, files_per_job=1, retar=False, data_source=None):
 	# Create working directory and cd
 	start_directory = os.getcwd()
-	working_directory = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
+	working_directory = dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/submit_" + analysis + "_" + sample
 	os.system("mkdir -pv " + working_directory)
 	os.chdir(working_directory)
 
@@ -134,7 +136,7 @@ def RunBHistogramsBackground(analysis, sample, files_per_job=1, retar=False, dat
 	#command += " --output-file=" + output_prefix + "_" + sample + ".root "
 	command += " --output-tag=BHistograms_" + sample + " "
 	command += " --run "
-	command += "  /uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
+	command += "  " + dijet_directory + "/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
 	command += " dataSource=simulation "
 	command += " dataType=background "
 	#command += "inputFiles=" + os.path.basename(input_files[sample])

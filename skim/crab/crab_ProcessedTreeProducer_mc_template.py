@@ -11,7 +11,7 @@ tag = "v1_4"
 ##________________________________________________________________________________||
 
 jobname = "QCDBEvent"
-jobname += dataset[1:].replace('/','_').replace(':','_').replace('AODSIM','').replace('Summer12DR53X-PU_S10_START53_V19-v2','').replace('-pythia8','').replace('-evtgen','').replace('__','_')
+jobname += dataset[1:].replace('/','_').replace(':','_').replace('AODSIM','').replace('Summer12DR53X-PU_S10_START53_V19','').replace('-pythia8','').replace('-evtgen','').replace('__','_')
 jobname += "_" + tag
 ##________________________________________________________________________________||
 

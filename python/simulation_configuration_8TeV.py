@@ -1,9 +1,7 @@
 # Signal samples
 signal_models = ["RSG", "Hbb"] # Zprime
 #signal_masses = [250, 300, 400, 500, 600, 750, 900, 1200]
-signal_masses = [250, 400, 500]
-#signal_masses = [600, 900, 1200]
-#signal_masses = [300]
+signal_masses = [400, 500, 600, 750, 900, 1200]
 
 limit_signal_masses = {
 	"trigbbl_CSVTM":range(400, 950, 50),
