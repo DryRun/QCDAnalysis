@@ -353,7 +353,7 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 			throw cms::Exception("Filed to open file ") << it_filename << std::endl;
 		}
 
-		nevents_histogram = (TH1D*)f->Get("ak5/EventsProcessed");
+		TH1D* nevents_histogram = (TH1D*)f->Get("ak5/EventsProcessed");
 		global_histograms_->GetTH1F("sample_nevents")->Fill(nevents_histogram->Integral());
 
 		tree_ = (TTree*)f->Get(input_tree_name_);
