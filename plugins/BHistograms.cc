@@ -225,6 +225,7 @@ void BHistograms::beginJob()
 	global_histograms_ = new Root::HistogramManager();
 	global_histograms_->AddPrefix("h_");
 	global_histograms_->AddTFileService(&fs_);
+	global_histograms_->AddTH1F("sample_nevents", "sample_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("input_nevents", "input_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("pass_nevents", "pass_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("pass_nevents_weighted", "pass_nevents_weighted", "", 1, 0.5, 1.5);
@@ -351,6 +352,10 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 		if (!(f->IsOpen())) {
 			throw cms::Exception("Filed to open file ") << it_filename << std::endl;
 		}
+
+		nevents_histogram = (TH1D*)f->Get("ak5/EventsProcessed")
+		global_histograms_->GetTH1F("sample_nevents")->Fill(nevents_histogram->Integral())
+
 		tree_ = (TTree*)f->Get(input_tree_name_);
 		if (!tree_) {
 			throw cms::Exception("Failed to get tree ") << input_tree_name_ << " from file " << it_filename << std::endl;
