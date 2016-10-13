@@ -7,7 +7,7 @@ import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 # - Two functions, RunData and RunSignal, setup the condor submission of 'cmsRun analysis_cfg.py inputFiles=<> outputFile=<>'. 
 # - The functions have to be separate because the data skim files reside on EOS and have to be chopped up into subjobs, while the signal skims are in single files.
 
-dijet_directory = "/home/dryu/Dijets"
+dijet_directory = os.path.expandvars("$DIJETHOME")
 
 # RunData
 # - Input files are on EOS, so you can't do the normal files-per-job mechanism (this cp's the files to the worker node, which is bad for EOS). 
