@@ -39,7 +39,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 		bash_script = open(bash_script_path, 'w')
 		bash_script.write("#!/bin/bash\n")
 		bash_script.write("input_files=( " + " ".join(input_files) + " )\n")
-		bash_script.write("files_per_job=2\n")
+		bash_script.write("files_per_job=" + str(files_per_job) + "\n")
 		bash_script.write("first_file_index=$(($1*$files_per_job))\n")
 		bash_script.write("max_file_index=$((${#input_files[@]}-1))\n")
 		bash_script.write("if [ $(($first_file_index+$files_per_job-1)) -gt $max_file_index ]; then\n")
@@ -48,6 +48,8 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 		bash_script.write("declare -a this_input_files=(${input_files[@]:$first_file_index:$files_per_job})\n")
 		bash_script.write("function join { local IFS=\"$1\"; shift; echo \"$*\"; }\n")
 		bash_script.write("this_input_files_string=\"$(join , ${this_input_files[@]})\"\n")
+		bash_script.write("echo \"Input files:\"\n")
+		bash_script.write("echo $this_input_files_string\n")
 		output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample).replace(".root", "_$1.root"))
 		bash_script.write("cmsRun " 
 			+ os.path.basename(analysis_config.analysis_cfgs[analysis]) 
@@ -98,7 +100,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 			subjob_index += 1
 
 	# Postprocessing script
-	merge_command = "hadd " + analysis_config.get_b_histogram_filename(analysis, sample) + " " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + ".subjob*"
+	merge_command = "hadd " + analysis_config.get_b_histogram_filename(analysis, sample) + " " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_*.root")
 	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".py", 'w')
 	postprocessing_file.write("import os\n")
 	postprocessing_file.write("import sys\n")

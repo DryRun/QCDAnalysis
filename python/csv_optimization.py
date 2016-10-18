@@ -24,6 +24,17 @@ def significance(analyses, signal_histograms, data_histograms, signal_mass, fit_
 	signal_sigma = signal_fit_results["fit"].GetParameter(3)
 	#print "Signal x0, sigma = " + str(signal_x0) + ", " + str(signal_sigma) + " [taken from " + fit_analysis + "]"
 	window = [signal_x0 - signal_sigma, signal_x0 + signal_sigma]
+
+	# Make sure window is inside fit range
+	for analysis in analyses:
+		if "trigbbl" in analysis:
+			if window[0] < 354.:
+				window[0] = 354.
+		elif "trigbbh" in analysis:
+			if window[0] < 526.:
+				window[0] = 526.
+
+	print "Window = [" + str(window[0]) + ", " + str(window[1]) + "]"
 	first = True
 	print "\t\t\t\\hline"
 	for analysis in analyses:
@@ -34,7 +45,13 @@ def significance(analyses, signal_histograms, data_histograms, signal_mass, fit_
 
 		s = signal_histograms[analysis].Integral(low_bin, high_bin)
 		#b = data_histograms[analysis].Integral(low_bin, high_bin)
-		background_fit_results = DoMjjBackgroundFit(data_histograms[analysis], fit_min=500., fit_max=1000.)
+		if "bbl" in analysis:
+			fit_min = 354.
+			fit_max = 1607.
+		elif "bbh" in analysis:
+			fit_min = 526.
+			fit_max = 1607.
+		background_fit_results = DoMjjBackgroundFit(data_histograms[analysis], fit_min=fit_min, fit_max=fit_max)
 		b = background_fit_results["fit"].Integral(low_edge, up_edge)
 		if first:
 			mass_string = "\\multirow{" + str(len(analyses)) + "}{*}{$" + str(signal_mass) + "\ (" + str(round(low_edge, 2)) + "-" + str(round(up_edge, 2)) + ")$ GeV"
@@ -50,7 +67,7 @@ def significance(analyses, signal_histograms, data_histograms, signal_mass, fit_
 if __name__ == "__main__":
 	for model in ["Hbb", "RSG"]:
 		#for analysis_base in ["trigbbh", "trigbbl"]:
-		for analysis_base in ["trigbbl"]:
+		for analysis_base in ["trigbbl", "trigbbh"]:
 			if analysis_base == "trigbbh":
 				masses = [600, 750, 900, 1200]
 			elif analysis_base == "trigbbl":
