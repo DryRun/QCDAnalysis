@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.expandvars("$CMSSW_BASE/python/CMSDIJET/QCDAnalysis"))
 import simulation_configuration_8TeV as simulation
 
-dijet_directory = "/uscms/home/dryu/Dijets/"
+dijet_directory = os.path.expandvars("$DIJETHOME")
 
 # Data samples
 data_samples = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D", "JetHT_2012B", "JetHT_2012C", "JetHT_2012D", "SingleMu_2012A", "SingleMu_2012B", "SingleMu_2012C", "SingleMu_2012D"]
