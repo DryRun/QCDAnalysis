@@ -67,7 +67,7 @@ if __name__ == "__main__":
 	analyses = ["trigbbl_CSVTM", "trigbbh_CSVTM"]
 	samples = ["BJetPlusX_2012"]
 	for model in ["Hbb", "RSG"]:
-		for mass in [300, 400, 500, 600, 750, 900, 1200]:
+		for mass in [400, 500, 600, 750, 900, 1200]:
 			samples.append(analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM"))
 
 	for analysis in analyses:

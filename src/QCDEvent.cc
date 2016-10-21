@@ -82,7 +82,7 @@ int QCDEvent::minPreL1(int i) {
 		}
 	}
 	if (min_L1_prescale == INT_MAX) {
-		std::cerr << "[QCDEvent::preL1] WARNING : Failed to find prescale for index " << i << ". Returning -1." << std::endl;
+		//std::cerr << "[QCDEvent::preL1] WARNING : Failed to find prescale for index " << i << ". Returning -1." << std::endl;
 		min_L1_prescale = -1;
 	}
 	return min_L1_prescale;

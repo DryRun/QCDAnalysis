@@ -1,4 +1,5 @@
 import os
+import math
 import CMSDIJET.QCDAnalysis.simulation_config
 from CMSDIJET.QCDAnalysis.simulation_config import *
 import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
@@ -7,7 +8,7 @@ import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 # - Two functions, RunData and RunSignal, setup the condor submission of 'cmsRun analysis_cfg.py inputFiles=<> outputFile=<>'. 
 # - The functions have to be separate because the data skim files reside on EOS and have to be chopped up into subjobs, while the signal skims are in single files.
 
-dijet_directory = "/uscms/home/dryu/Dijets"
+dijet_directory = os.path.expandvars("$DIJETHOME")
 
 # RunData
 # - Input files are on EOS, so you can't do the normal files-per-job mechanism (this cp's the files to the worker node, which is bad for EOS). 
@@ -23,41 +24,83 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 	os.system("mkdir -pv " + working_directory)
 	os.chdir(working_directory)
 
-	# Build file list 
-	file_list_handle = file(analysis_config.files_QCDBEventTree[sample], 'r')
-	file_list = file_list_handle.readlines()
-	file_list_handle.close()
-	file_index = 0
-	subjob_index = 0
-	subjob_output_filenames = []
-	while file_index < len(file_list):
-		this_job_files = []
-		while file_index < len(file_list) and len(this_job_files) < files_per_job:
-			this_job_files.append(file_list[file_index].rstrip())
-			file_index += 1
-		if len(this_job_files) < 1:
-			continue
-		command = "condor_cmsRun"
-		if retar:
-			command += " --retar "
-		command += " --submit-file=submit_" + analysis + "_" + sample + ".subjob" + str(subjob_index) + ".jdl "
-		command += " --output-tag=BHistograms_" + sample + ".subjob" + str(subjob_index) + " "
-		command += " --run " + dijet_directory + "/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis]
-		command += " dataSource=" + data_source
-		command += " dataType=data inputFiles="
-		for input_file in this_job_files:
-			command += input_file + ","
-		command = command.rstrip(",")
-		subjob_output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample) + ".subjob" + str(subjob_index))
-		command += " outputFile=" + subjob_output_filename
-		subjob_output_filenames.append(subjob_output_filename)
+	# Get input file list 
+	input_files_txt = file(analysis_config.files_QCDBEventTree[sample], 'r')
+	input_files = [line.strip() for line in input_files_txt]
+	input_files_txt.close()
 
-		#print command
-		os.system(command)
-		subjob_index += 1
+	method = "csub"
+	if method == "csub":
+		input_files_txt = open(analysis_config.files_QCDBEventTree[sample], 'r')
+		input_files = [line.strip() for line in input_files_txt]
+		input_files_txt.close()
+
+		bash_script_path = working_directory + "/run_" + analysis + "_" + sample + ".sh"
+		bash_script = open(bash_script_path, 'w')
+		bash_script.write("#!/bin/bash\n")
+		bash_script.write("input_files=( " + " ".join(input_files) + " )\n")
+		bash_script.write("files_per_job=" + str(files_per_job) + "\n")
+		bash_script.write("first_file_index=$(($1*$files_per_job))\n")
+		bash_script.write("max_file_index=$((${#input_files[@]}-1))\n")
+		bash_script.write("if [ $(($first_file_index+$files_per_job-1)) -gt $max_file_index ]; then\n")
+		bash_script.write("	files_per_job=$(($max_file_index-$first_file_index+1))\n")
+		bash_script.write("fi\n")
+		bash_script.write("declare -a this_input_files=(${input_files[@]:$first_file_index:$files_per_job})\n")
+		bash_script.write("function join { local IFS=\"$1\"; shift; echo \"$*\"; }\n")
+		bash_script.write("this_input_files_string=\"$(join , ${this_input_files[@]})\"\n")
+		bash_script.write("echo \"Input files:\"\n")
+		bash_script.write("echo $this_input_files_string\n")
+		output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample).replace(".root", "_$1.root"))
+		bash_script.write("cmsRun " 
+			+ os.path.basename(analysis_config.analysis_cfgs[analysis]) 
+			+ " dataSource=" + data_source
+			+ " dataType=data"
+			+ " outputFile=" + output_filename
+			+ " inputFiles=$this_input_files_string\n"
+		)
+		bash_script.close()
+
+		submit_command = "csub " + bash_script_path + " --cmssw "
+		if not retar:
+			submit_command += " --no_retar"
+		n_jobs = int(math.ceil(1. * len(input_files) / files_per_job))
+		print "[debug] This job will have " + str(len(input_files)) + " / " + str(files_per_job) + " = " + str(n_jobs) + " jobs"
+		submit_command += " -F " + "," + analysis_config.analysis_cfgs[analysis] + " -n " + str(n_jobs)
+		os.system(submit_command)
+
+	else:
+		file_index = 0
+		subjob_index = 0
+		subjob_output_filenames = []
+		while file_index < len(file_list):
+			this_job_files = []
+			while file_index < len(file_list) and len(this_job_files) < files_per_job:
+				this_job_files.append(file_list[file_index].rstrip())
+				file_index += 1
+			if len(this_job_files) < 1:
+				continue
+			command = "echo \"condor_cmsRun"
+			if retar:
+				command += " --retar "
+			command += " --submit-file=submit_" + analysis + "_" + sample + ".subjob" + str(subjob_index) + ".jdl "
+			command += " --output-tag=BHistograms_" + sample + ".subjob" + str(subjob_index) + " "
+			command += " --run " + dijet_directory + "/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis]
+			command += " dataSource=" + data_source
+			command += " dataType=data inputFiles="
+			for input_file in this_job_files:
+				command += input_file + ","
+			command = command.rstrip(",")
+			command += "\""
+			subjob_output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample) + ".subjob" + str(subjob_index))
+			command += " outputFile=" + subjob_output_filename
+			subjob_output_filenames.append(subjob_output_filename)
+
+			#print command
+			os.system(command)
+			subjob_index += 1
 
 	# Postprocessing script
-	merge_command = "hadd " + analysis_config.get_b_histogram_filename(analysis, sample) + " " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + ".subjob*"
+	merge_command = "hadd " + analysis_config.get_b_histogram_filename(analysis, sample) + " " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_*.root")
 	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".py", 'w')
 	postprocessing_file.write("import os\n")
 	postprocessing_file.write("import sys\n")
@@ -87,31 +130,58 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 	os.system("mkdir -pv " + working_directory)
 	os.chdir(working_directory)
 
-	command = "condor_cmsRun"
-	if retar:
-		command += " --retar "
-	#input_txt = open("tmp.txt", 'w')
-	#input_txt.write(analysis_config.files_QCDBEventTree[sample] + "\n")
-	#input_txt.close()
-	command += " --file-list=" + analysis_config.files_QCDBEventTree[sample] + " "
-	command += " --files-per-job=" + str(files_per_job)
-	command += " --submit-file=submit_" + analysis + "_" + sample + ".jdl "
-	#command += " --output-file=" + output_prefix + "_" + sample + ".root "
-	command += " --output-tag=BHistograms_" + sample + " "
-	command += " --run "
-	command += "  " + dijet_directory + "/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
-	command += " dataSource=simulation "
-	command += " dataType=signal "
-	command += " signalMass=" + str(analysis_config.simulation.signal_sample_masses[sample]) + " "
-	#command += "inputFiles=" + os.path.basename(input_files[sample])
-	output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
-	command += " outputFile=" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
-	print command
-	os.system(command)
-	os.system("rm -f tmp.txt")
+	method = "csub"
+	if method == "csub":
+		input_files_txt = open(analysis_config.files_QCDBEventTree[sample], 'r')
+		input_files = [line.strip() for line in input_files_txt]
+		input_files_txt.close()
+
+		bash_script_path = working_directory + "/run_" + analysis + "_" + sample + ".sh"
+		bash_script = open(bash_script_path, 'w')
+		bash_script.write("#!/bin/bash\n")
+		bash_script.write("input_files=( " + " ".join([os.path.basename(x) for x in input_files]) + " )\n")
+		output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_$1.root")
+		bash_script.write("cmsRun " 
+			+ os.path.basename(analysis_config.analysis_cfgs[analysis]) 
+			+ " dataSource=simulation"
+			+ " dataType=signal"
+			+ " signalMass=" + str(analysis_config.simulation.signal_sample_masses[sample])
+			+ " outputFile=" + output_filename
+			+ " inputFiles=file:${input_files[$1]}\n"
+		)
+		bash_script.close()
+
+		submit_command = "csub " + bash_script_path + " --cmssw "
+		if not retar:
+			submit_command += " --no_retar"
+		submit_command += " -F " + ",".join(input_files) + "," + analysis_config.analysis_cfgs[analysis] + " -n " + str(len(input_files))
+		os.system(submit_command)
+	else:
+		command = "condor_cmsRun"
+		if retar:
+			command += " --retar "
+		#input_txt = open("tmp.txt", 'w')
+		#input_txt.write(analysis_config.files_QCDBEventTree[sample] + "\n")
+		#input_txt.close()
+		command += " --file-list=" + analysis_config.files_QCDBEventTree[sample] + " "
+		command += " --files-per-job=" + str(files_per_job)
+		command += " --submit-file=submit_" + analysis + "_" + sample + ".jdl "
+		#command += " --output-file=" + output_prefix + "_" + sample + ".root "
+		command += " --output-tag=BHistograms_" + sample + " "
+		command += " --run "
+		command += "  " + dijet_directory + "/CMSSW_5_3_32_patch3/src/MyTools/RootUtils/scripts/cmsRun_wrapper.sh " + analysis_config.analysis_cfgs[analysis] 
+		command += " dataSource=simulation "
+		command += " dataType=signal "
+		command += " signalMass=" + str(analysis_config.simulation.signal_sample_masses[sample]) + " "
+		#command += "inputFiles=" + os.path.basename(input_files[sample])
+		output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
+		command += " outputFile=" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
+		print command
+		os.system(command)
+		os.system("rm -f tmp.txt")
 	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".sh", 'w')
 	postprocessing_file.write("#!/bin/bash\n")
-	postprocessing_file.write("hadd " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + " " + output_filename.replace("_\$\(Cluster\)_\$\(Process\)", "*") + "\n")
+	postprocessing_file.write("hadd " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + " " + output_filename.replace("_\$\(Cluster\)_\$\(Process\)", "*").replace("$1", "*") + "\n")
 	postprocessing_file.close()
 
 	# cd back
