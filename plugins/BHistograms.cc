@@ -227,6 +227,7 @@ void BHistograms::beginJob()
 	global_histograms_->AddTFileService(&fs_);
 	global_histograms_->AddTH1F("sample_nevents", "sample_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("input_nevents", "input_nevents", "", 1, 0.5, 1.5);
+	global_histograms_->AddTH1F("input_nevents_weighted", "input_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("pass_nevents", "pass_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("pass_nevents_weighted", "pass_nevents_weighted", "", 1, 0.5, 1.5);
 
@@ -382,6 +383,41 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 			// Sort jets by b tag rather than pT
 			//event_->sortPFJetsBTagCSV();
 
+			// Get event weight
+			double prescale = 1.;
+			if (data_source_ == ObjectIdentifiers::kCollisionData) {
+				for (auto& it_trig_index : event_selector_->GetCutParameters("TriggerOR")) {
+					// Check if the L1 and HLT were active
+					if (event_->minPreL1(it_trig_index) < 0) {
+						continue;
+					}
+					if (event_->preHLT(it_trig_index) < 0) {
+						continue;
+					}
+					double this_prescale = event_->preHLT(it_trig_index) * event_->minPreL1(it_trig_index);
+					// Consistency check: code is not able to handle combining triggers with different prescales.
+					if (prescale > 1. && this_prescale != prescale) {
+						std::cerr << "[BHistograms::analyze] ERROR : Found more than one prescale!" << std::endl;
+						for (auto& it_trig_index2 : event_selector_->GetCutParameters("TriggerOR")) {
+							std::cout << "[BHistograms::analyze] ERROR : Index " << it_trig_index2 << " = " << h_trigger_names_->GetXaxis()->GetBinLabel(it_trig_index2 + 1) << " has prescale " << event_->preHLT(it_trig_index2) * event_->minPreL1(it_trig_index2) << std::endl;
+						}
+						exit(1);
+					}
+					prescale = this_prescale;
+				}
+			} else if (data_source_ == ObjectIdentifiers::kSimulation) {
+				prescale = 1;
+			}
+			
+			// Simulation weights. 
+			double weight = prescale;
+			global_histograms_->GetTH1F("input_nevents_weighted")->Fill(weight);
+
+			// - B tag SFs
+			if (data_source_ == ObjectIdentifiers::kSimulation) {
+				weight *= getEventBTagSF();
+			}
+
 			// Object selection
 			dijet_selector_->ClassifyObjects(event_->pfjets());
 			pfjet_selector_->ClassifyObjects(event_->pfjets());
@@ -462,39 +498,6 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 
 			if (event_selector_->Pass()) {
 				++n_pass_;
-				// Get prescale
-				double prescale = 1.;
-				if (data_source_ == ObjectIdentifiers::kCollisionData) {
-					for (auto& it_trig_index : event_selector_->GetCutParameters("TriggerOR")) {
-						// Check if the L1 and HLT were active
-						if (event_->minPreL1(it_trig_index) < 0) {
-							continue;
-						}
-						if (event_->preHLT(it_trig_index) < 0) {
-							continue;
-						}
-						double this_prescale = event_->preHLT(it_trig_index) * event_->minPreL1(it_trig_index);
-						// Consistency check: code is not able to handle combining triggers with different prescales.
-						if (prescale > 1. && this_prescale != prescale) {
-							std::cerr << "[BHistograms::analyze] ERROR : Found more than one prescale!" << std::endl;
-							for (auto& it_trig_index2 : event_selector_->GetCutParameters("TriggerOR")) {
-								std::cout << "[BHistograms::analyze] ERROR : Index " << it_trig_index2 << " = " << h_trigger_names_->GetXaxis()->GetBinLabel(it_trig_index2 + 1) << " has prescale " << event_->preHLT(it_trig_index2) * event_->minPreL1(it_trig_index2) << std::endl;
-							}
-							exit(1);
-						}
-						prescale = this_prescale;
-					}
-				} else if (data_source_ == ObjectIdentifiers::kSimulation) {
-					prescale = 1;
-				}
-				
-				// Simulation weights. 
-				double weight = prescale;
-
-				// - B tag SFs
-				if (data_source_ == ObjectIdentifiers::kSimulation) {
-					weight *= getEventBTagSF();
-				}
 
 				global_histograms_->GetTH1F("pass_nevents")->Fill(1);
 				global_histograms_->GetTH1F("pass_nevents_weighted")->Fill(1, weight);
