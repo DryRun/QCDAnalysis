@@ -1,7 +1,5 @@
 import os
 import math
-import CMSDIJET.QCDAnalysis.simulation_config
-from CMSDIJET.QCDAnalysis.simulation_config import *
 import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 
 # Script to submit BHistogram jobs
@@ -105,7 +103,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 	postprocessing_file.write("import os\n")
 	postprocessing_file.write("import sys\n")
 	postprocessing_file.write("import glob\n")
-	postprocessing_file.write("log_files = glob.glob(" + working_directory + "/*stderr)\n")
+	postprocessing_file.write("log_files = glob.glob(\"" + working_directory + "/*stderr\")\n")
 	postprocessing_file.write("failed_logs = []\n")
 	postprocessing_file.write("for log_file in log_files:\n")
 	postprocessing_file.write("\tlog_file_handle = open(log_file, 'r')\n")
@@ -115,7 +113,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 	postprocessing_file.write("if len(failed_logs) == 0:\n")
 	postprocessing_file.write("\tos.system(\"" + merge_command + "\")\n")
 	postprocessing_file.write("else:\n")
-	postprocessing_file.write("\tprint(\"Some jobs failed. You need to retry them.\")")
+	postprocessing_file.write("\tprint(\"Some jobs failed. You need to retry them.\")\n")
 	postprocessing_file.write("\tfor failed_log in failed_logs:\n")
 	postprocessing_file.write("\t\tprint failed_log\n")
 	postprocessing_file.close()

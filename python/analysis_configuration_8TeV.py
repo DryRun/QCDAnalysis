@@ -150,6 +150,7 @@ analysis_cfgs["trigbbh_CSVT"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CM
 analysis_cfgs["trigbbh_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVTM_cfg.py"
 analysis_cfgs["trigbbh_CSVTL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVTL_cfg.py"
 analysis_cfgs["trigbbh_CSVML"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVML_cfg.py"
+analysis_cfgs["trigbbhl_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbhl_CSVTM_cfg.py"
 analysis_cfgs["trigbbl_CSVL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVL_cfg.py"
 analysis_cfgs["trigbbl_CSVM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVM_cfg.py"
 analysis_cfgs["trigbbl_CSVT"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVT_cfg.py"
@@ -251,3 +252,5 @@ def get_signal_fit_file(analysis, model, mass, fit_function, interpolated=False)
 		path += "_interpolated"
 	path += ".root"
 	return path
+
+external_limits = dijet_directory + "/data/EightTeeEeVeeBee/Fits/Limits/External/"
