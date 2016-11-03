@@ -207,7 +207,8 @@ void BHistograms::beginJob()
 					}
 				}
 				if (hlt_index == -1) {
-					throw cms::Exception("[BHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << it_trig << " in TriggerNames." << std::endl;
+					std::cerr << "[BHistograms::beginJob] WARNING : Didn't find trigger " << it_trig << " in TriggerNames. I'm going to ignore it, but this may mean that the trigger was not specified in your skim job, thereby losing events!" << std::endl;
+					//throw cms::Exception("[BHistograms::beginJob] ERROR : ") << "Couldn't find index for trigger " << it_trig << " in TriggerNames." << std::endl;
 				} else {
 					tmp_parameters.push_back(hlt_index);
 				}
@@ -242,6 +243,12 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH1D("pt2", "pt2", "p_{T} (subleading) [GeV]", 1000, 0., 1000.);
 	pfjet_histograms_->AddTH2D("pt1_vs_pt2", "pt1", "p_{T} (leading) [GeV]", 100, 0., 1000., "p_{T} (subleading) [GeV]", 100, 0., 1000.);
 	pfjet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("mjj_pt1", "mjj_pt1", "m_{jj} [GeV]", 500, 0., 5000., "p_{T,1} [GeV]", 100, 0., 1000.);
+	pfjet_histograms_->AddTH2F("mjj_pt2", "mjj_pt2", "m_{jj} [GeV]", 500, 0., 5000., "p_{T,2} [GeV]", 100, 0., 1000.);
+	pfjet_histograms_->AddTH2F("mjj_csv1", "mjj_csv1", "m_{jj} [GeV]", 500, 0., 5000., "CSV (leading)", 20, 0., 1.);
+	pfjet_histograms_->AddTH2F("mjj_csv2", "mjj_csv2", "m_{jj} [GeV]", 500, 0., 5000., "CSV (subleading)", 20, 0., 1.);
+	pfjet_histograms_->AddTH2F("mjj_npfjets", "mjj_npfjets", "m_{jj} [GeV]", 500, 0., 5000., "N_{PF jets}", 11, -0.5, 10.5);
+	pfjet_histograms_->AddTH2F("mjj_ncalojets", "mjj_ncalojets", "m_{jj} [GeV]", 500, 0., 5000., "N_{Calo jets}", 11, -0.5, 10.5);
 	pfjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
 
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
@@ -514,6 +521,12 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				pfjet_histograms_->GetTH1D("eta1")->Fill(event_->pfjet(0).eta(), weight);
 				pfjet_histograms_->GetTH1D("eta2")->Fill(event_->pfjet(1).eta(), weight);
 				pfjet_histograms_->GetTH2F("mjj_deltaeta")->Fill(event_->pfmjjcor(0), pf_deltaeta, weight);
+				pfjet_histograms_->GetTH2F("mjj_pt1")->Fill(event_->pfmjjcor(0), event_->pfjet(0).ptCor(), weight);
+				pfjet_histograms_->GetTH2F("mjj_pt2")->Fill(event_->pfmjjcor(0), event_->pfjet(1).ptCor(), weight);
+				pfjet_histograms_->GetTH2F("mjj_csv1")->Fill(event_->pfmjjcor(0), pf_btag_csv1, weight);
+				pfjet_histograms_->GetTH2F("mjj_csv2")->Fill(event_->pfmjjcor(0), pf_btag_csv2, weight);
+				pfjet_histograms_->GetTH2F("mjj_npfjets")->Fill(event_->pfmjjcor(0), event_->nPFJets(), weight);
+				pfjet_histograms_->GetTH2F("mjj_ncalojets")->Fill(event_->pfmjjcor(0), event_->nCaloJets(), weight);
 				pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, weight);
 				if (data_type_ == ObjectIdentifiers::kSignal) {
 					pfjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);

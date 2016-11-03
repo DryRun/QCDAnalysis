@@ -125,6 +125,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description = 'Dijet mass spectrum fits')
 	parser.add_argument('--ht', action='store_true', help='Make JetHT threshold plot')
 	parser.add_argument('--btag', action='store_true', help='Make online B tag efficiency plot')
+	parser.add_argument('--btag_mc', action='store_true', help='Make online B tag efficiency plot from MC')
 	args = parser.parse_args()
 
 	if args.ht:
@@ -231,107 +232,82 @@ if __name__ == "__main__":
 
 	if args.btag_mc:
 		for sr in ["lowmass", "highmass"]:
-			ht_analyses = {}
-			analyses = []
-			for mass in xrange(250, 700, 50):
-				if mass == 600:
-					continue
-				if mass == 650:
-					continue
-				analyses.append("HT" + str(mass))
+			for model in ["Hbb", "RSG"]:
+				ht_analyses = {}
+				analyses = []
+				for mass in xrange(250, 700, 50):
+					if mass == 600:
+						continue
+					if mass == 650:
+						continue
+					analyses.append("HT" + str(mass))
+					if sr == "highmass":
+						ht_analyses["HT" + str(mass)] = "trigjetht" + str(mass) + "_CSVTM"
+					else:
+						ht_analyses["HT" + str(mass)] = "trigjetht" + str(mass) + "_eta1p7_CSVTM"
+		
+				# For now, only the high mass SR has the unprescaled JetHT triggers
 				if sr == "highmass":
-					ht_analyses["HT" + str(mass)] = "trigjetht" + str(mass) + "_CSVTM"
+					analyses.append("HTUnprescaled")
+					ht_analyses["HTUnprescaled"] = "trigjetht_CSVTM"
+				ranges = {
+					"HT250":[400, 475],
+					"HT300":[475, 525],
+					"HT350":[525, 575],
+					"HT400":[575, 625],
+					"HT450":[625, 700],
+					"HT500":[700, 750],
+					"HT550":[750, 900],
+					#"HT650":[800, 900],
+					"HTUnprescaled":[900, 2000]
+				}
+				boundaries = []
+				for name, interval in ranges.iteritems():
+					boundaries.append(interval[0])
+					boundaries.append(interval[1])
+				boundaries = f8(boundaries)
+				boundaries.sort()
+
+				mc_sample = analysis_config.simulation.get_signal_tag(model, "All", "FULLSIM")
+				histograms = {}
+				for analysis in analyses:
+					print "[debug] Opening " + analysis_config.get_b_histogram_filename(ht_analyses[name], mc_sample)
+					f = TFile(analysis_config.get_b_histogram_filename(ht_analyses[name], mc_sample), "READ")
+					histograms[analysis] = f.Get("BHistograms/h_pfjet_mjj")
+					histograms[analysis].SetName(histograms[analysis].GetName() + "_" + analysis)
+					histograms[analysis].SetDirectory(0)
+					f.Close()
+				jetht_histogram = jetht_frankenhist(analyses, histograms, ranges)
+				jetht_histogram.Rebin(25)
+
+				bjetplusx_histogram = None
+				bjetplusx_nevents = 0
+				if sr == "highmass":
+					f = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", mc_sample), "READ")
 				else:
-					ht_analyses["HT" + str(mass)] = "trigjetht" + str(mass) + "_eta1p7_CSVTM"
-	
-			# For now, only the high mass SR has the unprescaled JetHT triggers
-			if sr == "highmass":
-				analyses.append("HTUnprescaled")
-				ht_analyses["HTUnprescaled"] = "trigjetht_CSVTM"
-			ranges = {
-				"HT250":[400, 475],
-				"HT300":[475, 525],
-				"HT350":[525, 575],
-				"HT400":[575, 625],
-				"HT450":[625, 700],
-				"HT500":[700, 750],
-				"HT550":[750, 900],
-				#"HT650":[800, 900],
-				"HTUnprescaled":[900, 2000]
-			}
-			boundaries = []
-			for name, interval in ranges.iteritems():
-				boundaries.append(interval[0])
-				boundaries.append(interval[1])
-			boundaries = f8(boundaries)
-			boundaries.sort()
+					f = TFile(analysis_config.get_b_histogram_filename("trigbbl_CSVTM", mc_sample), "READ")
+				bjetplusx_nevents += f.Get("BHistograms/h_input_nevents").GetEntries()
+				bjetplusx_histogram = f.Get("BHistograms/h_pfjet_mjj")
+				bjetplusx_histogram.SetDirectory(0)
+				f.Close()
 
-			signal_masses = [400, 500, 600, 750, 900, 1200]
-			mc_samples = [analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM") for model in ["Hbb", "RSG"] for mass in signal_masses]
-			histograms = {}
-			for analysis in analyses:
-				for sample in mc_samples:
-					f = TFile(analysis_config.get_b_histogram_filename(ht_analyses[name], sample), "READ")
-					#histograms[name] = mjj_common.apply_dijet_binning_normalized(f.Get("BHistograms/h_pfjet_mjj"))
-					print "[debug] For name " + name + ", input events = " + str(f.Get("BHistograms/h_input_nevents").GetEntries())
-					if not name in histograms:
-						histograms[name] = f.Get("BHistograms/h_pfjet_mjj")
-						histograms[name].SetName(histograms[name].GetName() + "_" + name)
-						histograms[name].SetDirectory(0)
-					else:
-						histograms[name].Add(f.Get("BHistograms/h_pfjet_mjj"))
-					f.Close()
-			jetht_histogram = jetht_frankenhist(analyses, histograms, ranges)
-			jetht_histogram.Rebin(25)
+				plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_MC_" + sr, x_range=[0., 1200.], log=True)
+				plot.draw()
+				plot.top.cd()
+				ymin = plot.frame_top.GetMinimum()
+				ymax = plot.frame_top.GetMaximum()
+				for boundary in boundaries:
+					plot.draw_line("top", boundary, ymin, boundary, ymax)
+					plot.draw_line("bottom", boundary, -0.2, boundary, 1.2)
+				# Fit constant to ratio
+				ratio_fit = TF1("ratio_fit", "[0]", 400, 1000)
+				plot.hist_ratio.Fit(ratio_fit, "QR0")
+				plot.canvas.cd()
+				plot.bottom.cd()
+				ratio_fit.Draw("same")
+				plot.canvas.cd()
+				print "Ratio chi2/ndf = " + str(ratio_fit.GetChisquare()) + " / " + str(ratio_fit.GetNDF()) + " = " + str(ratio_fit.GetChisquare() / ratio_fit.GetNDF())
+				plot.save()
+				print ratio_fit
 
-			bjetplusx_histogram = None
-			bjetplusx_nevents = 0
-			if sr == "highmass":
-				for sample in mc_samples:
-					f = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", sample), "READ")
-					#histograms[name] = mjj_common.apply_dijet_binning_normalized(f.Get("BHistograms/h_pfjet_mjj"))
-					print "[debug] For name " + name + ", input events = " + str(f.Get("BHistograms/h_input_nevents").GetEntries())
-					bjetplusx_nevents += f.Get("BHistograms/h_input_nevents").GetEntries()
-					if bjetplusx_histogram is None:
-						bjetplusx_histogram = f.Get("BHistograms/h_pfjet_mjj")
-						bjetplusx_histogram.SetDirectory(0)
-					else:
-						bjetplusx_histogram.Add(f.Get("BHistograms/h_pfjet_mjj"))
-					f.Close()
-			else:
-				for sample in mc_samples:
-					f = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", sample), "READ")
-					#histograms[name] = mjj_common.apply_dijet_binning_normalized(f.Get("BHistograms/h_pfjet_mjj"))
-					print "[debug] For name " + name + ", input events = " + str(f.Get("BHistograms/h_input_nevents").GetEntries())
-					bjetplusx_nevents += f.Get("BHistograms/h_input_nevents").GetEntries()
-					if bjetplusx_histogram is None:
-						bjetplusx_histogram = f.Get("BHistograms/h_pfjet_mjj")
-						bjetplusx_histogram.SetDirectory(0)
-					else:
-						bjetplusx_histogram.Add(f.Get("BHistograms/h_pfjet_mjj"))
-					f.Close()
-			print "[debug] For BJetsPlusX, input events = " + str(bjetplusx_nevents)
-			bjetplusx_histogram = f_bjetplusx.Get("BHistograms/h_pfjet_mjj").Rebin(25)
-			bjetplusx_histogram.SetDirectory(0)
-			f_bjetplusx.Close()
-
-			plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_" + sr, x_range=[0., 1200.], log=True)
-			plot.draw()
-			plot.top.cd()
-			ymin = plot.frame_top.GetMinimum()
-			ymax = plot.frame_top.GetMaximum()
-			for boundary in boundaries:
-				plot.draw_line("top", boundary, ymin, boundary, ymax)
-				plot.draw_line("bottom", boundary, -0.2, boundary, 1.2)
-			# Fit constant to ratio
-			ratio_fit = TF1("ratio_fit", "[0]", 400, 1000)
-			plot.hist_ratio.Fit(ratio_fit, "QR0")
-			plot.canvas.cd()
-			plot.bottom.cd()
-			ratio_fit.Draw("same")
-			plot.canvas.cd()
-			print "Ratio chi2/ndf = " + str(ratio_fit.GetChisquare()) + " / " + str(ratio_fit.GetNDF()) + " = " + str(ratio_fit.GetChisquare() / ratio_fit.GetNDF())
-			plot.save()
-			print ratio_fit
-
-			print plot.top
+				print plot.top
