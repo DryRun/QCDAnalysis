@@ -46,18 +46,18 @@ files_QCDBEventTree = {
 	#"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	#"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	#"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_M_400_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_400_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_M_500_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_500_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_600_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_750_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_900_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravitonToBBbar_M_1200_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_400_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_500_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_600_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_750_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_900_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_1200_TuneCUETP8M1_8TeV_pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_M_400_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-400_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_M_500_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-500_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_M_600_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-600_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_M_750_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-750_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_M_900_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-900_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_M_1200_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-1200_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-400_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-500_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-600_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-750_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-900_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-1200_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
 
 	# Background
 	"QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen.txt",
@@ -173,6 +173,7 @@ analysis_cfgs["trigjetht_CSVT"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CM
 analysis_cfgs["trigjetht_CSVML"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVML_cfg.py"
 analysis_cfgs["trigjetht_CSVTL"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVTL_cfg.py"
 analysis_cfgs["trigjetht_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_CSVTM_cfg.py"
+analysis_cfgs["trigjetht_eta1p7_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_eta1p7_CSVTM_cfg.py"
 
 analysis_cfgs["trigjetht200_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht200_CSVTM_cfg.py"
 analysis_cfgs["trigjetht250_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht250_CSVTM_cfg.py"
