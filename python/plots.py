@@ -489,6 +489,8 @@ class AnalysisComparisonPlot:
 
 		# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
 		self.hist_ratio = self.hist_num.Clone()
+		print "[debug] Num bins = " + str(self.hist_num.GetNbinsX())
+		print "[debug] Den bins = " + str(self.hist_den.GetNbinsX())
 		self.hist_ratio.Divide(self.hist_num, self.hist_den, 1, 1, "B")
 		self.hist_ratio.Draw("p same")
 
@@ -600,6 +602,8 @@ def BTagWPPlot(mjj_histograms, denominator_name, save_tag, x_range=None, log=Fal
 	for name, hist in mjj_histograms.iteritems():
 		ratio_hists[name] = hist.Clone()
 		ratio_hists[name].SetName(name + "_ratio")
+		print "[debug] Num bins = " + str(ratio_hists[name].GetNbinsX())
+		print "[debug] Den bins = " + str(mjj_histograms[denominator_name])
 		ratio_hists[name].Divide(ratio_hists[name], mjj_histograms[denominator_name], 1, 1, "B")
 		ratio_hists[name].SetMarkerStyle(20 + styles[name])
 		ratio_hists[name].SetMarkerColor(seaborn.GetColorRoot("dark", styles[name]))

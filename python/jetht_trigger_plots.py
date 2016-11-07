@@ -121,12 +121,14 @@ def jetht_frankenhist(names, histograms, ranges):
 
 
 if __name__ == "__main__":
+	print "Welcome to jetht_trigger_plot.py"
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Dijet mass spectrum fits')
 	parser.add_argument('--ht', action='store_true', help='Make JetHT threshold plot')
 	parser.add_argument('--btag', action='store_true', help='Make online B tag efficiency plot')
 	parser.add_argument('--btag_mc', action='store_true', help='Make online B tag efficiency plot from MC')
 	args = parser.parse_args()
+	print args
 
 	if args.ht:
 		analyses = {}
@@ -231,8 +233,11 @@ if __name__ == "__main__":
 			print plot.top
 
 	if args.btag_mc:
+		print "Making btag MC plot"
 		for sr in ["lowmass", "highmass"]:
+			print "On SR " + sr
 			for model in ["Hbb", "RSG"]:
+				print "On model " + model
 				ht_analyses = {}
 				analyses = []
 				for mass in xrange(250, 700, 50):
@@ -268,29 +273,47 @@ if __name__ == "__main__":
 				boundaries = f8(boundaries)
 				boundaries.sort()
 
-				mc_sample = analysis_config.simulation.get_signal_tag(model, "All", "FULLSIM")
+				#mc_sample = analysis_config.simulation.get_signal_tag(model, "All", "FULLSIM")
 				histograms = {}
 				for analysis in analyses:
-					print "[debug] Opening " + analysis_config.get_b_histogram_filename(ht_analyses[name], mc_sample)
-					f = TFile(analysis_config.get_b_histogram_filename(ht_analyses[name], mc_sample), "READ")
-					histograms[analysis] = f.Get("BHistograms/h_pfjet_mjj")
-					histograms[analysis].SetName(histograms[analysis].GetName() + "_" + analysis)
-					histograms[analysis].SetDirectory(0)
-					f.Close()
+					for mass in [400, 600, 750, 900, 1200]:
+						sample = analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM")
+						print "[debug] Opening " + analysis_config.get_b_histogram_filename(ht_analyses[analysis], sample)
+						f = TFile(analysis_config.get_b_histogram_filename(ht_analyses[analysis], sample), "READ")
+						print "[debug] \th_pfjet_mjj integral = " + str(f.Get("BHistograms/h_pfjet_mjj").Integral())
+						if not analysis in histograms:
+							histograms[analysis] = f.Get("BHistograms/h_pfjet_mjj")
+							histograms[analysis].SetName(histograms[analysis].GetName() + "_" + analysis)
+							histograms[analysis].SetDirectory(0)
+						else:
+							histograms[analysis].Add(f.Get("BHistograms/h_pfjet_mjj"))
+						f.Close()
 				jetht_histogram = jetht_frankenhist(analyses, histograms, ranges)
 				jetht_histogram.Rebin(25)
 
 				bjetplusx_histogram = None
 				bjetplusx_nevents = 0
-				if sr == "highmass":
-					f = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", mc_sample), "READ")
-				else:
-					f = TFile(analysis_config.get_b_histogram_filename("trigbbl_CSVTM", mc_sample), "READ")
-				bjetplusx_nevents += f.Get("BHistograms/h_input_nevents").GetEntries()
-				bjetplusx_histogram = f.Get("BHistograms/h_pfjet_mjj")
-				bjetplusx_histogram.SetDirectory(0)
-				f.Close()
-
+				for mass in [400, 600, 750, 900, 1200]:
+					this_sample = analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM")
+					if sr == "highmass":
+						print "[debug] Opening " + analysis_config.get_b_histogram_filename("trigbbh_CSVTM", this_sample)
+						f = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", this_sample), "READ")
+					else:
+						print "[debug] Opening " + analysis_config.get_b_histogram_filename("trigbbl_CSVTM", this_sample)
+						f = TFile(analysis_config.get_b_histogram_filename("trigbbl_CSVTM", this_sample), "READ")
+					print "[debug] \th_pfjet_mjj integral = " + str(f.Get("BHistograms/h_pfjet_mjj").Integral())
+					if not bjetplusx_histogram:
+						bjetplusx_histogram = f.Get("BHistograms/h_pfjet_mjj")
+						bjetplusx_histogram.SetName(bjetplusx_histogram.GetName() + "_BJetPlusX")
+						bjetplusx_histogram.SetDirectory(0)
+					else:
+						bjetplusx_histogram.Add(f.Get("BHistograms/h_pfjet_mjj"))
+					this_nevents = f.Get("BHistograms/h_input_nevents").Integral()
+					print "Sample " + this_sample + " has " + str(this_nevents) + " events"
+					bjetplusx_nevents += this_nevents
+					f.Close()
+				bjetplusx_histogram.Rebin(25)
+				print "[debug] bjetplusx_nevents = " + str(bjetplusx_nevents)
 				plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_MC_" + sr, x_range=[0., 1200.], log=True)
 				plot.draw()
 				plot.top.cd()
@@ -306,7 +329,10 @@ if __name__ == "__main__":
 				plot.bottom.cd()
 				ratio_fit.Draw("same")
 				plot.canvas.cd()
-				print "Ratio chi2/ndf = " + str(ratio_fit.GetChisquare()) + " / " + str(ratio_fit.GetNDF()) + " = " + str(ratio_fit.GetChisquare() / ratio_fit.GetNDF())
+				if ratio_fit.GetNDF() > 0:
+					print "Ratio chi2/ndf = " + str(ratio_fit.GetChisquare()) + " / " + str(ratio_fit.GetNDF()) + " = " + str(ratio_fit.GetChisquare() / ratio_fit.GetNDF())
+				else:
+					print "ndf = 0! Something went wrong."
 				plot.save()
 				print ratio_fit
 
