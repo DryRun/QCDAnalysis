@@ -158,6 +158,7 @@ analysis_cfgs["trigbbl_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/C
 analysis_cfgs["trigbbl_CSVTL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVTL_cfg.py"
 analysis_cfgs["trigbbl_CSVML"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_CSVML_cfg.py"
 analysis_cfgs["trigbbll_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbll_CSVTM_cfg.py"
+analysis_cfgs["trigbbl_raw"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbl_raw_cfg.py"
 
 analysis_cfgs["trigeff_trigbbh_CSVL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbh_CSVL_cfg.py"
 analysis_cfgs["trigeff_trigbbl_CSVL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbl_CSVL_cfg.py"

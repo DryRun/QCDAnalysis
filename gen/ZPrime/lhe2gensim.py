@@ -53,13 +53,79 @@ def SplitLHE(input_lhe, output_lhe_base=None, events_per_file=1000):
 
 input_lhe_files = {}
 top_directory = "/home/dryu/Dijets/data/EightTeeEeVeeBee/ZPrime/Reconstruction/"
-def SetupGENSIM(sample):
-	subjob = 0
-	for input_lhe in input_lhe_files[sample]:
-		crab_file = open(top_directory + "/GENSIM/crab/crab_GENSIM_" + str(subjob) + ".py", "w")
+version = "vTEST"
+# Sample = "ZPrime_M#_g#"
+# Dataset primary name = "ZPrime_M_#_g0p25_TuneX_8TeV_MadgraphPythia8"
 
+def GetSample(mass, coupling):
+	return "ZPrimeToCCBB_M_" + str(mass) + "_g" + str(coupling).replace(".", "p")
 
-		driver_command = "cmsDriver.py Configuration/Generator/python/Hadronizer_TuneCUETP8M1_8TeV_generic_LHE_pythia8_cff.py --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --conditions START53_V7C::All --beamspot Realistic8TeVCollision --step GEN,SIM --filein file:/home/dryu/Dijets/data/EightTeeEeVeeBee/ZPrime/Zprime_8TeV_ccbar_bbar_only/Events/mZ_400_0.25/events.lhe --fileout file:test.GEN.root -n -1 --no_exec"
+def GetDatasetFromSample(mass, coupling):
+	return GetSample(mass, coupling) + "_TuneCUEP8M1_8TeV_MadgraphPythia8"
 
-		subjob += 1
+def GetCfgPath(mass, coupling, stage):
+	return top_directory + "/" + stage + "/" + GetSample(mass, coupling) + "_cfg.py"
 
+def GetLHEPath(mass, coupling):
+	lhe_path = "/home/dryu/Dijets/data/EightTeeEeVeeBee/ZPrime/Zprime_8TeV_ccbar_bbar_only/Events/mZ_" + str(mass) + "_" + str(coupling) + "/events.lhe"
+	if not os.path.isfile(lhe_path):
+		print "[GetLHEPath] WARNING : LHE file not found at path + " lhe_path + "."
+		# Check for zipped file, and unzip
+		if os.path.isfile(lhe_path + ".gz"):
+			print "[GetLHEPath] WARNING : LHE zipped file found. Attempting to unzip."
+			os.system("gunzip " + lhe_path + ".gz")
+			if not os.path.isfile(lhe_path):
+				print "[GetLHEPath] ERROR : Failed to unzip."
+				sys.exit(1)
+	return lhe_path
+
+def GetCrabPath(mass, coupling, stage):
+	return top_directory + "/crab/crab_" + stage + "_" + GetSample(mass, coupling) + ".py"  
+
+def MakeGenSimCfg(mass, coupling):
+	driver_command = "cmsDriver.py Configuration/Generator/python/Hadronizer_TuneCUETP8M1_8TeV_generic_LHE_pythia8_cff.py --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --conditions START53_V7C::All --beamspot Realistic8TeVCollision --step GEN,SIM --filein file:" + GetLHEPath(str(mass)) + " --fileout file:GENSIM.root --python_filename " + GetCfgPath(mass, coupling, "GENSIM") + " -n -1 --no_exec"
+
+def MakeGenSimCrab(mass, coupling, version):
+	crab_file = open(GetCrabPath(mass, coupling, stage), "w")
+	crab_template = open(top_directory + "/GENSIM/crab/crab_template_GENSIM.py", "r")
+	for line in crab_template:
+		if "@REQUESTNAME@" in line:
+			line = line.replace("@REQUESTNAME@", GetSample(mass, coupling) + "_" + version)
+		if "@PSETNAME@" in line:
+			line = line.replace("@PSETNAME@", GetCfgPath(mass, coupling, "GENSIM"))
+		if "@INPUTFILES@" in line:
+			line = line.replace("@INPUTFILES@", "[" + GetLHEPath(mass, coupling) + "]")
+		if "@UNITSPERJOB@" in line:
+			line = line.replace("@UNITSPERJOB@", 500)
+		if "@TOTALUNITS@" in line:
+			line = line.replace("@TOTALUNITS@", 50000)
+		if "@OUTPUTDATASET@" in line:
+			line = line.replace("@OUTPUTPRIMARYDATASET@", GetDatasetFromSample(mass, coupling))
+
+RunGenSimCrab(mass, coupling, submit=False):
+	submission_command = "crab submit -c " + GetCrabPath(mass, coupling, "GENSIM")
+	if submit:
+		os.system(submission_command)
+	else:
+		print submission_command
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description = 'Make and submit CRAB generation jobs')
+    parser.add_argument('version', type=str, help='Version')
+    parser.add_argument('--submit', action='store_true', default=False, help='Submit jobs after creation')
+    parser.add_argument('--GENSIM', action='store_true', help='')
+    parser.add_argument('--DR1', action='store_true', help='')
+    parser.add_argument('--DR2', action='store_true', help='')
+    parser.add_argument('--masses', type=str, default="400,500,600,750,900,1200", help='Signal masses')
+   	parser.add_argument('--coupling', type=float, default=0.25, help='Coupling (0.25 or 0.5)')
+   	parser.add_argument('--version', type=str, default="vTEST", help='Coupling (0.25 or 0.5)')
+    args = parser.parse_args()
+    masses = [int(x) for x in args.masses.split(",")]
+    coupling = args.coupling
+
+    if args.GENSIM:
+    	for mass in masses:
+    		MakeGenSimCfg(mass, coupling)
+    		MakeGenSimCrab(mass, coupling, version=args.version)
+   			RunGenSim(mass, coupling, submit=args.submit, version=args.version)
