@@ -131,6 +131,25 @@ def RunGenSim(mass, coupling, submit=False):
 		print "cd " + submission_directory
 		print submission_command
 
+dataset = {
+        "GENSIM":{
+                400:"",
+                500:"",
+                600:"",
+                750:"",
+                900:"",
+                1200:""
+        },
+        "DR1":{},
+        "DR2":{}
+}
+
+def GetDataset(mass, step):
+        return datasets[step][mass]
+        
+def MakeDR1Cfg(mass, coupling):
+        command = "cmsDriver.py step1 --filein \"dbs:" + GetDataset(mass, coupling, "GENSIM") + "\" --fileout file:DIGI-RECO-step1.root --pileup_input \"dbs:/MinBias_TuneZ2star_8TeV-pythia6/Summer12-START50_V13-v3/GEN-SIM\" --mc --eventcontent RAWSIM --pileup 2012_Summer_50ns_PoissonOOTPU --datatier GEN-SIM-RAW --conditions START53_V19::All --step DIGI,L1,DIGI2RAW,HLT:7E33v2 --python_filename DIGI-RECO_1_ZPrime_" + str(mass) + "_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring"
+                
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Make and submit CRAB generation jobs')
