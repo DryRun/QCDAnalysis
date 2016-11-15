@@ -250,6 +250,9 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH2F("mjj_npfjets", "mjj_npfjets", "m_{jj} [GeV]", 500, 0., 5000., "N_{PF jets}", 11, -0.5, 10.5);
 	pfjet_histograms_->AddTH2F("mjj_ncalojets", "mjj_ncalojets", "m_{jj} [GeV]", 500, 0., 5000., "N_{Calo jets}", 11, -0.5, 10.5);
 	pfjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+	pfjet_histograms_->AddTH1D("pt_btag1", "pt_btag1", "p_{T} (leading CSV) [GeV]", 1000, 0., 1000.);
+	pfjet_histograms_->AddTH1D("pt_btag2", "pt_btag2", "p_{T} (subleading CSV) [GeV]", 1000, 0., 1000.);
+
 
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
 		pfjet_histograms_->AddTH1D("mjj_BTagOfflineSFUp", "mjj_BTagOfflineSFUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
@@ -528,6 +531,13 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				pfjet_histograms_->GetTH2F("mjj_npfjets")->Fill(event_->pfmjjcor(0), event_->nPFJets(), weight);
 				pfjet_histograms_->GetTH2F("mjj_ncalojets")->Fill(event_->pfmjjcor(0), event_->nCaloJets(), weight);
 				pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, weight);
+				if (pf_btag_csv1 >= pf_btag_csv2) {
+					pfjet_histograms_->GetTH1D("pt_btag1")->Fill(event_->pfjet(0).ptCor(), weight);
+					pfjet_histograms_->GetTH1D("pt_btag2")->Fill(event_->pfjet(1).ptCor(), weight);
+				} else {
+					pfjet_histograms_->GetTH1D("pt_btag1")->Fill(event_->pfjet(1).ptCor(), weight);
+					pfjet_histograms_->GetTH1D("pt_btag2")->Fill(event_->pfjet(0).ptCor(), weight);
+				}
 				if (data_type_ == ObjectIdentifiers::kSignal) {
 					pfjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);
 				}

@@ -394,6 +394,8 @@ class AnalysisComparisonPlot:
 		self.name_num = name_num
 		self.name_den = name_den
 		self.save_tag = save_tag
+		self.ratio_min = -0.2
+		self.ratio_max = 1.2
 		self.lines = []
 		if x_range:
 			self.x_min = x_range[0]
@@ -459,8 +461,8 @@ class AnalysisComparisonPlot:
 		self.bottom.cd()
 		# Make frame
 		self.frame_bottom = TH1D("frame_bottom_" + self.save_tag, "frame_bottom", 100, self.x_min, self.x_max)
-		self.frame_bottom.SetMinimum(0)
-		self.frame_bottom.SetMaximum(2)
+		self.frame_bottom.SetMinimum(self.ratio_min)
+		self.frame_bottom.SetMaximum(self.ratio_max)
 		self.frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
 		self.frame_bottom.GetYaxis().SetTitle(self.name_num + " / " + self.name_den)
 

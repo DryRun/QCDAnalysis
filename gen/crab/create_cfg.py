@@ -11,7 +11,8 @@ sys.path.append('./')
 
 models = ['GluGluSpin0ToBBbar', 'RSGravitonToBBbar']
 #masses = [300, 600, 750, 900, 1200]
-masses = [250, 400, 500]
+#masses = [250, 400, 500]
+masses = [350]
 
 def get_dataset_name_pieces(model, mass, stage):
     if model == "GluGluSpin0ToBBbar":
@@ -134,7 +135,7 @@ def sequence_GENSIM(model, mass,version='',submit=False):
 #################################
 
 def create_DR1_cfg(model, mass):
-    command = 'cmsDriver.py step1 --filein file:GEN-SIM.root --fileout file:DIGI-RECO_step1.root --mc --eventcontent RAWSIM --pileup 2012_Summer_50ns_PoissonOOTPU --datatier GEN-SIM-RAW --conditions auto:mc --step DIGI,L1,DIGI2RAW,HLT:7E33v2 --python_filename DIGI-RECO_1_'+model + "_" + str(mass)+'_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n -1' 
+    command = 'cmsDriver.py step1 --filein file:GEN-SIM.root --fileout file:DIGI-RECO_step1.root --mc --eventcontent RAWSIM --pileup_input "dbs:/MinBias_TuneZ2star_8TeV-pythia6/Summer12-START50_V13-v3/GEN-SIM" --pileup 2012_Summer_50ns_PoissonOOTPU --datatier GEN-SIM-RAW --conditions START53_V19::All --step DIGI,L1,DIGI2RAW,HLT:7E33v2 --python_filename DIGI-RECO_1_'+model + "_" + str(mass)+'_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n -1' 
     print command
     os.system(command)
 
@@ -178,7 +179,7 @@ def sequence_DR1(model, mass,version='',submit=False):
 #################################
 
 def create_DR2_cfg(model, mass):
-    command = 'cmsDriver.py step2 --filein file:DIGI-RECO_step1.root --fileout file:DIGI-RECO.root --mc --eventcontent AODSIM,DQM --datatier AODSIM,DQMIO --conditions auto:mc --step RAW2DIGI,L1Reco,RECO,DQM:DQMOfflinePOGMC  --python_filename DIGI-RECO_2_'+model + "_" + str(mass)+'_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1'
+    command = 'cmsDriver.py step2 --filein file:DIGI-RECO_step1.root --fileout file:DIGI-RECO.root --mc --eventcontent AODSIM,DQM --datatier AODSIM,DQMIO --conditions START53_V19::All --step RAW2DIGI,L1Reco,RECO,DQM:DQMOfflinePOGMC  --python_filename DIGI-RECO_2_'+model + "_" + str(mass)+'_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1'
     print command
     os.system(command)
 
