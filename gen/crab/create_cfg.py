@@ -82,7 +82,7 @@ def make_CFI(model, mass, width=0.01):
     template.close()
 
 def create_GENSIM_cfg(model, mass):
-    command = 'cmsDriver.py ' + get_CFI_path(model, mass).replace("$CMSSW_BASE/src/", "")+' --fileout file:GEN-SIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --conditions auto:mc --beamspot Realistic8TeVCollision --step GEN,SIM --python_filename GEN-SIM_'+model+"_"+str(mass)+'_cfg.py --no_exec -n 3'
+    command = 'cmsDriver.py ' + get_CFI_path(model, mass).replace("$CMSSW_BASE/src/", "")+' --fileout file:GEN-SIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --conditions START53_V7C::All --beamspot Realistic8TeVCollision --step GEN,SIM --python_filename GEN-SIM_'+model+"_"+str(mass)+'_cfg.py --no_exec -n 3'
     print command
     os.system(command)
 
@@ -128,7 +128,7 @@ def sequence_GENSIM(model, mass,version='',submit=False):
     if version == "test":
         n_total = 1000
     else:
-        n_total = 20000
+        n_total = 50000
     create_GENSIM_crab(model, mass, 200, n_total, version)
     submit_GENSIM_crab(model, mass, submit)
 

@@ -216,6 +216,12 @@ if __name__ == "__main__":
 			f_bjetplusx.Close()
 
 			plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_" + sr, x_range=[0., 1200.], log=True)
+			if sr == "lowmass":
+				plot.ratio_min = 0.
+				plot.ratio_max = 0.5
+			else:
+				plot.ratio_min = 0.
+				plot.ratio_max = 0.8
 			plot.draw()
 			plot.top.cd()
 			ymin = plot.frame_top.GetMinimum()
@@ -281,7 +287,7 @@ if __name__ == "__main__":
 				#mc_sample = analysis_config.simulation.get_signal_tag(model, "All", "FULLSIM")
 				bjetplusx_histogram_total = None
 				jetht_histograms_total = {}
-				for signal_mass in [400, 600, 750, 900, 1200]:
+				for signal_mass in [400, 500, 600, 750, 900, 1200]:
 					jetht_histograms = {}
 					bjetplusx_histogram = None
 					bjetplusx_nevents = 0
@@ -336,6 +342,12 @@ if __name__ == "__main__":
 					print "bjetplus_histogram integral = " + str(bjetplusx_histogram.Integral())
 
 					plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_MC_" + sr + "_" + model + "_" + str(signal_mass), x_range=[0., 1200.], log=True)
+					if sr == "lowmass":
+						plot.ratio_min = 0.
+						plot.ratio_max = 0.5
+					else:
+						plot.ratio_min = 0.
+						plot.ratio_max = 0.8
 					plot.draw()
 					plot.top.cd()
 					ymin = plot.frame_top.GetMinimum()
@@ -362,6 +374,12 @@ if __name__ == "__main__":
 				jetht_histogram_total.Rebin(25)
 				bjetplusx_histogram_total.Rebin(25)
 				plot = AnalysisComparisonPlot(bjetplusx_histogram_total, jetht_histogram_total, "BJetPlusX", "JetHT", "online_btag_efficiency_MC_" + sr + "_" + model + "_total", x_range=[0., 1200.], log=True)
+				if sr == "lowmass":
+					plot.ratio_min = 0.
+					plot.ratio_max = 0.5
+				else:
+					plot.ratio_min = 0.
+					plot.ratio_max = 0.8
 				plot.draw()
 				plot.top.cd()
 				ymin = plot.frame_top.GetMinimum()
@@ -399,7 +417,7 @@ if __name__ == "__main__":
 					notrig_histogram_total = None
 					bjetplusx_nevents = 0
 					notrig_nevents = 0
-					for signal_mass in [400, 600, 750, 900, 1200]:
+					for signal_mass in [400, 500, 600, 750, 900, 1200]:
 						mc_sample = analysis_config.simulation.get_signal_tag(model, signal_mass, "FULLSIM")
 						if sr == "highmass":
 							f = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", mc_sample), "READ")
@@ -407,11 +425,11 @@ if __name__ == "__main__":
 							f = TFile(analysis_config.get_b_histogram_filename("trigbbl_CSVTM", mc_sample), "READ")
 						print "[debug] \th_pfjet_" + var + " integral = " + str(f.Get("BHistograms/h_pfjet_" + var).Integral())
 						bjetplusx_histogram = f.Get("BHistograms/h_pfjet_" + var)
-						bjetplusx_histogram.SetName(bjetplusx_histogram.GetName() + "_BJetPlusX")
+						bjetplusx_histogram.SetName(bjetplusx_histogram.GetName() + "_BJetPlusX_" + str(signal_mass))
 						bjetplusx_histogram.SetDirectory(0)
 						if not bjetplusx_histogram_total:
 							bjetplusx_histogram_total = f.Get("BHistograms/h_pfjet_" + var)
-							bjetplusx_histogram_total.SetName(bjetplusx_histogram_total.GetName() + "_BJetPlusX")
+							bjetplusx_histogram_total.SetName(bjetplusx_histogram_total.GetName() + "_BJetPlusX_total")
 							bjetplusx_histogram_total.SetDirectory(0)
 						else:
 							bjetplusx_histogram_total.Add(f.Get("BHistograms/h_pfjet_" + var))
@@ -430,7 +448,7 @@ if __name__ == "__main__":
 						notrig_histogram = f.Get("BHistograms/h_pfjet_" + var)
 						print "Ensuring that the numerator and denominator have the same input normalization. Scale factor = " + str(this_bjetplusx_nevents/this_notrig_nevents)
 						notrig_histogram.Scale(this_bjetplusx_nevents/this_notrig_nevents)
-						notrig_histogram.SetName(notrig_histogram.GetName() + "_" + notrig_analysis)
+						notrig_histogram.SetName(notrig_histogram.GetName() + "_" + notrig_analysis + "_" + str(signal_mass))
 						notrig_histogram.SetDirectory(0)
 						if not notrig_histogram_total:
 							notrig_histogram_total = f.Get("BHistograms/h_pfjet_" + var)
@@ -448,13 +466,17 @@ if __name__ == "__main__":
 						print "notrig_histogram integral = " + str(notrig_histogram.Integral())
 						print "bjetplus_histogram integral = " + str(bjetplusx_histogram.Integral())
 
-						plot = AnalysisComparisonPlot(bjetplusx_histogram, notrig_histogram, "BJetPlusX", "No Trigger", "online_btag_efficiency_MC_NoTrigger_" + sr + "_" + model + "_" + str(signal_mass), x_range=[0., 1200.], log=True)
+						plot = AnalysisComparisonPlot(bjetplusx_histogram, notrig_histogram, "BJetPlusX", "No Trigger", "online_btag_efficiency_MC_NoTrigger_" + sr + "_" + model + "_" + str(signal_mass) + "_" + var, x_range=[0., 1200.], log=True)
+						if var == "pt_btag1":
+							plot.x_title = "p_{T} [GeV] (leading CSV)"
+						elif var == "pt_btag2":
+							plot.x_title = "p_{T} [GeV] (subleading CSV)"
 						if sr == "lowmass":
-							plot.ratio_min = -0.2
+							plot.ratio_min = 0.
 							plot.ratio_max = 0.5
 						else:
-							plot.ratio_min = -0.2
-							plot.ratio_max = 1.0
+							plot.ratio_min = 0.
+							plot.ratio_max = 0.8
 						plot.draw()
 						plot.top.cd()
 						ymin = plot.frame_top.GetMinimum()
@@ -478,11 +500,11 @@ if __name__ == "__main__":
 					bjetplusx_histogram_total.Rebin(25)
 					plot = AnalysisComparisonPlot(bjetplusx_histogram_total, notrig_histogram_total, "BJetPlusX", "No Trigger", "online_btag_efficiency_MC_NoTrigger_" + sr + "_" + model + "_total_" + var, x_range=[0., 1200.], log=True)
 					if sr == "lowmass":
-						plot.ratio_min = -0.2
+						plot.ratio_min = 0.
 						plot.ratio_max = 0.5
 					else:
-						plot.ratio_min = -0.2
-						plot.ratio_max = 1.0
+						plot.ratio_min = 0.
+						plot.ratio_max = 0.8
 					plot.draw()
 					plot.top.cd()
 					ymin = plot.frame_top.GetMinimum()

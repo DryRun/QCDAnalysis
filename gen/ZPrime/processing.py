@@ -9,6 +9,19 @@ nevents[0.25][750] = 65844
 nevents[0.25][900] = 68725
 nevents[0.25][1200] = 66924
 
+datasets = {
+		"GENSIM":{
+				400:"",
+				500:"",
+				600:"",
+				750:"/ZPrimeToCCBB_M_750_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM-09aa5bb01c248493e60679fcd1b56ec8/USER",
+				900:"/ZPrimeToCCBB_M_900_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM-09aa5bb01c248493e60679fcd1b56ec8/USER",
+				1200:"/ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM-09aa5bb01c248493e60679fcd1b56ec8/USER"
+		},
+		"DR1":{},
+		"DR2":{}
+}
+
 def SplitLHE(input_lhe, output_lhe_base=None, events_per_file=1000):
 	print "Welcome to SplitLHE. Input file = " + input_lhe
 	if not output_lhe_base:
@@ -131,25 +144,41 @@ def RunGenSim(mass, coupling, submit=False):
 		print "cd " + submission_directory
 		print submission_command
 
-dataset = {
-        "GENSIM":{
-                400:"",
-                500:"",
-                600:"",
-                750:"",
-                900:"",
-                1200:""
-        },
-        "DR1":{},
-        "DR2":{}
-}
-
-def GetDataset(mass, step):
-        return datasets[step][mass]
-        
+		
 def MakeDR1Cfg(mass, coupling):
-        command = "cmsDriver.py step1 --filein \"dbs:" + GetDataset(mass, coupling, "GENSIM") + "\" --fileout file:DIGI-RECO-step1.root --pileup_input \"dbs:/MinBias_TuneZ2star_8TeV-pythia6/Summer12-START50_V13-v3/GEN-SIM\" --mc --eventcontent RAWSIM --pileup 2012_Summer_50ns_PoissonOOTPU --datatier GEN-SIM-RAW --conditions START53_V19::All --step DIGI,L1,DIGI2RAW,HLT:7E33v2 --python_filename DIGI-RECO_1_ZPrime_" + str(mass) + "_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring"
-                
+	driver_command = "cmsDriver.py step1 --filein \"dbs:" + datasets["GENSIM"][mass] + "\" --fileout file:DIGI-RECO-step1.root --pileup_input \"dbs:/MinBias_TuneZ2star_8TeV-pythia6/Summer12-START50_V13-v3/GEN-SIM\" --mc --eventcontent RAWSIM --pileup 2012_Summer_50ns_PoissonOOTPU --datatier GEN-SIM-RAW --conditions START53_V19::All --step DIGI,L1,DIGI2RAW,HLT:7E33v2 --python_filename " + GetCfgPath(mass, coupling, "DR1") + " --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring"
+	os.system(driver_command)
+
+def MakeDR1Crab(mass, coupling, version):
+	crab_file = open(GetCrabPath(mass, coupling, "DR1"), "w")
+	crab_template = open("/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/gen/ZPrime/crab_template_DR1.py", "r")
+	for line in crab_template:
+		if '@REQUESTNAME@' in line:
+			line = line.replace("@REQUESTNAME@", GetSample(mass, coupling) + "_DR1_" + version)
+		if '@PSETNAME@' in line:
+			line = line.replace("@PSETNAME@", GetCfgPath(mass, coupling, "DR1"))
+		if '@INPUTDATASET@' in line:
+			line = line.replace("@INPUTDATASET@", datasets["GENSIM"][mass])
+		crab_file.write(line)
+	if "TEST" in version:
+		crab_file.write("config.Data.totalUnits = 1")
+	crab_file.close()
+
+def RunDR1(mass, coupling, submit=False):
+	submission_command = "crab submit -c " + os.path.basename(GetCrabPath(mass, coupling, "DR1"))
+	submission_directory = "/home/dryu/Dijets/data/EightTeeEeVeeBee/ZPrime/Reconstruction/DR1/"
+	if submit:
+		print "Submitting from " + submission_directory
+		start_directory = os.getcwd()
+		os.chdir(submission_directory)
+		print "Submission command: " + submission_command
+		os.system(submission_command)
+		os.chdir(start_directory)
+	else:
+		print "cd " + submission_directory
+		print submission_command
+
+
 if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description = 'Make and submit CRAB generation jobs')
@@ -176,3 +205,10 @@ if __name__ == "__main__":
 			MakeGenSimCrab(mass, coupling, version=args.version)
 		for mass in masses:
 			RunGenSim(mass, coupling, submit=args.submit)
+	if args.DR1:
+		for mass in masses:
+			MakeDR1Cfg(mass, coupling)
+		for mass in masses:
+			MakeDR1Crab(mass, coupling, version=args.version)
+		for mass in masses:
+			RunDR1(mass, coupling, submit=args.submit)

@@ -388,7 +388,7 @@ def MakeFatJetComparison(hist_pf, hist_fat, save_tag, fit_range=None, x_range=No
 
 
 class AnalysisComparisonPlot:
-	def __init__(self, hist_num, hist_den, name_num, name_den, save_tag, x_range=None, log=False):
+	def __init__(self, hist_num, hist_den, name_num, name_den, save_tag, x_range=None, log=False, x_title=None):
 		self.hist_num = hist_num
 		self.hist_den = hist_den
 		self.name_num = name_num
@@ -403,6 +403,7 @@ class AnalysisComparisonPlot:
 		else:
 			self.x_min = hist_num.GetXaxis().GetXmin()
 			self.x_max = hist_num.GetXaxis().GetXmax()
+		self.x_title = x_title
 
 		self.canvas = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
 		self.legend = TLegend(0.6, 0.6, 0.88, 0.88)
@@ -463,7 +464,10 @@ class AnalysisComparisonPlot:
 		self.frame_bottom = TH1D("frame_bottom_" + self.save_tag, "frame_bottom", 100, self.x_min, self.x_max)
 		self.frame_bottom.SetMinimum(self.ratio_min)
 		self.frame_bottom.SetMaximum(self.ratio_max)
-		self.frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+		if self.x_title:
+			self.frame_bottom.GetXaxis().SetTitle(self.x_title)
+		else:
+			self.frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
 		self.frame_bottom.GetYaxis().SetTitle(self.name_num + " / " + self.name_den)
 
 		self.frame_bottom.GetXaxis().SetLabelSize(0.04)
