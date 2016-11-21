@@ -24,7 +24,7 @@ def make_efficiency_histogram(test_hist, ref_hist, output_file=None):
 		den = ref_hist.GetBinContent(bin)
 		if den > 0 and num <= den:
 			eff = num / den
-			d_eff = (eff * (1. - eff) / den)**0.5
+			d_eff = max((eff * (1. - eff) / den)**0.5, 1. / den)
 		else:
 			eff = 0.
 			d_eff = 0.
@@ -35,7 +35,11 @@ def make_efficiency_histogram(test_hist, ref_hist, output_file=None):
 		efficiency_hist.Write()
 	return efficiency_hist
 
-def fit_efficiency(histogram, fit_range, save_tag):
+def fit_efficiency(histogram, fit_range, save_tag, x_range=None):
+	if not x_range:
+		x_range[0] = 0.
+		x_range[1] = 1.
+
 	fits = {}
 	fits["erf"] = ROOT.TF1("erf", "(0.5 * (1 + TMath::Erf((x-[0])/[1])))**[2]", fit_range[0], fit_range[1])
 	fits["erf"].SetParameter(0, 250)
@@ -47,59 +51,92 @@ def fit_efficiency(histogram, fit_range, save_tag):
 	fits["sigmoid"].SetParameter(1, 100)
 	fits["sigmoid"].SetParameter(2, 1)
 
-	#fits["arctan"] = TF1("arctan", "(0.5 * (1 + TMath::ArcTan((x-[0])/[1])))**[2]", fit_ranges[0], fit_ranges[1])
-	#fits["arctan"].SetParameter(0, 250)
-	#fits["arctan"].SetParameter(1, 100)
-	#fits["arctan"].SetParameter(2, 1)
+	fits["arctan"] = TF1("arctan", "(0.5 * (1 + 2./TMath::Pi()*TMath::ATan((x-[0])/[1])))**[2]", fit_range[0], fit_range[1])
+	fits["arctan"].SetParameter(0, 250)
+	fits["arctan"].SetParameter(1, 100)
+	fits["arctan"].SetParameter(2, 1)
+
+	colors = {
+		"erf":seaborn.GetColorRoot("default", 0),
+		"sigmoid":seaborn.GetColorRoot("default", 1),
+		"arctan":seaborn.GetColorRoot("default", 2),
+	}
 
 	for function_name, function in fits.iteritems():
 		print "Starting fit " + function_name
+		print function
 		histogram.Fit(function, "R0")
 		print "chi2/ndf = " + str(function.GetChisquare()) + " / " + str(function.GetNDF()) + " = " + str(function.GetChisquare() / function.GetNDF())
 
-		print "Making canvas"
-		c = TCanvas("c_" + function_name + "_" + save_tag, "c_" + function_name + "_" + save_tag, 800, 1000)
-		top = TPad("top", "top", 0., 0.5, 1., 1.)
-		top.SetBottomMargin(0.03)
-		top.Draw()
-		top.cd()
-		frame_top = ROOT.TH1D("frame_top", "frame_top", 100, 0., 800.)
-		frame_top.SetMinimum(-0.1)
-		frame_top.SetMaximum(1.1)
-		frame_top.GetXaxis().SetLabelSize(0)
-		frame_top.GetXaxis().SetTitleSize(0)
-		frame_top.Draw("axis")
-		histogram.Draw("same")
-		function.SetLineColor(seaborn.GetColorRoot("default", 2))
+	print "Making canvas"
+	c = TCanvas("c_trigger_efficiency_fits_" + save_tag, "c_trigger_efficiency_fits_" + save_tag, 800, 1000)
+	l = TLegend(0.5, 0.2, 0.85, 0.5)
+	l.SetFillColor(0)
+	l.SetBorderSize(0)
+	top = TPad("top", "top", 0., 0.5, 1., 1.)
+	top.SetBottomMargin(0.03)
+	top.Draw()
+	top.cd()
+	frame_top = ROOT.TH1D("frame_top", "frame_top", 100, x_range[0], x_range[1])
+	frame_top.SetMinimum(-0.1)
+	frame_top.SetMaximum(1.1)
+	frame_top.GetXaxis().SetLabelSize(0)
+	frame_top.GetXaxis().SetTitleSize(0)
+	frame_top.GetYaxis().SetTitle("Trigger Efficiency")
+	frame_top.Draw("axis")
+	histogram.SetMarkerStyle(24)
+	histogram.SetMarkerSize(1)
+	histogram.Draw("same")
+	l.AddEntry(histogram, "Data", "p")
+	
+	for function_name, function in fits.iteritems():
+		function.SetLineColor(colors[function_name])
 		function.Draw("same")
+		l.AddEntry(function, function_name + " (#chi^{2}/NDF=" + str(round(function.GetChisquare(), 2)) + "/" + str(function.GetNDF()) + ")", "l")
+	l.Draw()
 
-		c.cd()
-		bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
-		bottom.SetTopMargin(0.02)
-		bottom.SetBottomMargin(0.25)
-		bottom.Draw()
-		bottom.cd()
-		frame_bottom = ROOT.TH1D("frame_bottom", "frame_bottom", 100, 0., 800.)
-		frame_bottom.SetMinimum(-3.)
-		frame_bottom.SetMaximum(3.)
-		frame_bottom.Draw("axis")
+	c.cd()
+	bottom = TPad("bottom", "bottom", 0., 0., 1., 0.5)
+	bottom.SetTopMargin(0.02)
+	bottom.SetBottomMargin(0.25)
+	bottom.Draw()
+	bottom.cd()
+	frame_bottom = ROOT.TH1D("frame_bottom", "frame_bottom", 100, x_range[0], x_range[1])
+	frame_bottom.SetMinimum(-3.)
+	frame_bottom.SetMaximum(3.)
+	frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+	frame_bottom.GetYaxis().SetTitle("#frac{data - fit}{#sigma_{data}}")
+	frame_bottom.Draw("axis")
 
-		pulls = histogram.Clone()
-		pulls.Reset()
+	pulls = {}
+	style_counter = 0
+	for function_name, function in fits.iteritems():
+		pulls[function_name] = TH1D("pulls_" + function_name, "pulls_" + function_name, histogram.GetNbinsX(), histogram.GetXaxis().GetXmin(), histogram.GetXaxis().GetXmax())
+		pulls[function_name].Sumw2()
 		for bin in xrange(1, histogram.GetNbinsX()):
 			bin_center = histogram.GetXaxis().GetBinCenter(bin)
-			if histogram.GetBinError(bin) > 0:
-				pulls.SetBinContent(bin, (histogram.GetBinContent(bin) - fits[function_name].Eval(bin_center)) / (histogram.GetBinError(bin)))
+			if bin_center < fit_range[0] or bin_center > fit_range[1]:
+				pulls[function_name].SetBinContent(bin, 0)
 			else:
-				pulls.SetBinContent(bin, 0)
-		pulls.Draw("same")
+				if histogram.GetBinError(bin) > 0:
+					pulls[function_name].SetBinContent(bin, (histogram.GetBinContent(bin) - fits[function_name].Eval(bin_center)) / (histogram.GetBinError(bin)))
+				else:
+					pulls[function_name].SetBinContent(bin, 0)
+			pulls[function_name].SetBinError(bin, 1.e-10)
+		pulls[function_name].SetMarkerColor(colors[function_name])
+		pulls[function_name].SetLineWidth(1)
+		pulls[function_name].SetLineColor(colors[function_name])
+		pulls[function_name].SetMarkerStyle(24+style_counter)
+		pulls[function_name].SetMarkerSize(1)
+		pulls[function_name].Draw("plhist same")
+		style_counter += 1
 
-		c.cd()
-		c.SaveAs(analysis_config.figure_directory + "/trigger_efficiency_fit_" + function_name + "_" + save_tag + ".pdf")
-	
-		ROOT.SetOwnership(c, False)
-		ROOT.SetOwnership(top, False)
-		ROOT.SetOwnership(bottom, False)
+	c.cd()
+	c.SaveAs(analysis_config.figure_directory + "/trigger_efficiency_fit_allfits_" + save_tag + ".pdf")
+
+	ROOT.SetOwnership(c, False)
+	ROOT.SetOwnership(top, False)
+	ROOT.SetOwnership(bottom, False)
 
 def trigger_efficiency_plot(ref_hist, test_hist, save_tag):
 	c = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
@@ -179,8 +216,10 @@ if __name__ == "__main__":
 
 	analyses = ["trigbbh_CSVTM", "trigbbl_CSVTM"]
 	fit_ranges = {
-		"trigbbl_CSVTM":[175, 400],
-		"trigbbh_CSVTM":[300, 600]
+		"trigbbl_CSVTM":[240, 400],
+		"trigbbh_CSVTM":[400, 600]
+		#"trigbbl_CSVTM":[175, 400],
+		#"trigbbh_CSVTM":[300, 600]
 	}
 	trigeff_files = {
 		"trigbbh_CSVTM":"/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/BHistograms_trigeff_trigbbh_CSVTM_BJetPlusX_2012.root",
@@ -216,6 +255,10 @@ if __name__ == "__main__":
 
 	if args.fit:
 		for analysis in analyses:
+			if "bbl" in analysis:
+				x_range = [150, 500]
+			else:
+				x_range = [250, 700]
 			f = TFile(analysis_config.trigger_efficiency_file[analysis], "READ")
 			h = f.Get("h_trigger_efficiency")
-			fit_efficiency(h, fit_ranges[analysis], analysis)
+			fit_efficiency(h, fit_ranges[analysis], analysis, x_range=x_range)
