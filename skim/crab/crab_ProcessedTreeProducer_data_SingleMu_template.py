@@ -5,7 +5,7 @@
 #Configurables
 
 dataset = '__DATASET__'
-tag = "v1_4_1"
+tag = "v2_1_2"
 
 ##________________________________________________________________________________||
 
@@ -33,10 +33,10 @@ config.Data.inputDataset = dataset
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'LumiBased'
 #config.Data.totalUnits = 20
-config.Data.unitsPerJob = 20
+config.Data.unitsPerJob = 250
 config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt'
 config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.publication = True
 config.Data.outputDatasetTag = 'QCDBEventTree___NAME___' + tag
 
-config.Site.storageSite = "T3_US_FNALLPC"
+config.Site.storageSite = "T3_US_Brown"

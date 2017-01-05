@@ -385,15 +385,184 @@ def MakeFatJetComparison(hist_pf, hist_fat, save_tag, fit_range=None, x_range=No
 
 	c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Results/figures/" + save_tag + ".pdf")
 	
+class AnalysisComparisonPlotMultiple:
+	def __init__(self, hists_num, hists_den, names, name_num, name_den, save_tag, x_range=None, log=False, x_title=None, y_title=None):
+		self.hists_num = hists_num
+		self.hists_den = hists_den
+		print "[debug] hists_num = ",
+		print self.hists_num
+		print "[debug] hists_den = ",
+		print self.hists_den
+		self.names = names
+		self.name_num = name_num
+		self.name_den = name_den
+		self.save_tag = save_tag
+		self.log = log
+		self.ratio_min = -0.2
+		self.ratio_max = 1.2
+		self.lines = []
+		if x_range:
+			self.x_min = x_range[0]
+			self.x_max = x_range[1]
+		else:
+			self.x_min = 1e20
+			self.x_max = -1e20
+			for name, hist in hists_num.iteritems():
+				if hist.GetXaxis().GetXmin() < self.x_min:
+					self.x_min = hist.GetXaxis().GetXmin()
+				if hist.GetXaxis().GetXmax() > self.x_max:
+					self.x_max = hist.GetXaxis().GetXmax()
+		self.x_title = x_title
+		self.y_title = y_title
+
+		self.canvas = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
+		self.legend = TLegend(0.6, 0.45, 0.88, 0.88)
+		self.legend.SetFillColor(0)
+		self.legend.SetBorderSize(0)
+		self.top = TPad("top_" + save_tag, "top", 0., 0.5, 1., 1.)
+		self.top.SetBottomMargin(0.03)
+		self.top.Draw()
+		if self.log:
+			self.top.SetLogy()
+		self.canvas.cd()
+		self.bottom = TPad("bottom_" + save_tag, "bottom", 0., 0., 1., 0.5)
+		self.bottom.SetTopMargin(0.02)
+		self.bottom.SetBottomMargin(0.2)
+		self.bottom.Draw()
+		ROOT.SetOwnership(self.canvas, False)
+		ROOT.SetOwnership(self.top, False)
+		ROOT.SetOwnership(self.bottom, False)
+
+		self.draw_done = False
+
+	def draw(self):
+		self.top.cd()
+
+		self.frame_top = TH1D("frame_top_" + self.save_tag, "frame_top", 100, self.x_min, self.x_max)
+		self.frame_top.GetXaxis().SetTitleSize(0)
+		self.frame_top.GetXaxis().SetLabelSize(0)
+		self.frame_top.GetYaxis().SetLabelSize(0.04)
+		self.frame_top.GetYaxis().SetTitleSize(0.04)
+		#self.frame_top.GetYaxis().SetTitleOffset(0.85)
+		print "[debug] At the point of error, self.hists_num = ",
+		print self.hists_num
+		bin_width = self.hists_num[self.names[0]].GetXaxis().GetBinWidth(1)
+		if self.y_title:
+			self.frame_top.GetYaxis().SetTitle(self.y_title)
+		else:
+			self.frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
+		if self.log:
+			self.frame_top.SetMaximum(self.hists_den[self.names[0]].GetMaximum() * 5.)
+			self.frame_top.SetMinimum(5.)
+		else:
+			self.frame_top.SetMaximum(self.hists_den[self.names[0]].GetMaximum() * 1.2)
+		self.frame_top.Draw("axis")
+
+		style_counter = 0
+		for name in self.names:
+			self.hists_num[name].SetMarkerStyle(20)
+			self.hists_num[name].SetMarkerColor(seaborn.GetColorRoot("dark", style_counter))
+			self.hists_num[name].SetLineColor(seaborn.GetColorRoot("dark", style_counter))
+			self.hists_num[name].SetMarkerSize(1)
+			self.hists_num[name].Draw("p e1 same")
+			#print "[plots] DEBUG : self.hists_num[name] integral = " + str(self.hists_num[name].Integral())
+			self.legend.AddEntry(self.hists_num[name], str(name) + " / " + self.name_num, "pl")
+
+			self.hists_den[name].SetMarkerStyle(24)
+			self.hists_den[name].SetMarkerColor(seaborn.GetColorRoot("pastel", style_counter))
+			self.hists_den[name].SetLineColor(seaborn.GetColorRoot("pastel", style_counter))
+			self.hists_den[name].SetMarkerSize(1)
+			self.hists_den[name].Draw("p e1 same")
+			self.legend.AddEntry(self.hists_den[name], str(name) + " / " + self.name_den, "pl")
+			style_counter += 1
+		self.legend.Draw()
+
+		self.canvas.cd()
+		self.bottom.cd()
+		# Make frame
+		self.frame_bottom = TH1D("frame_bottom_" + self.save_tag, "frame_bottom", 100, self.x_min, self.x_max)
+		self.frame_bottom.SetMinimum(self.ratio_min)
+		self.frame_bottom.SetMaximum(self.ratio_max)
+		if self.x_title:
+			self.frame_bottom.GetXaxis().SetTitle(self.x_title)
+		else:
+			self.frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+		self.frame_bottom.GetYaxis().SetTitle("Ratio")
+
+		self.frame_bottom.GetXaxis().SetLabelSize(0.04)
+		self.frame_bottom.GetXaxis().SetTitleSize(0.06)
+		self.frame_bottom.GetXaxis().SetLabelOffset(0.01)
+		self.frame_bottom.GetXaxis().SetTitleOffset(1.1)
+
+		self.frame_bottom.GetYaxis().SetLabelSize(0.04)
+		self.frame_bottom.GetYaxis().SetTitleSize(0.04)
+		self.frame_bottom.GetYaxis().SetTitleOffset(1.0)
+
+		self.frame_bottom.Draw("axis")
+
+		unity = TLine(self.x_min, 1., self.x_max, 1.)
+		unity.SetLineColor(kGray)
+		unity.SetLineStyle(2)
+		unity.SetLineWidth(2)
+		unity.Draw("same")
+
+		zero = TLine(self.x_min, 0., self.x_max, 0.)
+		zero.SetLineColor(kBlack)
+		zero.SetLineStyle(1)
+		zero.SetLineWidth(2)
+		zero.Draw("same")
+
+		# Ratio histogram with no errors (not so well defined, since this isn't a well-defined efficiency)
+		self.hist_ratio = {}
+		style_counter = 0
+		for name in self.names:
+			self.hist_ratio[name] = self.hists_num[name].Clone()
+			#print "[debug] Num bins = " + str(self.hist_num.GetNbinsX())
+			#print "[debug] Den bins = " + str(self.hist_den.GetNbinsX())
+			self.hist_ratio[name].Divide(self.hists_num[name], self.hists_den[name], 1, 1, "B")
+			for bin in xrange(1, self.hist_ratio[name].GetNbinsX() + 1):
+				if self.hists_den[name].GetBinContent(bin) == 0 or self.hist_ratio[name].GetBinContent(bin) == 0:
+					self.hist_ratio[name].SetBinContent(bin, 0)
+					self.hist_ratio[name].SetBinError(bin, 0)
+			self.hist_ratio[name].SetFillStyle(3002)
+			self.hist_ratio[name].SetFillColor(seaborn.GetColorRoot("dark", style_counter))
+			self.hist_ratio[name].Draw("p e4 same")
+			self.hist_ratio[name].Draw("p e1 same")
+			style_counter += 1
+
+		self.canvas.cd()
+		self.draw_done = True
+
+	def draw_line(self, pad, x1, y1, x2, y2, style=2, color=kGray, width=1):
+		if not self.draw_done:
+			print "[AnalysisComparisonPlot::draw_line] ERROR : draw() must be called first"
+			return
+
+		if pad == "top":
+			self.top.cd()
+		elif pad == "bottom":
+			self.bottom.cd()
+		else:
+			print "[AnalysisComparisonPlot::draw_line] ERROR : pad must be top or bottom"
+		self.lines.append(TLine(x1, y1, x2, y2))
+		self.lines[-1].SetLineStyle(style)
+		self.lines[-1].SetLineColor(color)
+		self.lines[-1].SetLineWidth(width)
+		self.lines[-1].Draw("same")
+
+	def save(self):
+		self.canvas.cd()
+		self.canvas.SaveAs(analysis_config.figure_directory + "/" + self.save_tag + ".pdf")
 
 
 class AnalysisComparisonPlot:
-	def __init__(self, hist_num, hist_den, name_num, name_den, save_tag, x_range=None, log=False, x_title=None):
+	def __init__(self, hist_num, hist_den, name_num, name_den, save_tag, x_range=None, log=False, x_title=None, y_title=None):
 		self.hist_num = hist_num
 		self.hist_den = hist_den
 		self.name_num = name_num
 		self.name_den = name_den
 		self.save_tag = save_tag
+		self.log = log
 		self.ratio_min = -0.2
 		self.ratio_max = 1.2
 		self.lines = []
@@ -404,6 +573,7 @@ class AnalysisComparisonPlot:
 			self.x_min = hist_num.GetXaxis().GetXmin()
 			self.x_max = hist_num.GetXaxis().GetXmax()
 		self.x_title = x_title
+		self.y_title = y_title
 
 		self.canvas = TCanvas("c_" + save_tag, "c_" + save_tag, 800, 1000)
 		self.legend = TLegend(0.6, 0.6, 0.88, 0.88)
@@ -412,7 +582,7 @@ class AnalysisComparisonPlot:
 		self.top = TPad("top_" + save_tag, "top", 0., 0.5, 1., 1.)
 		self.top.SetBottomMargin(0.03)
 		self.top.Draw()
-		if log:
+		if self.log:
 			self.top.SetLogy()
 		self.canvas.cd()
 		self.bottom = TPad("bottom_" + save_tag, "bottom", 0., 0., 1., 0.5)
@@ -435,12 +605,15 @@ class AnalysisComparisonPlot:
 		self.frame_top.GetYaxis().SetTitleSize(0.04)
 		#self.frame_top.GetYaxis().SetTitleOffset(0.85)
 		bin_width = self.hist_num.GetXaxis().GetBinWidth(1)
-		self.frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
-		if log:
+		if self.y_title:
+			self.frame_top.GetYaxis().SetTitle(self.y_title)
+		else:
+			self.frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
+		if self.log:
 			self.frame_top.SetMaximum(self.hist_den.GetMaximum() * 5.)
 			self.frame_top.SetMinimum(5.)
 		else:
-			self.frame_top.SetMaximum(self.hist_den.GetMaximum() * 1.7)
+			self.frame_top.SetMaximum(self.hist_den.GetMaximum() * 1.2)
 		self.frame_top.Draw("axis")
 
 		self.hist_num.SetMarkerStyle(20)
@@ -448,6 +621,7 @@ class AnalysisComparisonPlot:
 		self.hist_num.SetLineColor(seaborn.GetColorRoot("dark", 0))
 		self.hist_num.SetMarkerSize(1)
 		self.hist_num.Draw("p e1 same")
+		print "[plots] DEBUG : self.hist_num integral = " + str(self.hist_num.Integral())
 		self.legend.AddEntry(self.hist_num, self.name_num, "pl")
 
 		self.hist_den.SetMarkerStyle(24)
@@ -477,7 +651,7 @@ class AnalysisComparisonPlot:
 
 		self.frame_bottom.GetYaxis().SetLabelSize(0.04)
 		self.frame_bottom.GetYaxis().SetTitleSize(0.04)
-		self.frame_bottom.GetYaxis().SetTitleOffset(0.85)
+		self.frame_bottom.GetYaxis().SetTitleOffset(1.0)
 
 		self.frame_bottom.Draw("axis")
 

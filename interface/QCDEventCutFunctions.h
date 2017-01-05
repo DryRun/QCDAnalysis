@@ -25,6 +25,7 @@ namespace QCDEventCutFunctions {
 	// Multiple trigger pass.
 	// p = vector of trigger indices to test
 	bool TriggerOR(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
+	bool TriggerOR2(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 	bool TriggerXOR(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);
 
 	bool IsGoodPV(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector);

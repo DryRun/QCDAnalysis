@@ -1,21 +1,25 @@
+import os
+dijet_directory = os.path.expandvars("$DIJETHOME")
+
 # Signal samples
-signal_models = ["RSG", "Hbb"] # Zprime
+signal_models = ["RSG", "Hbb", "ZPrime"] # Zprime
 #signal_masses = [250, 300, 400, 500, 600, 750, 900, 1200]
-signal_masses = [400, 500, 600, 750, 900, 1200]
+signal_masses = [350, 400, 500, 600, 750, 900, 1200]
 
 limit_signal_masses = {
-	"trigbbll_CSVTM":range(400, 950, 50),
-	"trigbbl_CSVTM":range(400, 950, 50),
+	"trigbbll_CSVTM":range(350, 950, 50),
+	"trigbbl_CSVTM":range(350, 950, 50),
 	"trigbbh_CSVTM":range(550, 1250, 50)
 }
 
-simulated_masses = [250, 300, 400, 500, 600, 750, 900, 1200]
+simulated_masses = [350, 400, 500, 600, 750, 900, 1200]
 
 output_tags = {}
 #output_tags["Hbb"] = "HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@"
 output_tags["Hbb"] = "GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_@SIMTYPE@"
-output_tags["RSG"] = "RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_@SIMTYPE@"
-output_tags["Zprime"] = "ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_@SIMTYPE@"
+output_tags["RSG"] = "RSGravitonToBBbar_kMpl01_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_@SIMTYPE@"
+output_tags["ZPrime"] = "ZPrimeToCCBB_M_@MASS@_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_@SIMTYPE@"
+
 def GetOutputTag(p_model, p_mass_point, p_simtype):
 	return output_tags[p_model].replace("@MASS@", str(p_mass_point)).replace("@SIMTYPE@", p_simtype)
 
@@ -26,10 +30,12 @@ signal_samples = {}
 signal_sample_masses = {}
 
 signal_sample_namestrings = {
-	"RSG":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_FULLSIM",
+	#"RSG":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia8_FULLSIM",
+	"RSG":"RSGravitonToBBbar_kMpl01_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FULLSIM",
 	"RSG_FASTSIM":"RSGravitonToBBbar_M_@MASS@_TuneZ2star_8TeV_pythia6_FASTSIM",
 	"Zprime_FASTSIM":"ZprimeToBB_M_@MASS@_TuneD6T_8TeV_pythia6_FULLSIM",
-	"Hbb":"GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FULLSIM"
+	"Hbb":"GluGluSpin0ToBBbar_M_@MASS@_TuneCUEP8M1_8TeV_pythia8_FULLSIM",
+	"ZPrime":"ZPrimeToCCBB_M_@MASS@_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM",
 }
 for signal_model in signal_models:
 	signal_samples[signal_model] = []
@@ -66,7 +72,16 @@ private_mc_file_lists["GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM
 private_mc_file_lists["GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_750_v1_3.txt"
 private_mc_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_900_v1_3.txt"
 private_mc_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_1200_v1_3.txt"
+private_mc_file_lists["GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8.txt"
+private_mc_file_lists["RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8.txt"
 
+private_mc_file_lists["ZPrimeToCCBB_M_350_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_350_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+private_mc_file_lists["ZPrimeToCCBB_M_400_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_400_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+private_mc_file_lists["ZPrimeToCCBB_M_500_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_500_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+private_mc_file_lists["ZPrimeToCCBB_M_600_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_600_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+private_mc_file_lists["ZPrimeToCCBB_M_750_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_750_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+private_mc_file_lists["ZPrimeToCCBB_M_900_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_900_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+private_mc_file_lists["ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
 
 # Fast sim configuration
 fastsim_models = ["RSG", "Zprime"]
@@ -159,6 +174,28 @@ signal_cross_sections["ZprimeToBB_M_1100_TuneD6T_8TeV_pythia6"] = 3.633e-10 * 10
 signal_cross_sections["ZprimeToBB_M_1150_TuneD6T_8TeV_pythia6"] = 2.96e-10 * 10**9
 signal_cross_sections["ZprimeToBB_M_1200_TuneD6T_8TeV_pythia6"] = 2.392e-10 * 10**9
 
+signal_cross_sections["ZPrimeToCCBB_M_200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 3.161e-07 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_250_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 1.418e-07 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_300_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 7.633e-08 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_350_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 4.432e-08 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_400_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 2.682e-08 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_450_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 1.684e-08 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_500_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 1.118e-08 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_550_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 7.707e-09 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_600_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 5.335e-09 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_650_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 3.852e-09 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_700_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 2.814e-09 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_750_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 2.129e-09 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_800_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 1.579e-09 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_850_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 1.236e-09 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_900_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 9.322e-10 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_950_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 7.256e-10 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_1000_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 5.793e-10 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_1050_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 4.534e-10 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_1100_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 3.633e-10 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_1150_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 2.96e-10 * 10**9
+signal_cross_sections["ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 2.392e-10 * 10**9
+
 background_cross_sections = {}
 background_cross_sections["TTJets_Hadronic"] = 252.89 * 0.68 * 0.68
 background_cross_sections["TTJets_SemiLept"] = 252.89 * 2 * 0.32 * 0.68
@@ -241,10 +278,35 @@ def get_signal_AE(analysis, model, mass):
 	return signal_acc_times_eff[model][analysis][mass]
 
 if __name__ == "__main__":
+	import pickle
+	signal_acc_times_eff = pickle.load(open(get_signal_AE_filename(), "rb"))
 	import ROOT
 	from ROOT import *
+	print "\\begin{table}\n"
+	print "\t\\centering\n"
+	print "\t\\begin{tabular}{|c|",
+	for mass in simulated_masses:
+		print "c|",
+	print "}\n"
+	print "\t\t\\hline\n"
+	print "\t\tModel / Analysis ",
+	for mass in simulated_masses:
+		print "\t&\t" + str(mass),
+	print "\t\\\\\n\\hline"
+	for analysis in ["trigbbl_CSVTM", "trigbbh_CSVTM"]:
+		for model in ["Hbb", "RSG"]:
+			print "\t\t" + model + " / " + analysis,
+			for mass in simulated_masses:
+				if not mass in signal_acc_times_eff[model][analysis]:
+					print "\t&\t Unknown",
+				else:
+					print "\t&\t" + str(round(signal_acc_times_eff[model][analysis][mass]*100, 2)) + "\%",
+			print "\t\\\\\n\t\t\\hline\n"
+	print "\t\\end{tabular}"
+	print "\\end{table}"
+
 	# Get n gen events
-	for model in ["Zprime", "RSG"]:
-		for mass in xrange(300, 1250, 50):
-			f = TFile.Open(GetEOSLocation(model, mass, "AODSIM", "FASTSIM"))
-			print model + " / " + str(mass) + " = " + str(f.Get("Events").GetEntriesFast())
+	#for model in ["Zprime", "RSG"]:
+	#	for mass in xrange(300, 1250, 50):
+	#		f = TFile.Open(GetEOSLocation(model, mass, "AODSIM", "FASTSIM"))
+	#		print model + " / " + str(mass) + " = " + str(f.Get("Events").GetEntriesFast())

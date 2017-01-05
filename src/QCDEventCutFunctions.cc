@@ -46,6 +46,18 @@ namespace QCDEventCutFunctions {
 		return (n_fired >= 1);
 	}
 
+	bool TriggerOR2(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
+		int n_fired = 0;
+		for (auto& it_trig : p_event_selector->GetCutParameters("TriggerOR2")) {
+			//bool trigger_on = (p_data.preHLT((int)it_trig) > 0);
+			int trigger_fired = p_data.fired((int)it_trig);
+			if (trigger_fired == 1) { // removed trigger_on because it doesn't work on MC
+				++n_fired;
+			}
+		}
+		return (n_fired >= 1);
+	}
+
 	bool MinNPFJets(const QCDEvent& p_data, EventSelector<QCDEvent>* p_event_selector) {
 		unsigned int n_jets = p_event_selector->GetNumberOfGoodObjects(ObjectIdentifiers::kPFJet);
 		p_event_selector->SetReturnData("MinNPFJets", n_jets);
@@ -684,6 +696,7 @@ namespace QCDEventCutFunctions {
 	void Configure(EventSelector<QCDEvent>* p_event_selector) {
 		p_event_selector->AddCutFunction("Trigger", &Trigger);
 		p_event_selector->AddCutFunction("TriggerOR", &TriggerOR);
+		p_event_selector->AddCutFunction("TriggerOR2", &TriggerOR2);
 		p_event_selector->AddCutFunction("TriggerXOR", &TriggerXOR);
 		p_event_selector->AddCutFunction("IsGoodPV", &IsGoodPV);
 		p_event_selector->AddCutFunction("MaxMetOverSumEt", &MaxMetOverSumEt);

@@ -183,7 +183,7 @@ void BHistograms::beginJob()
 	QCDEventCutFunctions::Configure(event_selector_);
 	for (auto& it_cut : event_cuts_) {
 		// For TriggerXOR, convert strings to ints
-		if (it_cut.EqualTo("TriggerXOR") || it_cut.EqualTo("TriggerOR")) {
+		if (it_cut.EqualTo("TriggerXOR") || it_cut.EqualTo("TriggerOR") || it_cut.EqualTo("TriggerOR2")) {
 			std::vector<double> tmp_parameters;
 			std::vector<TString> tmp_descriptors;
 			std::cout << "[BHistograms::beginJob] INFO : Opening " << input_file_names_[0] << std::endl;
@@ -231,6 +231,9 @@ void BHistograms::beginJob()
 	global_histograms_->AddTH1F("input_nevents_weighted", "input_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("pass_nevents", "pass_nevents", "", 1, 0.5, 1.5);
 	global_histograms_->AddTH1F("pass_nevents_weighted", "pass_nevents_weighted", "", 1, 0.5, 1.5);
+	if (data_source_ == ObjectIdentifiers::kSimulation) {
+		global_histograms_->AddTH1F("event_btag_sf", "event_btag_sf", "SF", 200, 0., 2.);
+	}
 
 	pfjet_histograms_ = new Root::HistogramManager();
 	pfjet_histograms_->AddPrefix("h_pfjet_");
@@ -421,12 +424,15 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 			
 			// Simulation weights. 
 			double weight = prescale;
-			global_histograms_->GetTH1F("input_nevents_weighted")->Fill(weight);
 
 			// - B tag SFs
 			if (data_source_ == ObjectIdentifiers::kSimulation) {
-				weight *= getEventBTagSF();
+				double btag_sf = getEventBTagSF();
+				weight *= btag_sf;
+				global_histograms_->GetTH1F("event_btag_sf")->Fill(btag_sf);
 			}
+			global_histograms_->GetTH1F("input_nevents_weighted")->Fill(weight);
+
 
 			// Object selection
 			dijet_selector_->ClassifyObjects(event_->pfjets());
