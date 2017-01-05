@@ -41,6 +41,12 @@ actual_gensim_names = {
     'GluGluSpin0ToBBbar_M_250_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_250_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-9c0fe13af874239b82a452a1e99c1d07/USER',
     'GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-5646f4c10e0952740354a58a642a4c32/USER',
     'GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_3-5e3aeb3e064217e7dc300ff2c4d72ddc/USER',
+
+    # First try during major CRAB outage. Not sure if reliable.
+    #'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0-5022fca4c09ec6a3250c982e6a691c94/USER',
+    #'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0-2089507b266388415f62eef171c53b83/USER'
+    'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0_3-5022fca4c09ec6a3250c982e6a691c94/USER',
+    'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0_3-2089507b266388415f62eef171c53b83/USER'
 }
 
 actual_dr1_names = {
@@ -60,6 +66,8 @@ actual_dr1_names = {
     'GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_500_v1_3-e55af98865f2d4f941410801f4f54826/USER',
     'GluGluSpin0ToBBbar_M_250_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_250_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_250_v1_3-e55af98865f2d4f941410801f4f54826/USER',
     'GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_400_v1_3-e55af98865f2d4f941410801f4f54826/USER',
+    'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_350_v1_0_6-25f662c8c8577d562263f1e0c47637d7/USER',
+    'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_350_v1_0_6-25f662c8c8577d562263f1e0c47637d7/USER',
 }
 
 def get_CFI_path(model, mass):

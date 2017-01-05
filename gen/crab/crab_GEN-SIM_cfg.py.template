@@ -21,5 +21,5 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.outputPrimaryDataset  = 
 
 config.section_("Site")
-#config.Site.storageSite = 'T3_US_FNALLPC'
-config.Site.storageSite = 'T3_US_Brown'
+config.Site.storageSite = 'T3_US_FNALLPC'
+#config.Site.storageSite = 'T3_US_Brown'
