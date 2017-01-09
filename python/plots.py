@@ -453,7 +453,7 @@ class AnalysisComparisonPlotMultiple:
 			self.frame_top.GetYaxis().SetTitle("Events / " + str(int(bin_width)) + " GeV")
 		if self.log:
 			self.frame_top.SetMaximum(self.hists_den[self.names[0]].GetMaximum() * 5.)
-			self.frame_top.SetMinimum(5.)
+			self.frame_top.SetMinimum(0.5)
 		else:
 			self.frame_top.SetMaximum(self.hists_den[self.names[0]].GetMaximum() * 1.2)
 		self.frame_top.Draw("axis")

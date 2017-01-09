@@ -164,6 +164,7 @@ if __name__ == "__main__":
 		ht_threshold_plot(names, histograms, save_tag="jetht_thresholds", x_range=[0., 1200.], logy=True)
 
 	if args.btag:
+		f_jetht_save = TFile(analysis_config.dijet_directory + "/data/EightTeeEeVeeBee/TriggerEfficiency/trigeff_jetht_data.root", "RECREATE")
 		for sr in ["lowmass", "highmass"]:
 			ht_analyses = {}
 			names = []
@@ -231,6 +232,7 @@ if __name__ == "__main__":
 			jetht_histogram = ApplyDijetBinning(jetht_histogram, 1.)
 			jetht_histogram.SetDirectory(0)
 			#jetht_histogram.Rebin(25)
+			jetht_histogram.SetName("h_pf_mjj_jetht_" + sr)
 
 			if sr == "highmass":
 				f_bjetplusx = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", "BJetPlusX_2012BCD"), "READ")
@@ -242,7 +244,10 @@ if __name__ == "__main__":
 			bjetplusx_histogram.SetDirectory(0)
 			f_bjetplusx.Close()
 
-			plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_" + sr, x_range=[0., 1200.], log=True)
+			if sr == "lowmass":
+				plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_" + sr, x_range=[0., 1400.], log=True)
+			else:
+				plot = AnalysisComparisonPlot(bjetplusx_histogram, jetht_histogram, "BJetPlusX", "JetHT", "online_btag_efficiency_" + sr, x_range=[0., 1800.], log=True)
 			if sr == "lowmass":
 				plot.ratio_min = 0.
 				plot.ratio_max = 0.5
@@ -258,9 +263,9 @@ if __name__ == "__main__":
 				plot.draw_line("bottom", boundary, plot.ratio_min, boundary, plot.ratio_max)
 			# Fit constant to ratio
 			if sr == "lowmass":
-				ratio_fit = TF1("ratio_fit", "[0]", 296, 1607)
+				ratio_fit = TF1("ratio_fit", "[0]", 296, 1246)
 			elif sr == "highmass":
-				ratio_fit = TF1("ratio_fit", "[0]", 526, 1607)
+				ratio_fit = TF1("ratio_fit", "[0]", 526, 1455)
 			plot.hist_ratio.Fit(ratio_fit, "QR0")
 			plot.canvas.cd()
 			plot.bottom.cd()
@@ -272,10 +277,14 @@ if __name__ == "__main__":
 
 			print plot.top
 
+			f_jetht_save.cd()
+			plot.hist_ratio.SetName("h_trigeff_jetht_" + sr)
+			plot.hist_ratio.Write()
+
 			# Plot each HT trigger
 			for name in names:
 				histograms[name] = ApplyDijetBinning(histograms[name])
-				plot = AnalysisComparisonPlot(bjetplusx_histogram, histograms[name], "BJetPlusX", name, "online_btag_efficiency_" + sr + "_" + name, x_range=[0., 1200.], log=True)
+				plot = AnalysisComparisonPlot(bjetplusx_histogram, histograms[name], "BJetPlusX", name, "online_btag_efficiency_" + sr + "_" + name, x_range=[0., 1800.], log=True)
 				if sr == "lowmass":
 					plot.ratio_min = 0.
 					plot.ratio_max = 0.5
@@ -293,6 +302,7 @@ if __name__ == "__main__":
 				plot.canvas.cd()
 				print "Ratio chi2/ndf = " + str(ratio_fit.GetChisquare()) + " / " + str(ratio_fit.GetNDF()) + " = " + str(ratio_fit.GetChisquare() / ratio_fit.GetNDF())
 				plot.save()
+		f_jetht_save.Close()
 
 	if args.btag_mc_jetht:
 		print "Making btag MC plot (vs HT triggers)"
@@ -513,9 +523,9 @@ if __name__ == "__main__":
 	if args.btag_mc_notrig:
 		print "Making btag MC plot (vs HT triggers)"
 		for var in ["mjj", "pt_btag1", "pt_btag2"]:
-			for sr in ["lowmass", "highmass"]:
+			for sr in ["llowmass", "lowmass", "highmass"]:
 				print "On SR " + sr
-				if sr == "lowmass":
+				if sr == "lowmass" or sr == "llowmass":
 					notrig_analysis = "NoTrigger_eta1p7_CSVTM"
 				else:
 					notrig_analysis = "NoTrigger_eta2p2_CSVTM"
@@ -530,8 +540,10 @@ if __name__ == "__main__":
 						mc_sample = analysis_config.simulation.get_signal_tag(model, signal_mass, "FULLSIM")
 						if sr == "highmass":
 							f = TFile(analysis_config.get_b_histogram_filename("trigbbh_CSVTM", mc_sample), "READ")
-						else:
+						elif sr == "lowmass":
 							f = TFile(analysis_config.get_b_histogram_filename("trigbbl_CSVTM", mc_sample), "READ")
+						elif sr == "llowmass":
+							f = TFile(analysis_config.get_b_histogram_filename("trigbbll_CSVTM", mc_sample), "READ")
 						print "[debug] \th_pfjet_" + var + " integral = " + str(f.Get("BHistograms/h_pfjet_" + var).Integral())
 						bjetplusx_histogram = f.Get("BHistograms/h_pfjet_" + var)
 						bjetplusx_histogram.SetName(bjetplusx_histogram.GetName() + "_BJetPlusX_" + str(signal_mass))
@@ -580,7 +592,7 @@ if __name__ == "__main__":
 							plot.x_title = "p_{T} [GeV] (leading CSV)"
 						elif var == "pt_btag2":
 							plot.x_title = "p_{T} [GeV] (subleading CSV)"
-						if sr == "lowmass":
+						if sr == "lowmass" or sr == "llowmass":
 							plot.ratio_min = 0.
 							plot.ratio_max = 0.5
 						else:
@@ -592,12 +604,12 @@ if __name__ == "__main__":
 						ymax = plot.frame_top.GetMaximum()
 						# Fit constant to ratio
 						if var == "mjj":
-							if sr == "lowmass":
-								ratio_fit = TF1("ratio_fit", "[0]", 250, 1000)
+							if sr == "lowmass" or sr == "llowmass":
+								ratio_fit = TF1("ratio_fit", "[0]", 296, 1246)
 							elif sr == "highmass":
-								ratio_fit = TF1("ratio_fit", "[0]", 450, 1000)
+								ratio_fit = TF1("ratio_fit", "[0]", 526, 1455)
 						elif var == "pt_btag1" or "pt_btag2":
-							if sr == "lowmass":
+							if sr == "lowmass" or sr == "llowmass":
 								ratio_fit = TF1("ratio_fit", "[0]", 80, 1000)
 							elif sr == "highmass":
 								ratio_fit = TF1("ratio_fit", "[0]", 160, 1000)
@@ -617,7 +629,7 @@ if __name__ == "__main__":
 					notrig_histogram_total.Rebin(25)
 					bjetplusx_histogram_total.Rebin(25)
 					plot = AnalysisComparisonPlot(bjetplusx_histogram_total, notrig_histogram_total, "BJetPlusX", "No Trigger", "online_btag_efficiency_MC_NoTrigger_" + sr + "_" + model + "_total_" + var, x_range=[0., 1200.], log=False)
-					if sr == "lowmass":
+					if sr == "lowmass" or sr == "llowmass":
 						plot.ratio_min = 0.
 						plot.ratio_max = 0.5
 					else:
@@ -629,12 +641,12 @@ if __name__ == "__main__":
 					ymax = plot.frame_top.GetMaximum()
 					# Fit constant to ratio
 					if var == "mjj":
-						if sr == "lowmass":
-							ratio_fit = TF1("ratio_fit", "[0]", 250, 1000)
+						if sr == "lowmass" or sr == "llowmass":
+							ratio_fit = TF1("ratio_fit", "[0]", 296, 1246)
 						elif sr == "highmass":
-							ratio_fit = TF1("ratio_fit", "[0]", 450, 1000)
+							ratio_fit = TF1("ratio_fit", "[0]", 526, 1455)
 					elif var == "pt_btag1" or "pt_btag2":
-						if sr == "lowmass":
+						if sr == "lowmass" or sr == "llowmass":
 							ratio_fit = TF1("ratio_fit", "[0]", 80, 1000)
 						elif sr == "highmass":
 							ratio_fit = TF1("ratio_fit", "[0]", 160, 1000)

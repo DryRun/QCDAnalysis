@@ -19,12 +19,20 @@ import CMSDIJET.QCDAnalysis.analysis_configuration_8TeV as analysis_config
 
 def signal_acc_eff():
 	for analysis in ["trigbbh_CSVTM", "trigbbl_CSVTM"]:
-		for model in ["Hbb", "RSG"]:
-			for mass in [300, 600, 750, 900, 1200]:
+		if "bbl" in analysis:
+			mjj_range = [296, 1246]
+		elif "bbh" in analysis:
+			mjj_range = [526, 1455]
+		for model in ["Hbb", "RSG", "ZPrime"]:
+			for mass in [350, 400, 500, 600, 750, 900, 1200]:
+				if analysis == "trigbbh_CSVTM" and mass == 350:
+					continue
 				f = TFile(analysis_config.get_b_histogram_filename(analysis, analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM"), ), "READ")
-				nevents = (f.Get("BHistograms/h_input_nevents")).Integral()
+				nevents = (f.Get("BHistograms/h_sample_nevents")).Integral()
 				h_mjj = f.Get("BHistograms/h_pfjet_mjj")
-				nsignal = h_mjj.Integral(1, h_mjj.GetNbinsX() + 1)
+				low_bin = h_mjj.GetXaxis().FindBin(mjj_range[0] + 1.e-5)
+				high_bin = h_mjj.GetXaxis().FindBin(mjj_range[1] - 1.e-5)
+				nsignal = h_mjj.Integral(low_bin, high_bin)
 				if nevents > 0:
 					acceff = 1. * nsignal / nevents
 				else:
