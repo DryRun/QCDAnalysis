@@ -58,6 +58,9 @@ class QCDEvent
       float genmjj() const; 
       float pfmjjcor(int unc) const;
       float pfmjjcor(int unc,int src) const;
+      float pfmjjcor_csv_ordered(int k) const;
+      float pfmjjcor_csv_ordered(int k, int src) const;
+
       float fatmjjcor(int unc) const;
       float calomjjcor(int unc) const;
       float pfmjjgen() const;

@@ -99,7 +99,7 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 
 	# Postprocessing script
 	merge_command = "hadd " + analysis_config.get_b_histogram_filename(analysis, sample) + " " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_*.root")
-	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".py", 'w')
+	postprocessing_file = open('postprocessing.py', 'w')
 	postprocessing_file.write("import os\n")
 	postprocessing_file.write("import sys\n")
 	postprocessing_file.write("import glob\n")
@@ -177,7 +177,7 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 		print command
 		os.system(command)
 		os.system("rm -f tmp.txt")
-	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".sh", 'w')
+	postprocessing_file = open('postprocessing.sh', 'w')
 	postprocessing_file.write("#!/bin/bash\n")
 	postprocessing_file.write("hadd " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + " " + output_filename.replace("_\$\(Cluster\)_\$\(Process\)", "*").replace("$1", "*") + "\n")
 	postprocessing_file.close()
@@ -213,7 +213,7 @@ def RunBHistogramsBackground(analysis, sample, files_per_job=1, retar=False, dat
 	print command
 	os.system(command)
 	os.system("rm -f tmp.txt")
-	postprocessing_file = open('postprocessing_' + analysis + "_" + sample + ".sh", 'w')
+	postprocessing_file = open('postprocessing.sh', 'w')
 	postprocessing_file.write("#!/bin/bash\n")
 	postprocessing_file.write("hadd " + working_directory + "/" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)) + " " + output_filename.replace("_\$\(Cluster\)_\$\(Process\)", "*") + "\n")
 	postprocessing_file.close()

@@ -243,6 +243,18 @@ analysis_cfgs["trigmubbll_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_pat
 analysis_cfgs["trigmubbl_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmubbl_lowmass_CSVTM_cfg.py"
 analysis_cfgs["trigmubbh_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmubbh_highmass_CSVTM_cfg.py"
 
+analysis_cfgs["trigmu24i_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24i_lowmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu24i_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24i_highmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu24ibbll_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24ibbll_lowmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu24ibbl_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24ibbl_lowmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu24ibbh_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24ibbh_highmass_CSVTM_cfg.py"
+
+analysis_cfgs["trigmu40_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40_lowmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu40_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40_highmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu40bbll_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40bbll_lowmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu40bbl_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40bbl_lowmass_CSVTM_cfg.py"
+analysis_cfgs["trigmu40bbh_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40bbh_highmass_CSVTM_cfg.py"
+
 analysis_cfgs["NoTrigger_eta2p2_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_CSVTM_cfg.py"
 analysis_cfgs["NoTrigger_eta1p7_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_CSVTM_cfg.py"
 
@@ -272,14 +284,14 @@ def get_bias_study_directory(model, analysis, mass, mu):
 def get_bias_study_results(model, analysis, mass, mu, f_gen, f_test):
 	return get_bias_study_directory(model, analysis, mass, mu) + "/mlfit" + model + "_" + analysis + "_m" + str(mass) + "_gen_" + f_gen + "_fit_" + f_test + "_mu" + str(mu) + ".root"
 
-def get_signal_fit_file(analysis, model, mass, fit_function, interpolated=False, correctTrigger=False, fitTrigger=False):
+def get_signal_fit_file(analysis, model, mass, fit_function, interpolated=False):
 	path = dijet_directory + "/data/EightTeeEeVeeBee/Fits/Signal/" + fit_function + "/fit_" + analysis + "_" + model + "_m" + str(mass)
 	if interpolated:
 		path += "_interpolated"
-	if correctTrigger:
-		path += "_correctTrigger"
-	if fitTrigger:
-		path += "_fitTrigger"
+	#if correctTrigger:
+	#	path += "_correctTrigger"
+	#if fitTrigger:
+	#	path += "_fitTrigger"
 	path += ".root"
 	return path
 

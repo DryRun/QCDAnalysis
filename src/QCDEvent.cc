@@ -153,6 +153,102 @@ float QCDEvent::pfmjjcor(int k) const
 		return (cor0*(1+sign*unc0)*P0+cor1*(1+sign*unc1)*P1).mass();
 	}
 }
+
+float QCDEvent::pfmjjcor_csv_ordered(int k) const
+{
+	int sign(0);
+	if (PFJets_.size() < 2)
+		return 0.0;
+	else {
+		if (k>0) {
+			sign = 1;
+		} else if (k<0) {
+			sign = -1;
+		} else {
+			sign = 0;
+		}
+		// Get indices of highest CSV jet
+		int max_csv = -100;
+		int submax_csv = -200;
+		int max_csv_index = -1;
+		int submax_csv_index = -1;
+		for (unsigned int i = 0; i < PFJets_.size(); ++i) {
+			if (PFJets_[i].pt() < 50.) {
+				continue;
+			}
+			if (PFJets_[i].btag_csv() > max_csv) {
+				// Move max to submax
+				submax_csv = max_csv;
+				submax_csv_index = max_csv_index;
+				max_csv = PFJets_[i].btag_csv();
+				max_csv_index = i;
+			} else if (PFJets_[i].btag_csv() <= max_csv && PFJets_[i].btag_csv() > submax_csv) {
+				submax_csv = PFJets_[i].btag_csv();
+				submax_csv_index = i;
+			}
+		}
+		if (max_csv_index < 0 || submax_csv_index < 0) {
+			std::cerr << "WARNING : Failed to determine highest CSV jets in pfmjjcor_csv_ordered! Returning -1." << std::endl;
+			return -1.;
+		}
+		const LorentzVector& P0 = PFJets_[max_csv_index].p4();
+		const LorentzVector& P1 = PFJets_[submax_csv_index].p4();
+		double cor0 = PFJets_[max_csv_index].cor();
+		double cor1 = PFJets_[submax_csv_index].cor();
+		double unc0 = PFJets_[max_csv_index].unc();
+		double unc1 = PFJets_[submax_csv_index].unc();
+		return (cor0*(1+sign*unc0)*P0+cor1*(1+sign*unc1)*P1).mass();
+	}
+}
+
+float QCDEvent::pfmjjcor_csv_ordered(int k, int src) const
+{
+	int sign(0);
+	if (PFJets_.size() < 2)
+		return 0.0;
+	else {
+		if (k>0) {
+			sign = 1;
+		} else if (k<0) {
+			sign = -1;
+		} else {
+			sign = 0;
+		}
+		// Get indices of highest CSV jet
+		int max_csv = -100;
+		int submax_csv = -200;
+		int max_csv_index = -1;
+		int submax_csv_index = -1;
+		for (unsigned int i = 0; i < PFJets_.size(); ++i) {
+			if (PFJets_[i].pt() < 50.) {
+				continue;
+			}
+			if (PFJets_[i].btag_csv() > max_csv) {
+				// Move max to submax
+				submax_csv = max_csv;
+				submax_csv_index = max_csv_index;
+				max_csv = PFJets_[i].btag_csv();
+				max_csv_index = i;
+			} else if (PFJets_[i].btag_csv() <= max_csv && PFJets_[i].btag_csv() > submax_csv) {
+				submax_csv = PFJets_[i].btag_csv();
+				submax_csv_index = i;
+			}
+		}
+		if (max_csv_index < 0 || submax_csv_index < 0) {
+			std::cerr << "WARNING : Failed to determine highest CSV jets in pfmjjcor_csv_ordered! Returning -1." << std::endl;
+			return -1.;
+		}
+		const LorentzVector& P0 = PFJets_[max_csv_index].p4();
+		const LorentzVector& P1 = PFJets_[submax_csv_index].p4();
+		double cor0 = PFJets_[max_csv_index].cor();
+		double cor1 = PFJets_[submax_csv_index].cor();
+		double unc0 = PFJets_[max_csv_index].uncSrc(src);
+		double unc1 = PFJets_[submax_csv_index].uncSrc(src);
+		return (cor0*(1+sign*unc0)*P0+cor1*(1+sign*unc1)*P1).mass();
+	}
+
+}
+
 //---------------------------------------------------
 float QCDEvent::pfmjjcor(int k,int src) const
 {

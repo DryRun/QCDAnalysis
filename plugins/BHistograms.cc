@@ -255,6 +255,8 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
 	pfjet_histograms_->AddTH1D("pt_btag1", "pt_btag1", "p_{T} (leading CSV) [GeV]", 1000, 0., 1000.);
 	pfjet_histograms_->AddTH1D("pt_btag2", "pt_btag2", "p_{T} (subleading CSV) [GeV]", 1000, 0., 1000.);
+	pfjet_histograms_->AddTH1D("mjj_csvorder", "mjj_csvorder", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	pfjet_histograms_->AddTH1D("mjj_vetothirdjet", "mjj_vetothirdjet", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
 
 
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
@@ -523,6 +525,22 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				double pf_btag_csv1 = event_->pfjet(0).btag_csv();
 				double pf_btag_csv2 = event_->pfjet(1).btag_csv();
 				pfjet_histograms_->GetTH1D("mjj")->Fill(event_->pfmjjcor(0), weight);
+				pfjet_histograms_->GetTH1D("mjj_csvorder")->Fill(event_->pfmjjcor_csv_ordered(0), weight);
+				bool is_excl_dijet = true;
+				if (event_->nPFJets() <= 2) {
+					is_excl_dijet = true;
+				} else {
+					// Allow low energy extra jets
+					for (unsigned int i_extra_jet = 2; i_extra_jet < event_->nPFJets(); ++i_extra_jet) {
+						if (event_->pfjet(i_extra_jet).ptCor() > 40.) {
+							is_excl_dijet = false;
+							break;
+						}
+					}
+				}
+				if (is_excl_dijet) {
+					pfjet_histograms_->GetTH1D("mjj_vetothirdjet")->Fill(event_->pfmjjcor(0), weight);
+				}
 				pfjet_histograms_->GetTH1D("deltaeta")->Fill(pf_deltaeta, weight);
 				pfjet_histograms_->GetTH1D("pt1")->Fill(event_->pfjet(0).ptCor(), weight);
 				pfjet_histograms_->GetTH1D("pt2")->Fill(event_->pfjet(1).ptCor(), weight);
