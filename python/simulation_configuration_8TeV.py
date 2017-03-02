@@ -49,10 +49,14 @@ for signal_model in signal_models:
 
 backgrounds = ["QCD", "QCDB", "TTJets"]
 background_supersamples = {
-	"QCD":["QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6","QCD_Pt-120to170_TuneZ2star_8TeV_pythia6","QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6","QCD_Pt-170to300_TuneZ2star_8TeV_pythia6","QCD_Pt-1800_TuneZ2star_8TeV_pythia6","QCD_Pt-300to470_TuneZ2star_8TeV_pythia6","QCD_Pt-470to600_TuneZ2star_8TeV_pythia6","QCD_Pt-600to800_TuneZ2star_8TeV_pythia6","QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6","QCD_Pt-80to120_TuneZ2star_8TeV_pythia6"],
+	"QCD":["QCD_Pt-120to170_TuneZ2star_8TeV_pythia6","QCD_Pt-170to300_TuneZ2star_8TeV_pythia6","QCD_Pt-300to470_TuneZ2star_8TeV_pythia6","QCD_Pt-470to600_TuneZ2star_8TeV_pythia6","QCD_Pt-600to800_TuneZ2star_8TeV_pythia6","QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6", "QCD_Pt-80to120_TuneZ2star_8TeV_pythia6", "QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6", "QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6", "QCD_Pt-1800_TuneZ2star_8TeV_pythia6"],
 	"QCDB":["QCD_Pt-50To150_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-15To30_bEnriched_TuneZ2star_8TeV-pythia6-evtgen","QCD_Pt-30To50_bEnriched_TuneZ2star_8TeV-pythia6-evtgen",],
 	"TTJets":["TTJets_Hadronic", "TTJets_SemiLept", "TTJets_Leptonic"],
 }
+background_samples = []
+for background_list in background_supersamples.values():
+	background_samples.extend(background_list)
+
 
 # Text files listing the bulk private MC production
 private_mc_file_lists = {}
@@ -196,11 +200,21 @@ signal_cross_sections["ZPrimeToCCBB_M_1100_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia
 signal_cross_sections["ZPrimeToCCBB_M_1150_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 2.96e-10 * 10**9
 signal_cross_sections["ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8"] = 2.392e-10 * 10**9
 
+# pb
 background_cross_sections = {}
 background_cross_sections["TTJets_Hadronic"] = 252.89 * 0.68 * 0.68
 background_cross_sections["TTJets_SemiLept"] = 252.89 * 2 * 0.32 * 0.68
 background_cross_sections["TTJets_Leptonic"] = 252.89 * 0.32 * 0.32
-
+background_cross_sections["QCD_Pt-80to120_TuneZ2star_8TeV_pythia6"] = 1033680
+background_cross_sections["QCD_Pt-120to170_TuneZ2star_8TeV_pythia6"] = 156293.3
+background_cross_sections["QCD_Pt-170to300_TuneZ2star_8TeV_pythia6"] = 34138.15
+background_cross_sections["QCD_Pt-300to470_TuneZ2star_8TeV_pythia6"] = 1759.549
+background_cross_sections["QCD_Pt-470to600_TuneZ2star_8TeV_pythia6"] = 113.8791
+background_cross_sections["QCD_Pt-600to800_TuneZ2star_8TeV_pythia6"] = 26.9921
+background_cross_sections["QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6"] = 3.550036
+background_cross_sections["QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6"] = 0.737844
+background_cross_sections["QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6"] = 0.03352235
+background_cross_sections["QCD_Pt-1800_TuneZ2star_8TeV_pythia6"] = 0.001829005
 background_cross_section_uncertainties = {}
 background_cross_section_uncertainties["TTJets"] = 0.1
 background_cross_section_uncertainties["TTJets_Hadronic"] = 0.1

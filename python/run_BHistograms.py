@@ -33,6 +33,10 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 		input_files = [line.strip() for line in input_files_txt]
 		input_files_txt.close()
 
+		# Recalculate files_per_job to split evenly
+		n_jobs = int(math.ceil(1. * len(input_files) / files_per_job))
+		files_per_job = int(math.ceil(1. * len(input_files) / n_jobs))
+
 		bash_script_path = working_directory + "/run_" + analysis + "_" + sample + ".sh"
 		bash_script = open(bash_script_path, 'w')
 		bash_script.write("#!/bin/bash\n")
@@ -61,7 +65,6 @@ def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_sou
 		submit_command = "csub " + bash_script_path + " --cmssw "
 		if not retar:
 			submit_command += " --no_retar"
-		n_jobs = int(math.ceil(1. * len(input_files) / files_per_job))
 		print "[debug] This job will have " + str(len(input_files)) + " / " + str(files_per_job) + " = " + str(n_jobs) + " jobs"
 		submit_command += " -F " + "," + analysis_config.analysis_cfgs[analysis] + " -n " + str(n_jobs)
 		os.system(submit_command)
@@ -254,8 +257,8 @@ if __name__ == "__main__":
 			if first:
 				first = False
 	elif args.background:
-		if args.background in analysis_config.simulation.backgrounds:
-			samples = analysis_config.simulation.background_samples[args.background]
+		if args.background in analysis_config.simulation.background_supersamples:
+			samples = analysis_config.simulation.background_supersamples[args.background]
 		else:
 			samples = [args.background]
 		first = True

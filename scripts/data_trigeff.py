@@ -75,11 +75,9 @@ class TrigEffPlotter():
 			}
 
 			self._analyses.append("JetHT")
-			print "[GetJetHTHistogram] DEBUG : Making frankenhist"
 			self._mjj_histograms_fine["JetHT"] = self.FrankenHist(HT_slices, HT_slice_histograms, ranges)
-			print "[GetJetHTHistogram] DEBUG : Integral = " + str(self._mjj_histograms_fine["JetHT"].Integral())
 			self._mjj_histograms["JetHT"] = histogram_tools.rebin_histogram(self._mjj_histograms_fine["JetHT"], self._mass_bins, normalization_bin_width=1)
-
+			self._mjj_histograms_fine["JetHT"].Rebin(5)
 
 	# Cobble together m(jj) histogram from several JetHT triggers. 
 	def FrankenHist(self, HT_slices, histograms, ranges):
@@ -124,12 +122,13 @@ class TrigEffPlotter():
 			if "bbll" in analysis:
 				self._mjj_histograms_fine[analysis].Scale(1.7) # Prescale for singlemu + 60/53. The prescale was not computer for these analyses.
 				self._mjj_histograms[analysis].Scale(1.7) # Prescale for singlemu + 60/53. The prescale was not computer for these analyses.
+			self._mjj_histograms_fine[analysis].Rebin(5)
 			self._analyses.append(analysis)
 			f.Close()
 
 
 	def GetBJetPlusXHistograms(self):
-		this_analyses = ["trigbbh_CSVTM", "trigbbl_CSVTM", "trigbbll_CSVTM"]
+		this_analyses = ["trigbbh_CSVTM", "trigbbl_CSVTM", "trigbbll_CSVTM", "trigbbh_trigbbl_CSVTM"]
 		this_samples = ["BJetPlusX_2012", "BJetPlusX_2012BCD"]
 		for analysis in this_analyses:
 			for sample in this_samples:
@@ -149,17 +148,28 @@ class TrigEffPlotter():
 				self._mjj_histograms_vetothirdjet[name].SetName("h_" + name + "_mjj_vetothirdjet")
 				self._mjj_histograms_vetothirdjet[name].SetDirectory(0)
 				self._mjj_histograms_vetothirdjet[name] = histogram_tools.rebin_histogram(self._mjj_histograms_vetothirdjet[name], self._mass_bins, normalization_bin_width=1)
+				self._mjj_histograms_fine[name].Rebin(5)
 				self._analyses.append(name)
 				f.Close()
+
+				if "bbll" in analysis:
+					self._mjj_histograms[name].Scale(1.7)
+					self._mjj_histograms_fine[name].Scale(1.7)
 
 	def MakeEfficiencyHistograms(self):
 		self._efficiency_combinations.update({
 			"JetHT_highmass":["trigbbh_CSVTM_BJetPlusX_2012BCD", "JetHT"],
 			"JetHT_lowmass":["trigbbl_CSVTM_BJetPlusX_2012BCD", "JetHT"], 
 			"JetHT_llowmass":["trigbbll_CSVTM_BJetPlusX_2012BCD", "JetHT"],
+<<<<<<< HEAD
 			#"SingleMu_highmass":["trigmubbh_highmass_CSVTM", "trigmu_highmass_CSVTM"], 
 			#"SingleMu_lowmass":["trigmubbl_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
 			#"SingleMu_llowmass":["trigmubbll_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+=======
+			"SingleMu_highmass":["trigmubbh_highmass_CSVTM", "trigmu_highmass_CSVTM"], 
+			"SingleMu_lowmass":["trigmubbl_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+			"SingleMu_llowmass":["trigmubbll_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+>>>>>>> 27e1124643ccf22f3ded325ada56a565edc3b963
 			"SingleMu24i_highmass":["trigmu24ibbh_highmass_CSVTM", "trigmu24i_highmass_CSVTM"], 
 			"SingleMu24i_lowmass":["trigmu24ibbl_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
 			#"SingleMu24i_llowmass":["trigmu24ibbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
@@ -167,13 +177,15 @@ class TrigEffPlotter():
 			#"SingleMu40_lowmass":["trigmu40bbl_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
 			#"SingleMu40_llowmass":["trigmu40bbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
 			"BJet60_53_lowmass":["trigbbl_CSVTM_BJetPlusX_2012", "trigbbll_CSVTM_BJetPlusX_2012"], 
-			"BJet80_70_highmass":["trigbbh_CSVTM_BJetPlusX_2012", "trigbbl_CSVTM_BJetPlusX_2012"], 
+			"BJet60_53_highmass":["trigbbh_CSVTM_BJetPlusX_2012", "trigbbll_CSVTM_BJetPlusX_2012"], 
+			"BJet80_70_highmass":["trigbbh_trigbbl_CSVTM_BJetPlusX_2012", "trigbbl_CSVTM_BJetPlusX_2012"], 
 			})
 		self._legend_entries = {
 			"trigbbh_CSVTM":"160/120 + b-tag",
 			"trigbbl_CSVTM":"80/70 + b-tag",
 			"trigbbll_CSVTM":"60/53 + b-tag",
 			"trigbbh_CSVTM_BJetPlusX_2012":"160/120 + b-tag",
+			"trigbbh_trigbbl_CSVTM_BJetPlusX_2012":"((160/120) && (80/70))",
 			"trigbbl_CSVTM_BJetPlusX_2012":"80/70 + b-tag",
 			"trigbbll_CSVTM_BJetPlusX_2012":"60/53 + b-tag",
 			"trigbbh_CSVTM_BJetPlusX_2012BCD":"160/120 + b-tag",
@@ -185,6 +197,7 @@ class TrigEffPlotter():
 			"trigmubbl_lowmass_CSVTM":"(mu24i||mu40)&&(80/70+b-tag)",
 			"trigmubbll_lowmass_CSVTM":"(mu24i||mu40)&&(60/53+b-tag)", 
 			"trigmu24ibbh_highmass_CSVTM":"(mu24i)&&(160/120+b-tag)",
+			"trigmu24i_lowmass_CSVTM":"mu24i",
 			"trigmu24ibbl_lowmass_CSVTM":"(mu24i)&&(80/70+b-tag)",
 			"trigmu24ibbll_lowmass_CSVTM":"(mu24i)&&(60/53+b-tag)", 
 			"trigmu40bbh_highmass_CSVTM":"(mu40)&&(160/120+b-tag)",
@@ -193,19 +206,20 @@ class TrigEffPlotter():
 			"JetHT":"JetHT"
 		}
 		self._efficiency_guesses = {
-				"JetHT_highmass":0.4,
+				"JetHT_highmass":0.5,
 				"JetHT_lowmass":0.2,
 				"JetHT_llowmass":0.1,
 				"SingleMu_highmass":0.2,
 				"SingleMu_lowmass":0.1,
 				"SingleMu_llowmass":0.05,
 				"SingleMu24i_highmass":0.2,
-				"SingleMu24i_lowmass":0.1,
+				"SingleMu24i_lowmass":0.18,
 				"SingleMu24i_llowmass":0.05,
 				"SingleMu40_highmass":0.2,
 				"SingleMu40_lowmass":0.1,
 				"SingleMu40_llowmass":0.05,
 				"BJet60_53_lowmass":1,
+				"BJet60_53_highmass":1,
 				"BJet80_70_highmass":1,
 		}
 		self._colors = {
@@ -221,8 +235,9 @@ class TrigEffPlotter():
 			"SingleMu40_highmass":seaborn.GetColorRoot("dark", 3),
 			"SingleMu40_lowmass":seaborn.GetColorRoot("dark", 3),
 			"SingleMu40_llowmass":seaborn.GetColorRoot("dark", 5),
-			"BJet60_53_lowmass":seaborn.GetColorRoot("cubehelix", 0, 20),
-			"BJet80_70_highmass":seaborn.GetColorRoot("cubehelix", 10, 20),
+			"BJet60_53_lowmass":seaborn.GetColorRoot("cubehelix", 0, 30),
+			"BJet60_53_highmass":seaborn.GetColorRoot("cubehelix", 10, 30),
+			"BJet80_70_highmass":seaborn.GetColorRoot("cubehelix", 20, 30),
 		}
 		self._line_styles = {
 			"JetHT_highmass":1,
@@ -238,6 +253,7 @@ class TrigEffPlotter():
 			"SingleMu40_lowmass":3,
 			"SingleMu40_llowmass":3,
 			"BJet60_53_lowmass":1,
+			"BJet60_53_highmass":1,
 			"BJet80_70_highmass":1,
 		}
 		for efficiency_name, hist_pair in self._efficiency_combinations.iteritems():
@@ -248,7 +264,7 @@ class TrigEffPlotter():
 			self._efficiency_histograms[efficiency_name].SetName("h_efficiency_" + efficiency_name)
 			self._efficiency_histograms[efficiency_name].SetDirectory(0)
 
-			if "JetHT" in efficiency_name:# or efficiency_name == "BJet80_70_highmass": This is inappropriate, I think. 80/70 - 160/120 don't have the same correlations.
+			if "JetHT" in efficiency_name or efficiency_name == "BJet60_53_highmass":
 				self._efficiency_histograms[efficiency_name].Divide(self._mjj_histograms[hist_pair[1]])
 				# Set the histogram errors to N/n * sqrt((N+n(x-2))/(nN)), where x is the prescale
 				for bin in xrange(1, self._efficiency_histograms[efficiency_name].GetNbinsX() + 1):
@@ -275,14 +291,16 @@ class TrigEffPlotter():
 
 			self._mjj_histograms[hist_pair[0]].SetMarkerStyle(24)
 			self._mjj_histograms[hist_pair[0]].SetMarkerColor(self._colors[efficiency_name])
+			self._mjj_histograms[hist_pair[0]].SetLineColor(self._colors[efficiency_name])
 			self._mjj_histograms[hist_pair[1]].SetMarkerStyle(20)
 			self._mjj_histograms[hist_pair[1]].SetMarkerColor(self._colors[efficiency_name])
+			self._mjj_histograms[hist_pair[1]].SetLineColor(self._colors[efficiency_name])
 
 			# Finely binned
 			self._efficiency_histograms_fine[efficiency_name] = self._mjj_histograms_fine[hist_pair[0]].Clone()
 			self._efficiency_histograms_fine[efficiency_name].SetName("h_efficiency_" + efficiency_name)
 			self._efficiency_histograms_fine[efficiency_name].SetDirectory(0)
-			if "JetHT" in efficiency_name or efficiency_name == "BJet80_70_highmass":
+			if "JetHT" in efficiency_name or efficiency_name == "BJet60_53_highmass":
 				self._efficiency_histograms_fine[efficiency_name].Divide(self._mjj_histograms_fine[hist_pair[1]])
 			else:
 				self._efficiency_histograms_fine[efficiency_name].Divide(self._mjj_histograms_fine[hist_pair[0]], self._mjj_histograms_fine[hist_pair[1]], 1, 1, "B")
@@ -354,13 +372,16 @@ class TrigEffPlotter():
 				if "highmass" in name:
 					self._fit_ranges[name] = [526, 1607]
 				elif "lowmass" in name:
-					self._fit_ranges[name] = [386, 1246]
-				self._efficiency_fits[name] = ROOT.TF1("linear_" + name, "[0]", self._fit_ranges[name][0], self._fit_ranges[name][1])
-				self._efficiency_fits[name].SetLineColor(self._colors[name])
+					self._fit_ranges[name] = [386, 1058]
+				self._efficiency_fits[name] = ROOT.TF1("linear_" + name, "[0]+[1]*x", self._fit_ranges[name][0], self._fit_ranges[name][1])
+				#self._efficiency_fits[name].SetLineColor(self._colors[name])
+				self._efficiency_fits[name].SetLineColor(kRed)
 				if "lowmass" in name:
 					self._efficiency_fits[name].SetParameter(0, 0.2)
+					self._efficiency_fits[name].SetParameter(1, 0.)
 				elif "highmass" in name:
 					self._efficiency_fits[name].SetParameter(0, 0.5)
+					self._efficiency_fits[name].SetParameter(1, 0.)
 				hist.Fit(self._efficiency_fits[name], "R0")
 
 		# Fit SingleMu and BJetPlusX with sigmoid functions
@@ -368,25 +389,27 @@ class TrigEffPlotter():
 			if "SingleMu" in name or "BJet" in name:
 				print "Fitting " + name
 				if "highmass" in name:
-					self._fit_ranges[name] = [354, 1607]
+					self._fit_ranges[name] = [330, 605]
 				elif "llowmass" in name:
-					self._fit_ranges[name] = [197, 526]
+					self._fit_ranges[name] = [175, 420]
 				elif "lowmass" in name:
-					self._fit_ranges[name] = [197, 526]
+					self._fit_ranges[name] = [175, 420]
 
 				self._efficiency_fits[name] = ROOT.TF1("sigmoid_" + name, "[2] * (1. / (1. + TMath::Exp(-1. * (x - [0]) / [1])))", self._fit_ranges[name][0], self._fit_ranges[name][1])
-				self._efficiency_fits[name].SetLineColor(self._colors[name])
+				#self._efficiency_fits[name].SetLineColor(self._colors[name])
+				self._efficiency_fits[name].SetLineColor(kRed)
 				self._efficiency_fits[name].SetParameter(0, 200.)
 				if "lowmass" in name:
 					self._efficiency_fits[name].SetParLimits(0, 0., 400.)
 				elif "highmass" in name:
 					self._efficiency_fits[name].SetParLimits(0, 0., 1000.)
-				self._efficiency_fits[name].SetParameter(1, 100.)
+				self._efficiency_fits[name].SetParameter(1, 50.)
+				#self._efficiency_fits[name].SetParameter(2, 1.)
 				if "SingleMu" in name:
-					self._efficiency_fits[name].SetParameter(2, 0.2)
+					self._efficiency_fits[name].SetParameter(2, 0.17)
 				elif name == "BJet60_53_lowmass":
 					self._efficiency_fits[name].SetParameter(2, 1.)
-				elif name == "BJet80_70_highmass":
+				elif name == "BJet80_70_highmass" or name == "BJet60_53_highmass":
 					self._efficiency_fits[name].SetParameter(2, 3.)
 	
 				fit_result = hist.Fit(self._efficiency_fits[name], "R0S")
@@ -432,14 +455,23 @@ class TrigEffPlotter():
 			top.Draw()
 			top.SetLogy()
 			top.cd()
-			frame_top = TH1F("frame_top", "frame_top", 100, 0., 1800.)
+			if "SingleMu" in efficiency_name:
+				frame_top = TH1F("frame_top", "frame_top", 100, 0., 1000.)
+			elif "BJet80_70_highmass" in efficiency_name:
+				frame_top = TH1F("frame_top", "frame_top", 100, 100., 800.)
+			else:
+				frame_top = TH1F("frame_top", "frame_top", 100, 0., 1800.)
 			frame_top.GetXaxis().SetTitleSize(0)
 			frame_top.GetXaxis().SetLabelSize(0)
 			frame_top.GetYaxis().SetTitle("Events / 1 GeV")
-			frame_top.SetMinimum(1.)
+			frame_top.SetMinimum(0.01)
 			frame_top.SetMaximum(10. * max(self._mjj_histograms[self._efficiency_combinations[efficiency_name][0]].GetMaximum(), self._mjj_histograms[self._efficiency_combinations[efficiency_name][1]].GetMaximum()))
 			frame_top.Draw()
+			self._mjj_histograms[self._efficiency_combinations[efficiency_name][0]].SetMarkerColor(seaborn.GetColorRoot("default", 0))
+			self._mjj_histograms[self._efficiency_combinations[efficiency_name][0]].SetLineColor(seaborn.GetColorRoot("default", 0))
 			self._mjj_histograms[self._efficiency_combinations[efficiency_name][0]].Draw("same")
+			self._mjj_histograms[self._efficiency_combinations[efficiency_name][1]].SetMarkerColor(seaborn.GetColorRoot("default", 2))
+			self._mjj_histograms[self._efficiency_combinations[efficiency_name][1]].SetLineColor(seaborn.GetColorRoot("default", 2))
 			self._mjj_histograms[self._efficiency_combinations[efficiency_name][1]].Draw("same")
 			if self._efficiency_combinations[efficiency_name][0] in self._legend_entries:
 				l.AddEntry(self._mjj_histograms[self._efficiency_combinations[efficiency_name][0]], self._legend_entries[self._efficiency_combinations[efficiency_name][0]], "lp")
@@ -457,12 +489,21 @@ class TrigEffPlotter():
 			bottom.SetBottomMargin(0.2)
 			bottom.Draw()
 			bottom.cd()
-			frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, 0., 1800.)
+			if "SingleMu" in efficiency_name:
+				frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, 0., 1000.)
+			elif "BJet80_70_highmass" in efficiency_name:
+				frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, 100., 800.)
+			else:
+				frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, 0., 1800.)
 			frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
 			frame_bottom.GetYaxis().SetTitle("Efficiency")
 			frame_bottom.SetMinimum(0.)
-			frame_bottom.SetMaximum(self._efficiency_guesses[efficiency_name] * 4.)
+			frame_bottom.SetMaximum(self._efficiency_guesses[efficiency_name] * 1.8)
 			frame_bottom.Draw()
+			efficiency_histogram.SetMarkerColor(kBlack)
+			efficiency_histogram.SetLineColor(kBlack)
+			efficiency_histogram.SetLineStyle(1)
+			efficiency_histogram.SetLineWidth(1)
 			efficiency_histogram.Draw("same")
 			#if "SingleMu" in efficiency_name or "BJet" in efficiency_name:
 			self._efficiency_fits[efficiency_name].Draw("same")
@@ -472,32 +513,190 @@ class TrigEffPlotter():
 			ROOT.SetOwnership(top, False)
 			ROOT.SetOwnership(bottom, False)
 
+			# Efficiency only
+			c_eff = TCanvas("c_trigeffonly_" + efficiency_name, "c_trigeffonly_" + efficiency_name, 800, 600)
+			frame_bottom.Draw()
+			efficiency_histogram.Draw("same")
+			if "JetHT" in efficiency_name:
+				self._efficiency_fits[efficiency_name].SetLineColor(kRed)
+				self._efficiency_fits[efficiency_name].Draw("same")
+			c_eff.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c_eff.GetName() + ".pdf")
+
+
+	def MakeSingleEfficiencyFinePlots(self):
+		for efficiency_name, efficiency_histogram in self._efficiency_histograms_fine.iteritems():
+			print "[MakeSingleEfficiencyPlots] INFO : Plotting " + efficiency_name
+			c = TCanvas("c_trigeff_" + efficiency_name + "_fine", "c_trigeff_" + efficiency_name + "_fine", 800, 1200)
+			l = TLegend(0.5, 0.6, 0.88, 0.88)
+			l.SetFillColor(0)
+			l.SetBorderSize(0)
+			l.SetHeader(efficiency_name)
+
+			top = TPad("top", "top", 0., 0.7, 1., 1.)
+			top.SetBottomMargin(0.03)
+			top.Draw()
+			top.SetLogy()
+			top.cd()
+			if "SingleMu" in efficiency_name:
+				frame_top = TH1F("frame_top", "frame_top", 100, 0., 800.)
+			elif "BJet80_70_highmass" in efficiency_name:
+				frame_top = TH1F("frame_top", "frame_top", 100, 100., 800.)
+			else:
+				frame_top = TH1F("frame_top", "frame_top", 100, 0., 1800.)
+			frame_top.GetXaxis().SetTitleSize(0)
+			frame_top.GetXaxis().SetLabelSize(0)
+			frame_top.GetYaxis().SetLabelSize(0.06)
+			frame_top.GetYaxis().SetTitleSize(0.06)
+			frame_top.GetYaxis().SetTitleOffset(0.8)
+			frame_top.GetYaxis().SetTitle("Events")
+			frame_top.SetMinimum(0.5)
+			frame_top.SetMaximum(10. * max(self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][0]].GetMaximum(), self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][1]].GetMaximum()))
+			frame_top.Draw()
+			self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][0]].SetMarkerColor(seaborn.GetColorRoot("default", 0))
+			self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][0]].SetLineColor(seaborn.GetColorRoot("default", 0))
+			self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][0]].Draw("same")
+			self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][1]].SetMarkerColor(seaborn.GetColorRoot("default", 2))
+			self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][1]].SetLineColor(seaborn.GetColorRoot("default", 2))
+			self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][1]].Draw("same")
+			if self._efficiency_combinations[efficiency_name][0] in self._legend_entries:
+				l.AddEntry(self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][0]], self._legend_entries[self._efficiency_combinations[efficiency_name][0]], "lp")
+			else:
+				l.AddEntry(self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][0]], self._efficiency_combinations[efficiency_name][0], "lp")
+			if self._efficiency_combinations[efficiency_name][1] in self._legend_entries:
+				l.AddEntry(self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][1]], self._legend_entries[self._efficiency_combinations[efficiency_name][1]], "lp")
+			else:
+				l.AddEntry(self._mjj_histograms_fine[self._efficiency_combinations[efficiency_name][1]], self._efficiency_combinations[efficiency_name][1], "lp")
+			l.Draw()
+
+			c.cd()
+			middle = TPad("middle", "middle", 0., 0.4, 1., 0.7)
+			middle.SetTopMargin(0.03)
+			middle.SetBottomMargin(0.03)
+			middle.Draw()
+			middle.cd()
+			if "SingleMu" in efficiency_name:
+				frame_middle = TH1F("frame_middle", "frame_middle", 100, 0., 800.)
+			elif "BJet80_70_highmass" in efficiency_name:
+				frame_middle = TH1F("frame_middle", "frame_middle", 100, 100., 800.)
+			else:
+				frame_middle = TH1F("frame_middle", "frame_middle", 100, 0., 1800.)
+			#frame_middle.GetXaxis().SetTitle("m_{jj} [GeV]")
+			frame_middle.GetXaxis().SetLabelSize(0.)
+			frame_middle.GetXaxis().SetTitleSize(0.)
+			frame_middle.GetYaxis().SetLabelSize(0.06)
+			frame_middle.GetYaxis().SetTitleSize(0.06)
+			frame_middle.GetYaxis().SetTitleOffset(0.8)
+			frame_middle.GetYaxis().SetTitle("Efficiency")
+			frame_middle.SetMinimum(0.)
+			frame_middle.SetMaximum(self._efficiency_guesses[efficiency_name] * 1.5)
+			frame_middle.Draw()
+			efficiency_histogram.SetMarkerColor(kBlack)
+			efficiency_histogram.SetLineColor(kBlack)
+			efficiency_histogram.SetLineStyle(1)
+			efficiency_histogram.SetLineWidth(1)
+			efficiency_histogram.Draw("same")
+			#if "SingleMu" in efficiency_name or "BJet" in efficiency_name:
+			self._efficiency_fits[efficiency_name].Draw("same")
+
+			c.cd()
+			bottom = TPad("bottom", "bottom", 0., 0., 1., 0.4)
+			bottom.SetTopMargin(0.02)
+			bottom.SetBottomMargin(0.25)
+			bottom.Draw()
+			bottom.cd()
+			if "SingleMu" in efficiency_name:
+				frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, 0., 800.)
+			elif "BJet80_70_highmass" in efficiency_name:
+				frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, 100., 800.)
+			else:
+				frame_bottom = TH1F("frame_bottom", "frame_bottom", 100, 0., 1800.)
+			frame_bottom.GetXaxis().SetTitleSize(0.05)
+			frame_bottom.GetXaxis().SetLabelSize(0.05)
+			frame_bottom.GetXaxis().SetTitle("m_{jj} [GeV]")
+			frame_bottom.GetYaxis().SetLabelSize(0.06 * 0.3 / 0.4)
+			frame_bottom.GetYaxis().SetTitleSize(0.06 * 0.3 / 0.4)
+			frame_bottom.GetYaxis().SetTitleOffset(0.8)
+			frame_bottom.GetYaxis().SetTitle("(eff - fit) / #sigma(eff)")
+			frame_bottom.SetMinimum(-3.)
+			frame_bottom.SetMaximum(3.)
+			frame_bottom.Draw()
+			fit_ratio_histogram = efficiency_histogram.Clone()
+			for bin in xrange(1, fit_ratio_histogram.GetNbinsX() + 1):
+				this_eff = efficiency_histogram.GetBinContent(bin)
+				this_deff = efficiency_histogram.GetBinError(bin)
+				this_mjj = efficiency_histogram.GetXaxis().GetBinCenter(bin)
+				if this_mjj < self._efficiency_fits[efficiency_name].GetXmin() or this_mjj > self._efficiency_fits[efficiency_name].GetXmax() or this_deff == 0.:
+					fit_ratio_histogram.SetBinContent(bin, 0.)
+					fit_ratio_histogram.SetBinError(bin, 0.)
+				else:
+					this_fit = self._efficiency_fits[efficiency_name].Eval(this_mjj)
+					fit_ratio_histogram.SetBinContent(bin, (this_eff - this_fit) / this_deff)
+					fit_ratio_histogram.SetBinError(bin, 0.)
+			fit_ratio_histogram.SetMarkerStyle(20)
+			fit_ratio_histogram.SetMarkerColor(kBlack)
+			fit_ratio_histogram.SetMarkerSize(1)
+			fit_ratio_histogram.SetFillStyle(1001)
+			fit_ratio_histogram.SetFillColor(seaborn.GetColorRoot("default", 2))
+			fit_ratio_histogram.Draw("hist same")
+
+			c.cd()
+			c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + ".pdf")
+			ROOT.SetOwnership(c, False)
+			ROOT.SetOwnership(top, False)
+			ROOT.SetOwnership(middle, False)
+
 	def MakeJetHTSingleMuComparisons(self):
-		for sr_name in ["lowmass", "llowmass"]:
+		for sr_name in ["lowmass"]:
 			c = TCanvas("c_trigeff_jetht_vs_singlemu_" + sr_name, "c_trigeff_jetht_vs_singlemu_" + sr_name, 800, 600)
 			l = TLegend(0.7, 0.7, 0.88, 0.88)
 			if sr_name == "highmass":
-				l.SetHeader("Test b-tagged 160/120")
+				l.SetHeader("HLT 160/120+btags")
 			elif sr_name == "lowmass":
-				l.SetHeader("Test b-tagged 80/70")
+				l.SetHeader("Low mass trigger #varepsilon_{b-tag}")
 			elif sr_name == "llowmass":
-				l.SetHeader("Test b-tagged 60/53")
+				l.SetHeader("HLT 60/53+btags")
 			l.SetFillColor(0)
 			l.SetBorderSize(0)
-			frame = TH1F("frame_" + sr_name, "frame_" + sr_name, 100, 0., 1800.)
+			if sr_name == "lowmass":
+				frame = TH1F("frame_" + sr_name, "frame_" + sr_name, 100, 0., 1200.)
+			else:
+				frame = TH1F("frame_" + sr_name, "frame_" + sr_name, 100, 0., 1800.)
 			frame.SetMinimum(0.)
-			frame.SetMaximum(self._efficiency_guesses["SingleMu_" + sr_name] * 7.)
+			frame.SetMaximum(0.5)
+			#frame.SetMaximum(self._efficiency_guesses["SingleMu24i_" + sr_name] * 10.)
 			frame.GetXaxis().SetTitle("m_{jj} [GeV]")
 			frame.GetYaxis().SetTitle("Efficiency")
 			frame.Draw()
 
 			# SingleMu-based efficiency
-			self._efficiency_histograms["SingleMu_" + sr_name].Draw("same")
-			l.AddEntry(self._efficiency_histograms["SingleMu_" + sr_name], "SingleMu", "lp")
+			if sr_name == "lowmass":
+				singlemu_fit = TF1("singlemu_eff_" + sr_name, "[0]", 296, 1058)
+				self._efficiency_histograms["SingleMu24i_lowmass"].Fit(singlemu_fit, "R0")
+				self._efficiency_histograms["SingleMu24i_lowmass"].SetMarkerColor(seaborn.GetColorRoot("default", 2))
+				self._efficiency_histograms["SingleMu24i_lowmass"].SetLineColor(seaborn.GetColorRoot("default", 2))
+				self._efficiency_histograms["SingleMu24i_lowmass"].SetMarkerStyle(20)
+				singlemu_fit.SetLineColor(seaborn.GetColorRoot("default", 2))
+				self._efficiency_histograms["SingleMu24i_lowmass"].Draw("same")
+			elif sr_name == "highmass":
+				singlemu_fit = TF1("singlemu_eff_" + sr_name, "[0]", 526, 1607)
+			singlemu_fit.Draw("same")
+			l.AddEntry(self._efficiency_histograms["SingleMu24i_" + sr_name], "Mu24i", "lp")
+			l.AddEntry(singlemu_fit, "Mu24i fit", "lp")
 
 			# JetHT_based efficiency
+			if sr_name == "lowmass":
+				jetht_fit = TF1("jetht_eff_" + sr_name, "[0]", 386, 1058)
+			elif sr_name == "highmass":
+				jetht_fit = TF1("jetht_eff_" + sr_name, "[0]", 526, 1607)
+			self._efficiency_histograms["JetHT_" + sr_name].Fit(jetht_fit, "R0")
+			self._efficiency_histograms["JetHT_" + sr_name].SetLineColor(seaborn.GetColorRoot("default", 0))
+			self._efficiency_histograms["JetHT_" + sr_name].SetMarkerStyle(24)
+			self._efficiency_histograms["JetHT_" + sr_name].SetMarkerColor(seaborn.GetColorRoot("default", 0))
 			self._efficiency_histograms["JetHT_" + sr_name].Draw("same")
+			jetht_fit.SetLineColor(seaborn.GetColorRoot("default", 0))
+			jetht_fit.Draw("same")
 			l.AddEntry(self._efficiency_histograms["JetHT_" + sr_name], "JetHT", "lp")
+			l.AddEntry(jetht_fit, "JetHT fit", "lp")
 			l.Draw()
 			c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + ".pdf")
 
@@ -528,5 +727,6 @@ if __name__ == "__main__":
 	trig_eff_plotter = TrigEffPlotter()
 	#trig_eff_plotter.MakeSingleMuComparisons()
 	trig_eff_plotter.MakeSingleEfficiencyPlots()
-	#trig_eff_plotter.MakeJetHTSingleMuComparisons()
+	trig_eff_plotter.MakeSingleEfficiencyFinePlots()
+	trig_eff_plotter.MakeJetHTSingleMuComparisons()
 	#trig_eff_plotter.MakeSingleMu6053Comparison()
