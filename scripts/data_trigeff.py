@@ -99,7 +99,7 @@ class TrigEffPlotter():
 
 	def GetSingleMuHistograms(self):
 		this_analyses = ["trigmu_highmass_CSVTM", "trigmu_lowmass_CSVTM", "trigmubbh_highmass_CSVTM", "trigmubbl_lowmass_CSVTM", "trigmubbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM", "trigmu24ibbl_lowmass_CSVTM", "trigmu24ibbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM", "trigmu40bbl_lowmass_CSVTM", "trigmu40bbll_lowmass_CSVTM"]
-		# this_analyses.extend(["trigmu24i_highmass_CSVTM", "trigmu24ibbh_highmass_CSVTM"])
+		this_analyses.extend(["trigmu24i_highmass_CSVTM", "trigmu24ibbh_highmass_CSVTM"])
 		for analysis in this_analyses:
 			print "Opening " + analysis_config.get_b_histogram_filename(analysis, "SingleMu_2012")
 			f = ROOT.TFile(analysis_config.get_b_histogram_filename(analysis, "SingleMu_2012"), "READ")
@@ -157,15 +157,15 @@ class TrigEffPlotter():
 			"JetHT_highmass":["trigbbh_CSVTM_BJetPlusX_2012BCD", "JetHT"],
 			"JetHT_lowmass":["trigbbl_CSVTM_BJetPlusX_2012BCD", "JetHT"], 
 			"JetHT_llowmass":["trigbbll_CSVTM_BJetPlusX_2012BCD", "JetHT"],
-			"SingleMu_highmass":["trigmubbh_highmass_CSVTM", "trigmu_highmass_CSVTM"], 
-			"SingleMu_lowmass":["trigmubbl_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
-			"SingleMu_llowmass":["trigmubbll_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
-			#"SingleMu24i_highmass":["trigmu24ibbh_highmass_CSVTM", "trigmu24i_highmass_CSVTM"], 
+			#"SingleMu_highmass":["trigmubbh_highmass_CSVTM", "trigmu_highmass_CSVTM"], 
+			#"SingleMu_lowmass":["trigmubbl_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+			#"SingleMu_llowmass":["trigmubbll_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+			"SingleMu24i_highmass":["trigmu24ibbh_highmass_CSVTM", "trigmu24i_highmass_CSVTM"], 
 			"SingleMu24i_lowmass":["trigmu24ibbl_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
-			"SingleMu24i_llowmass":["trigmu24ibbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
+			#"SingleMu24i_llowmass":["trigmu24ibbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
 			#"SingleMu40_highmass":["trigmu40bbh_highmass_CSVTM", "trigmu40_highmass_CSVTM"], 
-			"SingleMu40_lowmass":["trigmu40bbl_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
-			"SingleMu40_llowmass":["trigmu40bbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
+			#"SingleMu40_lowmass":["trigmu40bbl_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
+			#"SingleMu40_llowmass":["trigmu40bbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
 			"BJet60_53_lowmass":["trigbbl_CSVTM_BJetPlusX_2012", "trigbbll_CSVTM_BJetPlusX_2012"], 
 			"BJet80_70_highmass":["trigbbh_CSVTM_BJetPlusX_2012", "trigbbl_CSVTM_BJetPlusX_2012"], 
 			})
@@ -248,7 +248,7 @@ class TrigEffPlotter():
 			self._efficiency_histograms[efficiency_name].SetName("h_efficiency_" + efficiency_name)
 			self._efficiency_histograms[efficiency_name].SetDirectory(0)
 
-			if "JetHT" in efficiency_name or efficiency_name == "BJet80_70_highmass":
+			if "JetHT" in efficiency_name:# or efficiency_name == "BJet80_70_highmass": This is inappropriate, I think. 80/70 - 160/120 don't have the same correlations.
 				self._efficiency_histograms[efficiency_name].Divide(self._mjj_histograms[hist_pair[1]])
 				# Set the histogram errors to N/n * sqrt((N+n(x-2))/(nN)), where x is the prescale
 				for bin in xrange(1, self._efficiency_histograms[efficiency_name].GetNbinsX() + 1):
@@ -370,11 +370,11 @@ class TrigEffPlotter():
 				if "highmass" in name:
 					self._fit_ranges[name] = [354, 1607]
 				elif "llowmass" in name:
-					self._fit_ranges[name] = [176, 1246]
+					self._fit_ranges[name] = [197, 526]
 				elif "lowmass" in name:
-					self._fit_ranges[name] = [176, 1246]
+					self._fit_ranges[name] = [197, 526]
 
-				self._efficiency_fits[name] = ROOT.TF1("sigmoid_" + name, "[3] * (1. / (1. + TMath::Exp(-1. * (x - [0]) / [1])))**[2]", self._fit_ranges[name][0], self._fit_ranges[name][1])
+				self._efficiency_fits[name] = ROOT.TF1("sigmoid_" + name, "[2] * (1. / (1. + TMath::Exp(-1. * (x - [0]) / [1])))", self._fit_ranges[name][0], self._fit_ranges[name][1])
 				self._efficiency_fits[name].SetLineColor(self._colors[name])
 				self._efficiency_fits[name].SetParameter(0, 200.)
 				if "lowmass" in name:
@@ -382,17 +382,17 @@ class TrigEffPlotter():
 				elif "highmass" in name:
 					self._efficiency_fits[name].SetParLimits(0, 0., 1000.)
 				self._efficiency_fits[name].SetParameter(1, 100.)
-				self._efficiency_fits[name].SetParameter(2, 1.)
 				if "SingleMu" in name:
-					self._efficiency_fits[name].SetParameter(3, 0.17)
+					self._efficiency_fits[name].SetParameter(2, 0.2)
 				elif name == "BJet60_53_lowmass":
-					self._efficiency_fits[name].SetParameter(3, 1.)
+					self._efficiency_fits[name].SetParameter(2, 1.)
 				elif name == "BJet80_70_highmass":
-					self._efficiency_fits[name].SetParameter(3, 3.)
+					self._efficiency_fits[name].SetParameter(2, 3.)
 	
-				hist.Fit(self._efficiency_fits[name], "R0")
+				fit_result = hist.Fit(self._efficiency_fits[name], "R0S")
 				self._fit_chi2s[name] = self._efficiency_fits[name].GetChisquare()
 				self._fit_ndfs[name] = self._efficiency_fits[name].GetNDF()
+				fit_result.Print("V")
 
 	def MakeSingleMuComparisons(self):
 		for sr_name in ["lowmass", "llowmass"]:
@@ -526,7 +526,7 @@ class TrigEffPlotter():
 
 if __name__ == "__main__":
 	trig_eff_plotter = TrigEffPlotter()
-	trig_eff_plotter.MakeSingleMuComparisons()
+	#trig_eff_plotter.MakeSingleMuComparisons()
 	trig_eff_plotter.MakeSingleEfficiencyPlots()
-	trig_eff_plotter.MakeJetHTSingleMuComparisons()
-	trig_eff_plotter.MakeSingleMu6053Comparison()
+	#trig_eff_plotter.MakeJetHTSingleMuComparisons()
+	#trig_eff_plotter.MakeSingleMu6053Comparison()
