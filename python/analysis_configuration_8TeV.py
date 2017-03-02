@@ -250,6 +250,11 @@ analysis_cfgs["trigmu24ibbll_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_
 analysis_cfgs["trigmu24ibbl_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24ibbl_lowmass_CSVTM_cfg.py"
 analysis_cfgs["trigmu24ibbh_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24ibbh_highmass_CSVTM_cfg.py"
 
+analysis_cfgs["trigmu24i_lowmass"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24i_lowmass_cfg.py"
+analysis_cfgs["trigmu24i_highmass"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24i_highmass_cfg.py"
+analysis_cfgs["trigmu24ibbl_lowmass"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24ibbl_lowmass_cfg.py"
+analysis_cfgs["trigmu24ibbh_highmass"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu24ibbh_highmass_cfg.py"
+
 analysis_cfgs["trigmu40_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40_lowmass_CSVTM_cfg.py"
 analysis_cfgs["trigmu40_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40_highmass_CSVTM_cfg.py"
 analysis_cfgs["trigmu40bbll_lowmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigmu40bbll_lowmass_CSVTM_cfg.py"

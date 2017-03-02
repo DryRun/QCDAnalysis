@@ -15,17 +15,12 @@ seaborn.Initialize()
 import time
 
 class OfflineBTagPlots():
-	def __init__(self, sr, samples):
+	def __init__(self, numerator_analysis, denominator_analysis, samples):
 		print "[OfflineBTagPlots::__init__] Initializing with sr = " + sr + ", samples = ",
 		print samples
-		self._sr = sr
 		self._samples = samples
-		if sr == "lowmass":
-			self._numerator_analysis = "NoTrigger_eta1p7_CSVTM"
-			self._denominator_analysis = "NoTrigger_eta1p7"
-		elif sr == "highmass":
-			self._numerator_analysis = "NoTrigger_eta2p2_CSVTM"
-			self._denominator_analysis = "NoTrigger_eta2p2"
+		self._numerator_analysis = numerator_analysis
+		self._denominator_analysis = denominator_analysis
 		self._input_files = {"numerator":{}, "denominator":{}}
 		for sample in self._samples:
 			self._input_files["numerator"][sample] = TFile(analysis_config.get_b_histogram_filename(self._numerator_analysis, sample))
@@ -46,13 +41,22 @@ class OfflineBTagPlots():
 					print "[EfficiencyPlot] WARNING : Numerator and denominator normalizations do not match! Continuing, but investigate this. Numerator nevents = " + str(self._input_files["numerator"][sample].Get("BHistograms/h_sample_nevents").Integral()) + ", denominator nevents = " + str(self._input_files["denominator"][sample].Get("BHistograms/h_sample_nevents").Integral())
 			else:
 				# Check input nevents
-				if self._input_files["numerator"][sample].Get("BHistograms/h_sample_nevents").Integral() != self._input_files["denominator"][sample].Get("BHistograms/h_sample_nevents").Integral():
-					print "[EfficiencyPlot] ERROR : Inconsistent number of events between numerator and denominator. Results would be wrong, so I'm aborting."
-					print "[EfficiencyPlot] ERROR : \tNumerator = " + str(self._input_files["numerator"][sample].Get("BHistograms/h_sample_nevents").Integral())
-					print "[EfficiencyPlot] ERROR : \tDenominator = " + str(self._input_files["denominator"][sample].Get("BHistograms/h_sample_nevents").Integral())
-					sys.exit(1)
-				numerator_normalization = 1.
-				denominator_normalization = 1.
+				num_nevents = self._input_files["numerator"][sample].Get("BHistograms/h_sample_nevents").Integral()
+				den_nevents = self._input_files["denominator"][sample].Get("BHistograms/h_sample_nevents").Integral()
+				if num_nevents != den_nevents:
+					# Allow tiny differences...?
+					if abs((num_nevents - den_nevents) / den_nevents) < 0.001:
+						print "[EfficiencyPlot] ERROR : Small inconsistency between number of events between numerator and denominator. I'm going to rescale away the difference, but you may want to fix this."
+						numerator_normalization = den_nevents / num_nevents
+						denominator_normalization = 1.
+					else:
+						print "[EfficiencyPlot] ERROR : Inconsistent number of events between numerator and denominator. Results would be wrong, so I'm aborting."
+						print "[EfficiencyPlot] ERROR : \tNumerator = " + str(self._input_files["numerator"][sample].Get("BHistograms/h_sample_nevents").Integral())
+						print "[EfficiencyPlot] ERROR : \tDenominator = " + str(self._input_files["denominator"][sample].Get("BHistograms/h_sample_nevents").Integral())
+						sys.exit(1)
+				else:
+					numerator_normalization = 1.
+					denominator_normalization = 1.
 			if numerator_histogram:
 				numerator_histogram.Add(self._input_files["numerator"][sample].Get("BHistograms/h_pfjet_" + var), numerator_normalization)
 			else:
@@ -77,7 +81,7 @@ class OfflineBTagPlots():
 			denominator_histogram.Rebin(simple_rebin)
 
 
-		cname = "c_offline_btag_eff_" + var + "_" + self._sr
+		cname = "c_offline_btag_eff_" + var
 		if logy:
 			cname += "_log"
 		c = TCanvas(cname, "Offline b-tag #epsilon", 800, 1000)
@@ -180,9 +184,11 @@ class OfflineBTagPlots():
 		ROOT.SetOwnership(bottom, False)
 
 if __name__ == "__main__":
-	do_signal=True
-	do_qcd=True
+	do_signal = False
+	do_qcd = False
+	do_singlemu = True
 	dijet_binning = array("d", [1, 3, 6, 10, 16, 23, 31, 40, 50, 61, 74, 88, 103, 119, 137, 156, 176, 197, 220, 244, 270, 296, 325, 354, 386, 419, 453, 489, 526, 565, 606, 649, 693, 740, 788, 838, 890, 944, 1000, 1058, 1118, 1181, 1246, 1313, 1383, 1455, 1530, 1607, 1687, 1770, 1856, 1945, 2037, 2132, 2231, 2332, 2438, 2546, 2659, 2775, 2895, 3019, 3147, 3279, 3416, 3558, 3704, 3854, 4010, 4171, 4337, 4509, 4686, 4869, 5000])
+
 	if do_signal:
 		signal_masses = [400, 500, 600, 750, 900, 1200]
 		samples = []
@@ -190,17 +196,59 @@ if __name__ == "__main__":
 			for mass in signal_masses:
 				samples.append(analysis_config.simulation.get_signal_tag(model, mass, "FULLSIM"))
 		for sr in ["lowmass", "highmass"]:
-			plotter = OfflineBTagPlots(sr, samples)
-			plotter.EfficiencyPlot(logy=False, binning=dijet_binning, save_tag="_signal")
+			if sr == "lowmass":
+				numerator_analysis = "NoTrigger_eta1p7_CSVTM"
+				denominator_analysis = "NoTrigger_eta1p7"
+			elif sr == "highmass":
+				numerator_analysis = "NoTrigger_eta2p2_CSVTM"
+				denominator_analysis = "NoTrigger_eta2p2"
+			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, samples)
+			plotter.EfficiencyPlot(logy=False, binning=dijet_binning, save_tag="_" + sr + "_signal")
 
 			for sample in samples:
 				plotter = OfflineBTagPlots(sr, [sample])
-				plotter.EfficiencyPlot(logy=False, binning=dijet_binning, save_tag="_signal_" + sample)
+				plotter.EfficiencyPlot(logy=False, binning=dijet_binning, save_tag="_" + sr + "_signal_" + sample)
 
 	if do_qcd:
 		QCD_samples = ["QCD_Pt-80to120_TuneZ2star_8TeV_pythia6","QCD_Pt-120to170_TuneZ2star_8TeV_pythia6","QCD_Pt-170to300_TuneZ2star_8TeV_pythia6","QCD_Pt-300to470_TuneZ2star_8TeV_pythia6","QCD_Pt-470to600_TuneZ2star_8TeV_pythia6","QCD_Pt-600to800_TuneZ2star_8TeV_pythia6","QCD_Pt-800to1000_TuneZ2star_8TeV_pythia6","QCD_Pt-1000to1400_TuneZ2star_8TeV_pythia6","QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6","QCD_Pt-1800_TuneZ2star_8TeV_pythia6"]
 		for sr in ["lowmass", "highmass"]:
-			plotter = OfflineBTagPlots(sr, QCD_samples)
-			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_qcd", ratio_range=[0.,5.e-3], x_range=[0., 2000.], legend_position="bottomright")
-			plotter.EfficiencyPlot(var="pt_btag1", logy=True, simple_rebin=5, save_tag="_qcd", ratio_range=[0.,5.e-3], x_range=[0., 1000.], legend_position="bottomright")
-			plotter.EfficiencyPlot(var="pt_btag2", logy=True, simple_rebin=5, save_tag="_qcd", ratio_range=[0.,5.e-3], x_range=[0., 1000.], legend_position="bottomright")
+			if sr == "lowmass":
+				numerator_analysis = "NoTrigger_eta1p7_CSVTM"
+				denominator_analysis = "NoTrigger_eta1p7"
+			elif sr == "highmass":
+				numerator_analysis = "NoTrigger_eta2p2_CSVTM"
+				denominator_analysis = "NoTrigger_eta2p2"
+			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, QCD_samples)
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_qcd", ratio_range=[0.,5.e-3], x_range=[0., 2000.], legend_position="bottomright")
+			plotter.EfficiencyPlot(var="pt_btag1", logy=True, simple_rebin=5, save_tag="_" + sr + "_qcd", ratio_range=[0.,5.e-3], x_range=[0., 1000.], legend_position="bottomright")
+			plotter.EfficiencyPlot(var="pt_btag2", logy=True, simple_rebin=5, save_tag="_" + sr + "_qcd", ratio_range=[0.,5.e-3], x_range=[0., 1000.], legend_position="bottomright")
+
+	if do_singlemu:
+		for sr in ["lowmass", "highmass"]:
+			# Total b-tagging efficiency
+			if sr == "lowmass":
+				numerator_analysis = "trigmu24ibbl_" + sr + "_CSVTM"
+			elif sr == "highmass":
+				numerator_analysis = "trigmu24ibbh_" + sr + "_CSVTM"
+			denominator_analysis = "trigmu24i_" + sr
+			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, ["SingleMu_2012"])
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_totalbtag_singlemu", ratio_range=[0.,0.1], x_range=[0., 2000.], legend_position="topright")
+
+			# Offline b-tagging efficiency
+			if sr == "lowmass":
+				numerator_analysis = "trigmu24i_" + sr + "_CSVTM"
+			elif sr == "highmass":
+				numerator_analysis = "trigmu24i_" + sr + "_CSVTM"
+			denominator_analysis = "trigmu24i_" + sr
+			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, ["SingleMu_2012"])
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_offbtag_singlemu", ratio_range=[0.,0.1], x_range=[0., 2000.], legend_position="topright")
+
+			# Online b-tagging efficiency
+			if sr == "lowmass":
+				numerator_analysis = "trigmu24ibbl_" + sr
+			elif sr == "highmass":
+				numerator_analysis = "trigmu24ibbh_" + sr
+			denominator_analysis = "trigmu24i_" + sr
+			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, ["SingleMu_2012"])
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_onbtag_singlemu", ratio_range=[0.,0.1], x_range=[0., 2000.], legend_position="topright")
+
