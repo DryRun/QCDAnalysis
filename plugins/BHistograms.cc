@@ -233,6 +233,7 @@ void BHistograms::beginJob()
 	global_histograms_->AddTH1F("pass_nevents_weighted", "pass_nevents_weighted", "", 1, 0.5, 1.5);
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
 		global_histograms_->AddTH1F("event_btag_sf", "event_btag_sf", "SF", 200, 0., 2.);
+		global_histograms_->AddTH1F("mc_weights", "mc_weights", "MC weight", 200, 0., 2.);
 	}
 
 	pfjet_histograms_ = new Root::HistogramManager();
@@ -252,7 +253,7 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH2F("mjj_csv2", "mjj_csv2", "m_{jj} [GeV]", 500, 0., 5000., "CSV (subleading)", 20, 0., 1.);
 	pfjet_histograms_->AddTH2F("mjj_npfjets", "mjj_npfjets", "m_{jj} [GeV]", 500, 0., 5000., "N_{PF jets}", 11, -0.5, 10.5);
 	pfjet_histograms_->AddTH2F("mjj_ncalojets", "mjj_ncalojets", "m_{jj} [GeV]", 500, 0., 5000., "N_{Calo jets}", 11, -0.5, 10.5);
-	pfjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+	pfjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 100, 0., 1., "CSV (subleading)", 100, 0., 1.);
 	pfjet_histograms_->AddTH1D("pt_btag1", "pt_btag1", "p_{T} (leading CSV) [GeV]", 1000, 0., 1000.);
 	pfjet_histograms_->AddTH1D("pt_btag2", "pt_btag2", "p_{T} (subleading CSV) [GeV]", 1000, 0., 1000.);
 	pfjet_histograms_->AddTH1D("mjj_csvorder", "mjj_csvorder", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
@@ -280,7 +281,7 @@ void BHistograms::beginJob()
 	calojet_histograms_->AddTH1D("pt2", "pt2", "p_{T} (subleading) [GeV]", 1000, 0., 1000.);
 	calojet_histograms_->AddTH2D("pt1_vs_pt2", "pt1", "p_{T} (leading) [GeV]", 100, 0., 1000., "p_{T} (subleading) [GeV]", 100, 0., 1000.);
 	calojet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
-	calojet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+	calojet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 100, 0., 1., "CSV (subleading)", 100, 0., 1.);
 
 	fatjet_histograms_ = new Root::HistogramManager();
 	fatjet_histograms_->AddPrefix("h_fatjet_");
@@ -293,7 +294,7 @@ void BHistograms::beginJob()
 	fatjet_histograms_->AddTH1D("pt2", "pt2", "p_{T} (subleading) [GeV]", 1000, 0., 1000.);
 	fatjet_histograms_->AddTH2D("pt1_vs_pt2", "pt1", "p_{T} (leading) [GeV]", 100, 0., 1000., "p_{T} (subleading) [GeV]", 100, 0., 1000.);
 	fatjet_histograms_->AddTH2F("mjj_deltaeta", "mjj_deltaeta", "m_{jj} [GeV]", 500, 0., 5000., "#Delta#eta", 100, -5., 5.);
-	fatjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 20, 0., 1., "CSV (subleading)", 20, 0., 1.);
+	fatjet_histograms_->AddTH2F("btag_csv", "btag_csv", "CSV (leading)", 100, 0., 1., "CSV (subleading)", 100, 0., 1.);
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
 		fatjet_histograms_->AddTH1D("mjj_BTagOfflineSFUp", "mjj_BTagOfflineSFUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
 		fatjet_histograms_->AddTH1D("mjj_BTagOfflineSFDown", "mjj_BTagOfflineSFDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
@@ -432,6 +433,10 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				double btag_sf = getEventBTagSF();
 				weight *= btag_sf;
 				global_histograms_->GetTH1F("event_btag_sf")->Fill(btag_sf);
+
+				double mc_weight = event_->evtHdr().weight();
+				weight *= mc_weight;
+				global_histograms_->GetTH1F("mc_weights")->Fill(mc_weight);
 			}
 			global_histograms_->GetTH1F("input_nevents_weighted")->Fill(weight);
 
@@ -525,6 +530,17 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				double pf_btag_csv1 = event_->pfjet(0).btag_csv();
 				double pf_btag_csv2 = event_->pfjet(1).btag_csv();
 				pfjet_histograms_->GetTH1D("mjj")->Fill(event_->pfmjjcor(0), weight);
+				if (TMath::Abs(event_->pfmjjcor(0) - 150.) < 1.) {
+					std::cout << "[BHistograms::ProcessEvent] DEBUG : Printing low mass event" << std::endl;
+					for (int i_jet = 0; i_jet <= 1; ++i_jet) {
+						std::cout << "[BHistograms::ProcessEvent] DEBUG : \tJet " << i_jet << " pT = " << event_->pfjet(i_jet).ptCor() << std::endl;;
+						std::cout << "[BHistograms::ProcessEvent] DEBUG : \tJet " << i_jet << " eta = " << event_->pfjet(i_jet).eta() << std::endl;;
+						std::cout << "[BHistograms::ProcessEvent] DEBUG : \tJet " << i_jet << " phi = " << event_->pfjet(i_jet).phi() << std::endl;;
+						std::cout << "[BHistograms::ProcessEvent] DEBUG : \tJet " << i_jet << " mass = " << event_->pfjet(i_jet).mass() << std::endl;;
+						std::cout << "[BHistograms::ProcessEvent] DEBUG : \tJet " << i_jet << " CSV = " << event_->pfjet(i_jet).btag_csv() << std::endl;;
+					}
+					std::cout << "[BHistograms::ProcessEvent] DEBUG : \tDeltaEta = " << pf_deltaeta << std::endl;
+				}
 				pfjet_histograms_->GetTH1D("mjj_csvorder")->Fill(event_->pfmjjcor_csv_ordered(0), weight);
 				bool is_excl_dijet = true;
 				if (event_->nPFJets() <= 2) {
