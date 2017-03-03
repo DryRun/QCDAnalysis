@@ -26,7 +26,7 @@ class OfflineBTagPlots():
 			self._input_files["numerator"][sample] = TFile(analysis_config.get_b_histogram_filename(self._numerator_analysis, sample))
 			self._input_files["denominator"][sample] = TFile(analysis_config.get_b_histogram_filename(self._denominator_analysis, sample))
 
-	def EfficiencyPlot(self, var="mjj", logy=True, binning=None, simple_rebin=None, save_tag="", sample_xsecs=None, x_range=None, ratio_range=None, legend_position="topright"):
+	def EfficiencyPlot(self, var="mjj", logy=True, binning=None, simple_rebin=None, save_tag="", sample_xsecs=None, x_range=None, ratio_range=None, legend_position="topright", numerator_legend=None, denominator_legend=None, ratio_title=None):
 		numerator_histogram = None
 		denominator_histogram = None
 		for sample in self._samples:
@@ -109,7 +109,7 @@ class OfflineBTagPlots():
 		if binning:
 			#frame_top.GetYaxis().SetTitle("Events / 1 GeV")
 			frame_top.GetYaxis().SetTitle("Events")
-#		else:
+		else:
 			frame_top.GetYaxis().SetTitle("Events")
 		frame_top.Draw("axis")
 		print "numerator integral = " + str(numerator_histogram.Integral())
@@ -129,8 +129,15 @@ class OfflineBTagPlots():
 
 		l.SetFillColor(0)
 		l.SetBorderSize(0)
-		l.AddEntry(numerator_histogram, "CSVT+CSVM")
-		l.AddEntry(denominator_histogram, "No CSV")
+		if numerator_legend:
+			l.AddEntry(numerator_histogram, numerator_legend)
+		else:
+			l.AddEntry(numerator_histogram, "CSVT+CSVM")
+		if denominator_legend:
+			l.AddEntry(denominator_histogram, denominator_legend)
+
+		else:
+			l.AddEntry(denominator_histogram, "No CSV")
 		l.Draw()
 
 		c.cd()
@@ -168,7 +175,10 @@ class OfflineBTagPlots():
 			ratio_histogram.GetXaxis().SetTitle("m_{jj} [GeV]")
 		elif "pt" in var:
 			ratio_histogram.GetXaxis().SetTitle("p_{T} [GeV]")
-		ratio_histogram.GetYaxis().SetTitle("Offline 2#timesb-tag efficiency")
+		if ratio_title:
+			ratio_histogram.GetYaxis().SetTitle(ratio_title)
+		else:
+			ratio_histogram.GetYaxis().SetTitle("Offline 2#timesb-tag efficiency")
 		if ratio_range:
 			ratio_histogram.SetMinimum(ratio_range[0])
 			ratio_histogram.SetMaximum(ratio_range[1])
@@ -185,8 +195,8 @@ class OfflineBTagPlots():
 
 if __name__ == "__main__":
 	do_signal = False
-	do_qcd = False
-	do_singlemu = True
+	do_qcd = True
+	do_singlemu = False
 	dijet_binning = array("d", [1, 3, 6, 10, 16, 23, 31, 40, 50, 61, 74, 88, 103, 119, 137, 156, 176, 197, 220, 244, 270, 296, 325, 354, 386, 419, 453, 489, 526, 565, 606, 649, 693, 740, 788, 838, 890, 944, 1000, 1058, 1118, 1181, 1246, 1313, 1383, 1455, 1530, 1607, 1687, 1770, 1856, 1945, 2037, 2132, 2231, 2332, 2438, 2546, 2659, 2775, 2895, 3019, 3147, 3279, 3416, 3558, 3704, 3854, 4010, 4171, 4337, 4509, 4686, 4869, 5000])
 
 	if do_signal:
@@ -223,6 +233,8 @@ if __name__ == "__main__":
 			plotter.EfficiencyPlot(var="pt_btag1", logy=True, simple_rebin=5, save_tag="_" + sr + "_qcd", ratio_range=[0.,5.e-3], x_range=[0., 1000.], legend_position="bottomright")
 			plotter.EfficiencyPlot(var="pt_btag2", logy=True, simple_rebin=5, save_tag="_" + sr + "_qcd", ratio_range=[0.,5.e-3], x_range=[0., 1000.], legend_position="bottomright")
 
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_qcd_norm", ratio_range=[0.,5.e-3], x_range=[0., 2000.], legend_position="bottomright", sample_xsecs=analysis_config.simulation.background_cross_sections)
+
 	if do_singlemu:
 		for sr in ["lowmass", "highmass"]:
 			# Total b-tagging efficiency
@@ -232,7 +244,7 @@ if __name__ == "__main__":
 				numerator_analysis = "trigmu24ibbh_" + sr + "_CSVTM"
 			denominator_analysis = "trigmu24i_" + sr
 			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, ["SingleMu_2012"])
-			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_totalbtag_singlemu", ratio_range=[0.,0.1], x_range=[0., 2000.], legend_position="topright")
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_totalbtag_singlemu", ratio_range=[0.,0.02], x_range=[0., 2000.], legend_position="topright", numerator_legend="With on+off b-tagging", denominator_legend="No b-tagging", ratio_title="Total online*offline b-tag efficiency")
 
 			# Offline b-tagging efficiency
 			if sr == "lowmass":
@@ -241,7 +253,7 @@ if __name__ == "__main__":
 				numerator_analysis = "trigmu24i_" + sr + "_CSVTM"
 			denominator_analysis = "trigmu24i_" + sr
 			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, ["SingleMu_2012"])
-			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_offbtag_singlemu", ratio_range=[0.,0.1], x_range=[0., 2000.], legend_position="topright")
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_offbtag_singlemu", ratio_range=[0.,0.06], x_range=[0., 2000.], legend_position="topright")
 
 			# Online b-tagging efficiency
 			if sr == "lowmass":
@@ -250,5 +262,5 @@ if __name__ == "__main__":
 				numerator_analysis = "trigmu24ibbh_" + sr
 			denominator_analysis = "trigmu24i_" + sr
 			plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, ["SingleMu_2012"])
-			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_onbtag_singlemu", ratio_range=[0.,0.1], x_range=[0., 2000.], legend_position="topright")
+			plotter.EfficiencyPlot(var="mjj", logy=True, binning=dijet_binning, save_tag="_" + sr + "_onbtag_singlemu", ratio_range=[0.,0.1], x_range=[0., 2000.], legend_position="topright", numerator_legend="With online b-tag", denominator_legend="Without online b-tag", ratio_title="Online b-tag efficiency (no offline CSV)")
 
