@@ -161,15 +161,21 @@ class TrigEffPlotter():
 			"JetHT_highmass":["trigbbh_CSVTM_BJetPlusX_2012BCD", "JetHT"],
 			"JetHT_lowmass":["trigbbl_CSVTM_BJetPlusX_2012BCD", "JetHT"], 
 			"JetHT_llowmass":["trigbbll_CSVTM_BJetPlusX_2012BCD", "JetHT"],
+<<<<<<< HEAD
+			#"SingleMu_highmass":["trigmubbh_highmass_CSVTM", "trigmu_highmass_CSVTM"], 
+			#"SingleMu_lowmass":["trigmubbl_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+			#"SingleMu_llowmass":["trigmubbll_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+=======
 			"SingleMu_highmass":["trigmubbh_highmass_CSVTM", "trigmu_highmass_CSVTM"], 
 			"SingleMu_lowmass":["trigmubbl_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
 			"SingleMu_llowmass":["trigmubbll_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+>>>>>>> 27e1124643ccf22f3ded325ada56a565edc3b963
 			"SingleMu24i_highmass":["trigmu24ibbh_highmass_CSVTM", "trigmu24i_highmass_CSVTM"], 
 			"SingleMu24i_lowmass":["trigmu24ibbl_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
-			"SingleMu24i_llowmass":["trigmu24ibbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
+			#"SingleMu24i_llowmass":["trigmu24ibbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
 			#"SingleMu40_highmass":["trigmu40bbh_highmass_CSVTM", "trigmu40_highmass_CSVTM"], 
-			"SingleMu40_lowmass":["trigmu40bbl_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
-			"SingleMu40_llowmass":["trigmu40bbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
+			#"SingleMu40_lowmass":["trigmu40bbl_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
+			#"SingleMu40_llowmass":["trigmu40bbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
 			"BJet60_53_lowmass":["trigbbl_CSVTM_BJetPlusX_2012", "trigbbll_CSVTM_BJetPlusX_2012"], 
 			"BJet60_53_highmass":["trigbbh_CSVTM_BJetPlusX_2012", "trigbbll_CSVTM_BJetPlusX_2012"], 
 			"BJet80_70_highmass":["trigbbh_trigbbl_CSVTM_BJetPlusX_2012", "trigbbl_CSVTM_BJetPlusX_2012"], 
@@ -406,9 +412,10 @@ class TrigEffPlotter():
 				elif name == "BJet80_70_highmass" or name == "BJet60_53_highmass":
 					self._efficiency_fits[name].SetParameter(2, 3.)
 	
-				hist.Fit(self._efficiency_fits[name], "R0")
+				fit_result = hist.Fit(self._efficiency_fits[name], "R0S")
 				self._fit_chi2s[name] = self._efficiency_fits[name].GetChisquare()
 				self._fit_ndfs[name] = self._efficiency_fits[name].GetNDF()
+				fit_result.Print("V")
 
 	def MakeSingleMuComparisons(self):
 		for sr_name in ["lowmass", "llowmass"]:
@@ -718,7 +725,7 @@ class TrigEffPlotter():
 
 if __name__ == "__main__":
 	trig_eff_plotter = TrigEffPlotter()
-	trig_eff_plotter.MakeSingleMuComparisons()
+	#trig_eff_plotter.MakeSingleMuComparisons()
 	trig_eff_plotter.MakeSingleEfficiencyPlots()
 	trig_eff_plotter.MakeSingleEfficiencyFinePlots()
 	trig_eff_plotter.MakeJetHTSingleMuComparisons()
