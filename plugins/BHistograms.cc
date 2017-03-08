@@ -1,3 +1,4 @@
+#define DONT_CARE_ABOUT_FATJETS
 #include <iostream>
 #include <sstream>
 #include <istream>
@@ -258,7 +259,24 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH1D("pt_btag2", "pt_btag2", "p_{T} (subleading CSV) [GeV]", 1000, 0., 1000.);
 	pfjet_histograms_->AddTH1D("mjj_csvorder", "mjj_csvorder", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
 	pfjet_histograms_->AddTH1D("mjj_vetothirdjet", "mjj_vetothirdjet", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	pfjet_histograms_->AddTH1D("jet1_flavor", "jet1_flavor", "Flavor", 11, -0.5, 10.5);
+	pfjet_histograms_->AddTH1D("jet1_bstatus3", "jet1_bstatus3", "b status == 3?", 3, -0.5, 2.5);
+	pfjet_histograms_->AddTH1D("jet1_bstatus2", "jet1_bstatus2", "b status == 2", 3, -0.5, 2.5);
+	pfjet_histograms_->AddTH1D("jet1_PartonId", "jet1_PartonId", "PartonId", 11, -0.5, 10.5);
+	pfjet_histograms_->AddTH1D("jet2_flavor", "jet2_flavor", "Flavor", 11, -0.5, 10.5);
+	pfjet_histograms_->AddTH1D("jet2_bstatus3", "jet2_bstatus3", "b status == 3?", 3, -0.5, 2.5);
+	pfjet_histograms_->AddTH1D("jet2_bstatus2", "jet2_bstatus2", "b status == 2?", 3, -0.5, 2.5);
+	pfjet_histograms_->AddTH1D("jet2_PartonId", "jet2_PartonId", "PartonId", 11, -0.5, 10.5);
 
+	// pT vs eta histograms for jets 0 and 1, passing various b-tag requirements
+	pfjet_histograms_->AddTH2F("jet0_pt_eta", "jet0_pt_eta", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet0_pt_eta_CSVT", "jet0_pt_eta_CSVT", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet0_pt_eta_CSVM", "jet0_pt_eta_CSVM", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet0_pt_eta_CSVL", "jet0_pt_eta_CSVL", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet1_pt_eta", "jet1_pt_eta", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet1_pt_eta_CSVT", "jet1_pt_eta_CSVT", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet1_pt_eta_CSVM", "jet1_pt_eta_CSVM", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet1_pt_eta_CSVL", "jet1_pt_eta_CSVL", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
 
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
 		pfjet_histograms_->AddTH1D("mjj_BTagOfflineSFUp", "mjj_BTagOfflineSFUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
@@ -446,6 +464,7 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 			pfjet_selector_->ClassifyObjects(event_->pfjets());
 
 			// Recompute fat jets
+			#ifndef DONT_CARE_ABOUT_FATJETS
 			if (event_->nPFJets() >= 2) {
 				reco::Particle::LorentzVector lv_fatjet[2];
 				lv_fatjet[0] = event_->pfjet(0).p4() * event_->pfjet(0).cor();
@@ -515,6 +534,7 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				std::vector<QCDJet> fat_jets_vector;
 	      		event_->setFatJets(fat_jets_vector);
 	      	}
+	      	#endif
 
 			// Event selection
 			event_selector_->ProcessEvent(event_);
@@ -526,6 +546,13 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				global_histograms_->GetTH1F("pass_nevents_weighted")->Fill(1, weight);
 
 				//double pf_mjj = (event_->pfjet(0).p4() + event_->pfjet(1).p4()).mass();
+				// Sanity check: make sure we are really using the two highest pT jets
+				for (unsigned int ijet = 2; ijet < event_->nPFJets(); ++ijet) {
+					if (event_->pfjet(ijet).ptCor() > event_->pfjet(0).ptCor() || event_->pfjet(ijet).ptCor() > event_->pfjet(1).ptCor()) {
+						std::cerr << "[BHistograms::ProcessEvent] ERROR : Found a higher pT jet than the selected two at index " << ijet << std::endl;
+						exit(1);
+					}
+				}
 				double pf_deltaeta = event_->pfjet(0).eta() - event_->pfjet(1).eta();
 				double pf_btag_csv1 = event_->pfjet(0).btag_csv();
 				double pf_btag_csv2 = event_->pfjet(1).btag_csv();
@@ -571,6 +598,27 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				pfjet_histograms_->GetTH2F("mjj_npfjets")->Fill(event_->pfmjjcor(0), event_->nPFJets(), weight);
 				pfjet_histograms_->GetTH2F("mjj_ncalojets")->Fill(event_->pfmjjcor(0), event_->nCaloJets(), weight);
 				pfjet_histograms_->GetTH2F("btag_csv")->Fill(pf_btag_csv1, pf_btag_csv2, weight);
+				pfjet_histograms_->GetTH2F("jet0_pt_eta")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+				if (pf_btag_csv1 > 0.244) {
+					pfjet_histograms_->GetTH2F("jet0_pt_eta_CSVL")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+					if (pf_btag_csv1 > 0.679) {
+						pfjet_histograms_->GetTH2F("jet0_pt_eta_CSVM")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+						if (pf_btag_csv1 > 0.898) {
+							pfjet_histograms_->GetTH2F("jet0_pt_eta_CSVT")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+						}
+					}
+				}
+				pfjet_histograms_->GetTH2F("jet1_pt_eta")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+				if (pf_btag_csv2 > 0.244) {
+					pfjet_histograms_->GetTH2F("jet1_pt_eta_CSVL")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+					if (pf_btag_csv2 > 0.679) {
+						pfjet_histograms_->GetTH2F("jet1_pt_eta_CSVM")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+						if (pf_btag_csv2 > 0.898) {
+							pfjet_histograms_->GetTH2F("jet1_pt_eta_CSVT")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+						}
+					}
+				}
+	
 				if (pf_btag_csv1 >= pf_btag_csv2) {
 					pfjet_histograms_->GetTH1D("pt_btag1")->Fill(event_->pfjet(0).ptCor(), weight);
 					pfjet_histograms_->GetTH1D("pt_btag2")->Fill(event_->pfjet(1).ptCor(), weight);
@@ -598,6 +646,14 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 						pfjet_histograms_->GetTH1D("mjj_over_M_JERUp")->Fill(0.);
 						pfjet_histograms_->GetTH1D("mjj_over_M_JERDown")->Fill(0.);
 					}
+					pfjet_histograms_->GetTH1D("jet1_flavor")->Fill(event_->pfjet(0).flavor());
+					pfjet_histograms_->GetTH1D("jet1_bstatus3")->Fill(event_->pfjet(0).bstatus3());
+					pfjet_histograms_->GetTH1D("jet1_bstatus2")->Fill(event_->pfjet(0).bstatus2());
+					pfjet_histograms_->GetTH1D("jet1_PartonId")->Fill(event_->pfjet(0).PartonId());
+					pfjet_histograms_->GetTH1D("jet2_flavor")->Fill(event_->pfjet(1).flavor());
+					pfjet_histograms_->GetTH1D("jet2_bstatus3")->Fill(event_->pfjet(1).bstatus3());
+					pfjet_histograms_->GetTH1D("jet2_bstatus2")->Fill(event_->pfjet(1).bstatus2());
+					pfjet_histograms_->GetTH1D("jet2_PartonId")->Fill(event_->pfjet(1).PartonId());
 				}
 
 				//double calo_mjj = (event_->calojet(0).p4() + event_->calojet(1).p4()).mass();
