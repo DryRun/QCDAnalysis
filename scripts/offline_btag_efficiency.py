@@ -184,9 +184,9 @@ class OfflineBTagPlots():
 		ROOT.SetOwnership(bottom, False)
 
 if __name__ == "__main__":
-	do_signal = False
+	do_signal = True
 	do_qcd = False
-	do_singlemu = True
+	do_singlemu = False
 	dijet_binning = array("d", [1, 3, 6, 10, 16, 23, 31, 40, 50, 61, 74, 88, 103, 119, 137, 156, 176, 197, 220, 244, 270, 296, 325, 354, 386, 419, 453, 489, 526, 565, 606, 649, 693, 740, 788, 838, 890, 944, 1000, 1058, 1118, 1181, 1246, 1313, 1383, 1455, 1530, 1607, 1687, 1770, 1856, 1945, 2037, 2132, 2231, 2332, 2438, 2546, 2659, 2775, 2895, 3019, 3147, 3279, 3416, 3558, 3704, 3854, 4010, 4171, 4337, 4509, 4686, 4869, 5000])
 
 	if do_signal:
@@ -206,7 +206,7 @@ if __name__ == "__main__":
 			plotter.EfficiencyPlot(logy=False, binning=dijet_binning, save_tag="_" + sr + "_signal")
 
 			for sample in samples:
-				plotter = OfflineBTagPlots(sr, [sample])
+				plotter = OfflineBTagPlots(numerator_analysis, denominator_analysis, [sample])
 				plotter.EfficiencyPlot(logy=False, binning=dijet_binning, save_tag="_" + sr + "_signal_" + sample)
 
 	if do_qcd:

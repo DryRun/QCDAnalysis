@@ -263,6 +263,16 @@ analysis_cfgs["trigmu40bbh_highmass_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_p
 
 analysis_cfgs["NoTrigger_eta2p2_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_CSVTM_cfg.py"
 analysis_cfgs["NoTrigger_eta1p7_CSVTM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_CSVTM_cfg.py"
+analysis_cfgs["NoTrigger_eta2p2_CSVTL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_CSVTL_cfg.py"
+analysis_cfgs["NoTrigger_eta1p7_CSVTL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_CSVTL_cfg.py"
+analysis_cfgs["NoTrigger_eta2p2_CSVML"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_CSVML_cfg.py"
+analysis_cfgs["NoTrigger_eta1p7_CSVML"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_CSVML_cfg.py"
+analysis_cfgs["NoTrigger_eta2p2_CSVT"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_CSVT_cfg.py"
+analysis_cfgs["NoTrigger_eta1p7_CSVT"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_CSVT_cfg.py"
+analysis_cfgs["NoTrigger_eta2p2_CSVM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_CSVM_cfg.py"
+analysis_cfgs["NoTrigger_eta1p7_CSVM"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_CSVM_cfg.py"
+analysis_cfgs["NoTrigger_eta2p2_CSVL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_CSVL_cfg.py"
+analysis_cfgs["NoTrigger_eta1p7_CSVL"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_CSVL_cfg.py"
 analysis_cfgs["NoTrigger_eta2p2"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta2p2_cfg.py"
 analysis_cfgs["NoTrigger_eta1p7"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_NoTrigger_eta1p7_cfg.py"
 
