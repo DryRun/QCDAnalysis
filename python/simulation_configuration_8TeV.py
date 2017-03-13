@@ -283,7 +283,7 @@ pat_file_lists["GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/
 pat_file_lists["GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/PAT/PAT_Hbb_1200.txt"
 
 def get_signal_AE_filename():
-	return "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Simulation/signal_acc_times_eff.pkl"
+	return "/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/Simulation/signal_acc_times_eff.pkl.MCtrigger"
 
 def get_signal_AE(analysis, model, mass):
 	import pickle
