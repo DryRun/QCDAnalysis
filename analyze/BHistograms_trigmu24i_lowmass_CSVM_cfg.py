@@ -10,7 +10,7 @@ options.register('inputFiles',
 	"List of input files"
 )
 options.register('outputFile', 
-	'BHistograms_trigjetht_CSVL.root', 
+	'BHistograms_trigbbh_CSVT.root', 
 	VarParsing.VarParsing.multiplicity.singleton,
 	VarParsing.VarParsing.varType.string,
 	"Output file"
@@ -74,7 +74,7 @@ dijet_cuts = cms.VPSet(
 		name        = cms.string("MaxMuonEnergyFraction"),
 		parameters  = cms.vdouble(0.8),
 		descriptors = cms.vstring()
-	),
+	)
 )
 
 # Cuts on all PF jets (defines the generic jet collection for e.g. making fat jets)
@@ -110,7 +110,7 @@ event_cuts = cms.VPSet(
 	cms.PSet(
 		name        = cms.string("TriggerOR"),
 		parameters  = cms.vdouble(),
-		descriptors = cms.vstring("HLT_PFHT650_v5", "HLT_PFHT650_v6", "HLT_PFHT650_v7", "HLT_PFHT650_v8", "HLT_PFHT650_v9", "HLT_PFNoPUHT650_v1", "HLT_PFNoPUHT650_v3", "HLT_PFNoPUHT650_v4", "HLT_HT750_v1", "HLT_HT750_v2", "HLT_HT750_v3", "HLT_HT750_v4", "HLT_HT750_v5", "HLT_HT750_v7")
+		descriptors = cms.vstring('HLT_IsoMu24_v15', 'HLT_IsoMu24_v16', 'HLT_IsoMu24_v17', 	'HLT_IsoMu24_eta2p1_v11', 'HLT_IsoMu24_eta2p1_v12', 'HLT_IsoMu24_eta2p1_v13', 'HLT_IsoMu24_eta2p1_v14', 'HLT_IsoMu24_eta2p1_v15')
 	),
 	cms.PSet(
 		name        = cms.string("MaxMetOverSumEt"),
@@ -125,11 +125,6 @@ event_cuts = cms.VPSet(
 	cms.PSet(
 		name        = cms.string("MinNCSVM"),
 		parameters  = cms.vdouble(2),
-		descriptors = cms.vstring()
-	),
-	cms.PSet(
-		name        = cms.string("MinNCSVT"),
-		parameters  = cms.vdouble(1),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
@@ -165,7 +160,7 @@ process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	calojet_cuts           = calojet_cuts,
 	event_cuts             = event_cuts,
 	fatjet_delta_eta_cut  = cms.double(1.1),
-	btag_wp_1              = cms.string('CSVT'),
+	btag_wp_1              = cms.string('CSVM'),
 	btag_wp_2              = cms.string('CSVM'),
 )
 

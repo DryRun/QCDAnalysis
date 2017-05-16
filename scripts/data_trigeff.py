@@ -41,7 +41,7 @@ class TrigEffPlotter():
 				analyses["HT" + str(mass)] = "trigjetht" + str(mass)
 				if sr_name == "lowmass":
 					analyses["HT" + str(mass)] += "_eta1p7"
-				analyses["HT" + str(mass)] += "_CSVM"
+				analyses["HT" + str(mass)] += "_CSVTM"
 			sample = "JetHT_2012BCD"
 			HT_slice_histograms = {}
 			for HT_slice in HT_slices:
@@ -55,7 +55,7 @@ class TrigEffPlotter():
 			unprescaled_analysis_name = "trigjetht"
 			if sr_name == "lowmass":
 				unprescaled_analysis_name += "_eta1p7"
-			unprescaled_analysis_name += "_CSVM"
+			unprescaled_analysis_name += "_CSVTM"
 			analyses["HTUnprescaled"] = unprescaled_analysis_name
 			f_unprescaled = TFile(analysis_config.get_b_histogram_filename(unprescaled_analysis_name, sample), "READ")
 			HT_slice_histograms["HTUnprescaled"] = f_unprescaled.Get("BHistograms/h_pfjet_mjj")
@@ -97,9 +97,9 @@ class TrigEffPlotter():
 		return frankenhist
 
 	def GetSingleMuHistograms(self):
-		#this_analyses = ["trigmu_highmass_CSVM", "trigmu_lowmass_CSVM", "trigmubbh_highmass_CSVM", "trigmubbl_lowmass_CSVM", "trigmubbll_lowmass_CSVM", "trigmu24i_lowmass_CSVM", "trigmu24ibbl_lowmass_CSVM", "trigmu24ibbll_lowmass_CSVM", "trigmu40_lowmass_CSVM", "trigmu40bbl_lowmass_CSVM", "trigmu40bbll_lowmass_CSVM"]
-		this_analyses = ["trigmu24i_lowmass_CSVM", "trigmu24ibbl_lowmass_CSVM"]
-		this_analyses.extend(["trigmu24i_highmass_CSVM", "trigmu24ibbh_highmass_CSVM"])
+		#this_analyses = ["trigmu_highmass_CSVTM", "trigmu_lowmass_CSVTM", "trigmubbh_highmass_CSVTM", "trigmubbl_lowmass_CSVTM", "trigmubbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM", "trigmu24ibbl_lowmass_CSVTM", "trigmu24ibbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM", "trigmu40bbl_lowmass_CSVTM", "trigmu40bbll_lowmass_CSVTM"]
+		this_analyses = ["trigmu24i_lowmass_CSVTM", "trigmu24ibbl_lowmass_CSVTM"]
+		this_analyses.extend(["trigmu24i_highmass_CSVTM", "trigmu24ibbh_highmass_CSVTM"])
 		for analysis in this_analyses:
 			print "Opening " + analysis_config.get_b_histogram_filename(analysis, "SingleMu_2012")
 			f = ROOT.TFile(analysis_config.get_b_histogram_filename(analysis, "SingleMu_2012"), "READ")
@@ -130,7 +130,7 @@ class TrigEffPlotter():
 
 
 	def GetBJetPlusXHistograms(self):
-		this_analyses = ["trigbbh_CSVM", "trigbbl_CSVM", "trigbbll_CSVM", "trigbbh_trigbbl_CSVM"]
+		this_analyses = ["trigbbh_CSVTM", "trigbbl_CSVTM", "trigbbll_CSVTM", "trigbbh_trigbbl_CSVTM"]
 		this_samples = ["BJetPlusX_2012", "BJetPlusX_2012BCD"]
 		for analysis in this_analyses:
 			for sample in this_samples:
@@ -160,45 +160,45 @@ class TrigEffPlotter():
 
 	def MakeEfficiencyHistograms(self):
 		self._efficiency_combinations.update({
-			"JetHT_highmass":["trigbbh_CSVM_BJetPlusX_2012BCD", "JetHT"],
-			"JetHT_lowmass":["trigbbl_CSVM_BJetPlusX_2012BCD", "JetHT"], 
-			#"JetHT_llowmass":["trigbbll_CSVM_BJetPlusX_2012BCD", "JetHT"],
-			#"SingleMu_highmass":["trigmubbh_highmass_CSVM", "trigmu_highmass_CSVM"], 
-			#"SingleMu_lowmass":["trigmubbl_lowmass_CSVM", "trigmu_lowmass_CSVM"], 
-			#"SingleMu_llowmass":["trigmubbll_lowmass_CSVM", "trigmu_lowmass_CSVM"], 
-			"SingleMu24i_highmass":["trigmu24ibbh_highmass_CSVM", "trigmu24i_highmass_CSVM"], 
-			"SingleMu24i_lowmass":["trigmu24ibbl_lowmass_CSVM", "trigmu24i_lowmass_CSVM"], 
-			#"SingleMu24i_llowmass":["trigmu24ibbll_lowmass_CSVM", "trigmu24i_lowmass_CSVM"], 
-			#"SingleMu40_highmass":["trigmu40bbh_highmass_CSVM", "trigmu40_highmass_CSVM"], 
-			#"SingleMu40_lowmass":["trigmu40bbl_lowmass_CSVM", "trigmu40_lowmass_CSVM"], 
-			#"SingleMu40_llowmass":["trigmu40bbll_lowmass_CSVM", "trigmu40_lowmass_CSVM"], 
-			"BJet60_53_lowmass":["trigbbl_CSVM_BJetPlusX_2012", "trigbbll_CSVM_BJetPlusX_2012"], 
-			"BJet60_53_highmass":["trigbbh_CSVM_BJetPlusX_2012", "trigbbll_CSVM_BJetPlusX_2012"], 
-			"BJet80_70_highmass":["trigbbh_trigbbl_CSVM_BJetPlusX_2012", "trigbbl_CSVM_BJetPlusX_2012"], 
+			"JetHT_highmass":["trigbbh_CSVTM_BJetPlusX_2012BCD", "JetHT"],
+			"JetHT_lowmass":["trigbbl_CSVTM_BJetPlusX_2012BCD", "JetHT"], 
+			#"JetHT_llowmass":["trigbbll_CSVTM_BJetPlusX_2012BCD", "JetHT"],
+			#"SingleMu_highmass":["trigmubbh_highmass_CSVTM", "trigmu_highmass_CSVTM"], 
+			#"SingleMu_lowmass":["trigmubbl_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+			#"SingleMu_llowmass":["trigmubbll_lowmass_CSVTM", "trigmu_lowmass_CSVTM"], 
+			"SingleMu24i_highmass":["trigmu24ibbh_highmass_CSVTM", "trigmu24i_highmass_CSVTM"], 
+			"SingleMu24i_lowmass":["trigmu24ibbl_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
+			#"SingleMu24i_llowmass":["trigmu24ibbll_lowmass_CSVTM", "trigmu24i_lowmass_CSVTM"], 
+			#"SingleMu40_highmass":["trigmu40bbh_highmass_CSVTM", "trigmu40_highmass_CSVTM"], 
+			#"SingleMu40_lowmass":["trigmu40bbl_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
+			#"SingleMu40_llowmass":["trigmu40bbll_lowmass_CSVTM", "trigmu40_lowmass_CSVTM"], 
+			"BJet60_53_lowmass":["trigbbl_CSVTM_BJetPlusX_2012", "trigbbll_CSVTM_BJetPlusX_2012"], 
+			"BJet60_53_highmass":["trigbbh_CSVTM_BJetPlusX_2012", "trigbbll_CSVTM_BJetPlusX_2012"], 
+			"BJet80_70_highmass":["trigbbh_trigbbl_CSVTM_BJetPlusX_2012", "trigbbl_CSVTM_BJetPlusX_2012"], 
 			})
 		self._legend_entries = {
-			"trigbbh_CSVM":"160/120 + b-tag",
-			"trigbbl_CSVM":"80/70 + b-tag",
-			"trigbbll_CSVM":"60/53 + b-tag",
-			"trigbbh_CSVM_BJetPlusX_2012":"160/120 + b-tag",
-			"trigbbh_trigbbl_CSVM_BJetPlusX_2012":"((160/120) && (80/70))",
-			"trigbbl_CSVM_BJetPlusX_2012":"80/70 + b-tag",
-			"trigbbll_CSVM_BJetPlusX_2012":"60/53 + b-tag",
-			"trigbbh_CSVM_BJetPlusX_2012BCD":"160/120 + b-tag",
-			"trigbbl_CSVM_BJetPlusX_2012BCD":"80/70 + b-tag",
-			"trigbbll_CSVM_BJetPlusX_2012BCD":"60/53 + b-tag",
-			"trigmu_highmass_CSVM":"mu24i||mu40",
-			"trigmu_lowmass_CSVM":"mu24i||mu40",
-			"trigmubbh_highmass_CSVM":"(mu24i||mu40)&&(160/120+b-tag)",
-			"trigmubbl_lowmass_CSVM":"(mu24i||mu40)&&(80/70+b-tag)",
-			"trigmubbll_lowmass_CSVM":"(mu24i||mu40)&&(60/53+b-tag)", 
-			"trigmu24ibbh_highmass_CSVM":"(mu24i)&&(160/120+b-tag)",
-			"trigmu24i_lowmass_CSVM":"mu24i",
-			"trigmu24ibbl_lowmass_CSVM":"(mu24i)&&(80/70+b-tag)",
-			"trigmu24ibbll_lowmass_CSVM":"(mu24i)&&(60/53+b-tag)", 
-			"trigmu40bbh_highmass_CSVM":"(mu40)&&(160/120+b-tag)",
-			"trigmu40bbl_lowmass_CSVM":"(mu40)&&(80/70+b-tag)",
-			"trigmu40bbll_lowmass_CSVM":"(mu40)&&(60/53+b-tag)", 
+			"trigbbh_CSVTM":"160/120 + b-tag",
+			"trigbbl_CSVTM":"80/70 + b-tag",
+			"trigbbll_CSVTM":"60/53 + b-tag",
+			"trigbbh_CSVTM_BJetPlusX_2012":"160/120 + b-tag",
+			"trigbbh_trigbbl_CSVTM_BJetPlusX_2012":"((160/120) && (80/70))",
+			"trigbbl_CSVTM_BJetPlusX_2012":"80/70 + b-tag",
+			"trigbbll_CSVTM_BJetPlusX_2012":"60/53 + b-tag",
+			"trigbbh_CSVTM_BJetPlusX_2012BCD":"160/120 + b-tag",
+			"trigbbl_CSVTM_BJetPlusX_2012BCD":"80/70 + b-tag",
+			"trigbbll_CSVTM_BJetPlusX_2012BCD":"60/53 + b-tag",
+			"trigmu_highmass_CSVTM":"mu24i||mu40",
+			"trigmu_lowmass_CSVTM":"mu24i||mu40",
+			"trigmubbh_highmass_CSVTM":"(mu24i||mu40)&&(160/120+b-tag)",
+			"trigmubbl_lowmass_CSVTM":"(mu24i||mu40)&&(80/70+b-tag)",
+			"trigmubbll_lowmass_CSVTM":"(mu24i||mu40)&&(60/53+b-tag)", 
+			"trigmu24ibbh_highmass_CSVTM":"(mu24i)&&(160/120+b-tag)",
+			"trigmu24i_lowmass_CSVTM":"mu24i",
+			"trigmu24ibbl_lowmass_CSVTM":"(mu24i)&&(80/70+b-tag)",
+			"trigmu24ibbll_lowmass_CSVTM":"(mu24i)&&(60/53+b-tag)", 
+			"trigmu40bbh_highmass_CSVTM":"(mu40)&&(160/120+b-tag)",
+			"trigmu40bbl_lowmass_CSVTM":"(mu40)&&(80/70+b-tag)",
+			"trigmu40bbll_lowmass_CSVTM":"(mu40)&&(60/53+b-tag)", 
 			"JetHT":"JetHT"
 		}
 		self._efficiency_guesses = {
@@ -271,7 +271,7 @@ class TrigEffPlotter():
 					if N == 0:
 						continue
 					x = 1. * (self._mjj_histograms[hist_pair[1]].GetBinError(bin) * bin_width)**2 / N
-					print "Bin center = " + str(self._efficiency_histograms[efficiency_name].GetXaxis().GetBinCenter(bin)) + " / x=" + str(x)
+					#print "Bin center = " + str(self._efficiency_histograms[efficiency_name].GetXaxis().GetBinCenter(bin)) + " / x=" + str(x)
 					if x == 0 or n == 0:
 						continue
 					err = n / N * sqrt((N + n * (x - 2)) / (n * N))
@@ -380,6 +380,42 @@ class TrigEffPlotter():
 					self._efficiency_fits[name].SetParameter(0, 0.5)
 					#self._efficiency_fits[name].SetParameter(1, 0.)
 				hist.Fit(self._efficiency_fits[name], "R0")
+				chi2 = self._efficiency_fits[name].GetChisquare()
+				ndf = self._efficiency_fits[name].GetNDF()
+				prob = TMath.Prob(chi2, ndf)
+				print "chi2/ndf = " + str(chi2) + "/" + str(ndf) + ", p = " + str(prob)
+				# Calculate RSS as well
+				bin_min = hist.GetXaxis().FindBin(self._fit_ranges[name][0]+1.e-5)
+				bin_max = hist.GetXaxis().FindBin(self._fit_ranges[name][1]-1.e-5)
+				rss_constant = 0
+				for bin in xrange(bin_min, bin_max + 1):
+					bin_center = hist.GetXaxis().GetBinCenter(bin)
+					rss_constant += (hist.GetBinContent(bin) - self._efficiency_fits[name].Eval(bin_center))**2
+				print "RSS = " + str(rss_constant)
+
+				print "\nDoing a linear fit for systematic"
+				linear_fit = ROOT.TF1("linear_" + name, "[0]+[1]*x", self._fit_ranges[name][0], self._fit_ranges[name][1])
+				if "lowmass" in name:
+					linear_fit.SetParameter(0, 0.2)
+					linear_fit.SetParameter(1, 0.)
+				elif "highmass" in name:
+					linear_fit.SetParameter(0, 0.5)
+					linear_fit.SetParameter(1, 0.)
+				hist.Fit(linear_fit, "R0")
+				chi2_linear = linear_fit.GetChisquare()
+				ndf_linear = linear_fit.GetNDF()
+				prob_linear = TMath.Prob(chi2_linear, ndf_linear)
+				print "chi2/ndf = " + str(chi2_linear) + "/" + str(ndf_linear) + ", p=" + str(prob_linear)
+				# Calculate RSS as well
+				rss_linear = 0
+				for bin in xrange(bin_min, bin_max + 1):
+					bin_center = hist.GetXaxis().GetBinCenter(bin)
+					rss_linear += (hist.GetBinContent(bin) - linear_fit.Eval(bin_center))**2
+				print "RSS = " + str(rss_linear)
+				f21 = (rss_constant-rss_linear) / (rss_linear / (hist.GetNbinsX() - 2))
+				cl21 = 1. - TMath.FDistI(f21, 2 - 1, hist.GetNbinsX() - 2)
+				print "F21 = " + str(f21)
+				print "CS21 = " + str(cl21)
 
 		# Fit SingleMu and BJetPlusX with sigmoid functions
 		for name, hist in self._efficiency_histograms_fine.iteritems():
@@ -696,6 +732,11 @@ class TrigEffPlotter():
 			l.AddEntry(jetht_fit, "JetHT fit", "lp")
 			l.Draw()
 			c.SaveAs("/uscms/home/dryu/Dijets/data/EightTeeEeVeeBee/TriggerEfficiency/figures/" + c.GetName() + ".pdf")
+
+			# Print results
+			print "Printing online b-tagging efficiency for sr " + sr_name
+			print "singlemu_fit: " + str(singlemu_fit.GetParameter(0)) + " +/- " + str(singlemu_fit.GetParError(0))
+			print "jetht_fit: " + str(jetht_fit.GetParameter(0)) + " +/- " + str(jetht_fit.GetParError(0))
 
 	def MakeSingleMu6053Comparison(self):
 		c = TCanvas("c_trigeff_80_70_over_60_53", "c_trigeff_80_70_over_60_53", 800, 600)

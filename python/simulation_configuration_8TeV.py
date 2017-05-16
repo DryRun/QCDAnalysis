@@ -8,8 +8,8 @@ signal_masses = [350, 400, 500, 600, 750, 900, 1200]
 
 limit_signal_masses = {
 	"trigbbll_CSVTM":range(350, 950, 50),
-	"trigbbl_CSVTM":range(350, 950, 50),
-	"trigbbh_CSVTM":range(550, 1250, 50)
+	"trigbbl_CSVTM":range(350, 850, 50),
+	"trigbbh_CSVTM":range(600, 1250, 50)
 }
 
 simulated_masses = [350, 400, 500, 600, 750, 900, 1200]

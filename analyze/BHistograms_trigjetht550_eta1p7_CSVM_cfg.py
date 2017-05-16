@@ -110,7 +110,7 @@ event_cuts = cms.VPSet(
 	cms.PSet(
 		name        = cms.string("TriggerOR"),
 		parameters  = cms.vdouble(),
-		descriptors = cms.vstring("HLT_PFHT650_v5", "HLT_PFHT650_v6", "HLT_PFHT650_v7", "HLT_PFHT650_v8", "HLT_PFHT650_v9", "HLT_PFNoPUHT650_v1", "HLT_PFNoPUHT650_v3", "HLT_PFNoPUHT650_v4", "HLT_HT750_v1", "HLT_HT750_v2", "HLT_HT750_v3", "HLT_HT750_v4", "HLT_HT750_v5", "HLT_HT750_v7")
+		descriptors = cms.vstring('HLT_HT550_v1', 'HLT_HT550_v2', 'HLT_HT550_v3', 'HLT_HT550_v4', 'HLT_HT550_v5', 'HLT_HT550_v7')
 	),
 	cms.PSet(
 		name        = cms.string("MaxMetOverSumEt"),
@@ -125,11 +125,6 @@ event_cuts = cms.VPSet(
 	cms.PSet(
 		name        = cms.string("MinNCSVM"),
 		parameters  = cms.vdouble(2),
-		descriptors = cms.vstring()
-	),
-	cms.PSet(
-		name        = cms.string("MinNCSVT"),
-		parameters  = cms.vdouble(1),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
@@ -165,7 +160,7 @@ process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	calojet_cuts           = calojet_cuts,
 	event_cuts             = event_cuts,
 	fatjet_delta_eta_cut  = cms.double(1.1),
-	btag_wp_1              = cms.string('CSVT'),
+	btag_wp_1              = cms.string('CSVM'),
 	btag_wp_2              = cms.string('CSVM'),
 )
 

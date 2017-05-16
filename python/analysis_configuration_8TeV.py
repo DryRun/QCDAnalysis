@@ -227,6 +227,7 @@ analysis_cfgs["trigjetht450"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSD
 analysis_cfgs["trigjetht500"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht500_cfg.py"
 analysis_cfgs["trigjetht550"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht550_cfg.py"
 analysis_cfgs["trigjetht650"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht650_cfg.py"
+analysis_cfgs["trigjetht"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_cfg.py"
 
 analysis_cfgs["trigjetht200_eta1p7_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht200_eta1p7_CSVTM_cfg.py"
 analysis_cfgs["trigjetht250_eta1p7_CSVTM"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht250_eta1p7_CSVTM_cfg.py"
@@ -257,6 +258,7 @@ analysis_cfgs["trigjetht450_eta1p7"] = dijet_directory + "/CMSSW_5_3_32_patch3/s
 analysis_cfgs["trigjetht500_eta1p7"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht500_eta1p7_cfg.py"
 analysis_cfgs["trigjetht550_eta1p7"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht550_eta1p7_cfg.py"
 analysis_cfgs["trigjetht650_eta1p7"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht650_eta1p7_cfg.py"
+analysis_cfgs["trigjetht_eta1p7"] = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigjetht_eta1p7_cfg.py"
 
 analysis_cfgs["trigbbh_CSVTM_bfat"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BHistograms_trigbbh_CSVTM_bfat_cfg.py"
 analysis_cfgs["trigeff_trigbbh_CSVTM_bfat"]   = dijet_directory + "/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/analyze/BTriggerEfficiency_trigbbh_CSVTM_bfat_cfg.py"

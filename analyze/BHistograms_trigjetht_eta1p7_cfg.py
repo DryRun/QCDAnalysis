@@ -123,16 +123,6 @@ event_cuts = cms.VPSet(
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
-		name        = cms.string("MinNCSVM"),
-		parameters  = cms.vdouble(2),
-		descriptors = cms.vstring()
-	),
-	cms.PSet(
-		name        = cms.string("MinNCSVT"),
-		parameters  = cms.vdouble(1),
-		descriptors = cms.vstring()
-	),
-	cms.PSet(
 		name        = cms.string("MinLeadingPFJetPt"),
 		parameters  = cms.vdouble(80.),
 		descriptors = cms.vstring()
@@ -165,8 +155,8 @@ process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	calojet_cuts           = calojet_cuts,
 	event_cuts             = event_cuts,
 	fatjet_delta_eta_cut  = cms.double(1.1),
-	btag_wp_1              = cms.string('CSVT'),
-	btag_wp_2              = cms.string('CSVM'),
+	btag_wp_1              = cms.string('none'),
+	btag_wp_2              = cms.string('none'),
 )
 
 process.p = cms.Path(process.BHistograms)

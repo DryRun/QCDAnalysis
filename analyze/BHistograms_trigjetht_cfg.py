@@ -62,7 +62,7 @@ dijet_cuts = cms.VPSet(
 	),
 	cms.PSet(
 		name        = cms.string("MaxAbsEta"),
-		parameters  = cms.vdouble(1.7),
+		parameters  = cms.vdouble(2.2),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
@@ -123,23 +123,13 @@ event_cuts = cms.VPSet(
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
-		name        = cms.string("MinNCSVM"),
-		parameters  = cms.vdouble(2),
-		descriptors = cms.vstring()
-	),
-	cms.PSet(
-		name        = cms.string("MinNCSVT"),
-		parameters  = cms.vdouble(1),
-		descriptors = cms.vstring()
-	),
-	cms.PSet(
 		name        = cms.string("MinLeadingPFJetPt"),
-		parameters  = cms.vdouble(80.),
+		parameters  = cms.vdouble(160.),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
 		name        = cms.string("MinSubleadingPFJetPt"),
-		parameters  = cms.vdouble(70.),
+		parameters  = cms.vdouble(120.),
 		descriptors = cms.vstring()
 	),
 	cms.PSet(
@@ -165,8 +155,8 @@ process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	calojet_cuts           = calojet_cuts,
 	event_cuts             = event_cuts,
 	fatjet_delta_eta_cut  = cms.double(1.1),
-	btag_wp_1              = cms.string('CSVT'),
-	btag_wp_2              = cms.string('CSVM'),
+	btag_wp_1              = cms.string('none'),
+	btag_wp_2              = cms.string('none'),
 )
 
 process.p = cms.Path(process.BHistograms)
