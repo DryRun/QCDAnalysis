@@ -298,6 +298,15 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH2F("jet1_pt_eta_CSVM", "jet1_pt_eta_CSVM", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
 	pfjet_histograms_->AddTH2F("jet1_pt_eta_CSVL", "jet1_pt_eta_CSVL", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
 
+	pfjet_histograms_->AddTH2F("jet_btag0_pt_eta", "jet0_pt_eta", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet_btag0_pt_eta_CSVT", "jet0_pt_eta_CSVT", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet_btag0_pt_eta_CSVM", "jet0_pt_eta_CSVM", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet_btag0_pt_eta_CSVL", "jet0_pt_eta_CSVL", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet_btag1_pt_eta", "jet1_pt_eta", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet_btag1_pt_eta_CSVT", "jet1_pt_eta_CSVT", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet_btag1_pt_eta_CSVM", "jet1_pt_eta_CSVM", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+	pfjet_histograms_->AddTH2F("jet_btag1_pt_eta_CSVL", "jet1_pt_eta_CSVL", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
+
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
 		pfjet_histograms_->AddTH1D("mjj_BTagOfflineSFUp", "mjj_BTagOfflineSFUp", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
 		pfjet_histograms_->AddTH1D("mjj_BTagOfflineSFDown", "mjj_BTagOfflineSFDown", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
@@ -642,9 +651,49 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				if (pf_btag_csv1 >= pf_btag_csv2) {
 					pfjet_histograms_->GetTH1D("pt_btag1")->Fill(event_->pfjet(0).ptCor(), weight);
 					pfjet_histograms_->GetTH1D("pt_btag2")->Fill(event_->pfjet(1).ptCor(), weight);
+					pfjet_histograms_->GetTH2F("jet_btag0_pt_eta")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+					if (pf_btag_csv1 > 0.244) {
+						pfjet_histograms_->GetTH2F("jet_btag0_pt_eta_CSVL")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+						if (pf_btag_csv1 > 0.679) {
+							pfjet_histograms_->GetTH2F("jet_btag0_pt_eta_CSVM")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+							if (pf_btag_csv1 > 0.898) {
+								pfjet_histograms_->GetTH2F("jet_btag0_pt_eta_CSVT")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+							}
+						}
+					}
+					pfjet_histograms_->GetTH2F("jet_btag1_pt_eta")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+					if (pf_btag_csv2 > 0.244) {
+						pfjet_histograms_->GetTH2F("jet_btag1_pt_eta_CSVL")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+						if (pf_btag_csv2 > 0.679) {
+							pfjet_histograms_->GetTH2F("jet_btag1_pt_eta_CSVM")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+							if (pf_btag_csv2 > 0.898) {
+								pfjet_histograms_->GetTH2F("jet_btag1_pt_eta_CSVT")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+							}
+						}
+					}
 				} else {
 					pfjet_histograms_->GetTH1D("pt_btag1")->Fill(event_->pfjet(1).ptCor(), weight);
 					pfjet_histograms_->GetTH1D("pt_btag2")->Fill(event_->pfjet(0).ptCor(), weight);
+					pfjet_histograms_->GetTH2F("jet_btag0_pt_eta")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+					if (pf_btag_csv2 > 0.244) {
+						pfjet_histograms_->GetTH2F("jet_btag0_pt_eta_CSVL")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+						if (pf_btag_csv2 > 0.679) {
+							pfjet_histograms_->GetTH2F("jet_btag0_pt_eta_CSVM")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+							if (pf_btag_csv2 > 0.898) {
+								pfjet_histograms_->GetTH2F("jet_btag0_pt_eta_CSVT")->Fill(event_->pfjet(1).ptCor(), event_->pfjet(1).eta(), weight);
+							}
+						}
+					}
+					pfjet_histograms_->GetTH2F("jet_btag1_pt_eta")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+					if (pf_btag_csv1 > 0.244) {
+						pfjet_histograms_->GetTH2F("jet_btag1_pt_eta_CSVL")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+						if (pf_btag_csv1 > 0.679) {
+							pfjet_histograms_->GetTH2F("jet_btag1_pt_eta_CSVM")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+							if (pf_btag_csv1 > 0.898) {
+								pfjet_histograms_->GetTH2F("jet_btag1_pt_eta_CSVT")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(0).eta(), weight);
+							}
+						}
+					}
 				}
 				if (data_type_ == ObjectIdentifiers::kSignal) {
 					pfjet_histograms_->GetTH1D("mjj_over_M")->Fill(event_->pfmjjcor(0) / signal_mass_, weight);
