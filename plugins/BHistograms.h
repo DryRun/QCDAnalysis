@@ -102,6 +102,12 @@ class BHistograms : public edm::EDAnalyzer
 	//std::map<ObjectIdentifiers::BTagWP, TH2D*> btag_efficiency_histograms_;
 	std::map<ObjectIdentifiers::BTagWP, TF1*> btag_scale_factors_;
 	std::map<ObjectIdentifiers::BTagWP, TH1D*> btag_scale_factor_uncertainties_;
+
+	// B tag efficiencies, hopefully not used for anything too serious.
+	bool correct_btag_efficiency_;
+	TH1D* h_btag_eff_jet0_;
+	TH1D* h_btag_eff_jet1_;
+
 };
 
 

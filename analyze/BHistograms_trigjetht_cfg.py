@@ -157,6 +157,7 @@ process.BHistograms    = cms.EDAnalyzer('BHistograms',
 	fatjet_delta_eta_cut  = cms.double(1.1),
 	btag_wp_1              = cms.string('none'),
 	btag_wp_2              = cms.string('none'),
+	btag_efficiency_file = cms.string("$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/data/single_jet_btag_eff_lowmass.root"),
 )
 
 process.p = cms.Path(process.BHistograms)

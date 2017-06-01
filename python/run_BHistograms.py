@@ -11,7 +11,7 @@ dijet_directory = os.path.expandvars("$DIJETHOME")
 # RunData
 # - Input files are on EOS, so you can't do the normal files-per-job mechanism (this cp's the files to the worker node, which is bad for EOS). 
 # - Instead, do the subjobbing manually. 
-def RunBHistogramsEOS(analysis, sample, files_per_job=200, retar=False, data_source=None):
+def RunBHistogramsEOS(analysis, sample, files_per_job=20, retar=False, data_source=None):
 	if not data_source:
 		print "[RunBHistogramsEOS] ERROR : Please specify data_source = collision_data or simulation"
 		sys.exit(1)
@@ -242,7 +242,10 @@ if __name__ == "__main__":
 			samples = [args.data]
 		first = True
 		for sample in samples:
-			RunBHistogramsEOS(args.analysis, sample, retar=(first and not args.noretar), data_source="collision_data")
+			if "JetHT" in sample:
+				RunBHistogramsEOS(args.analysis, sample, retar=(first and not args.noretar), data_source="collision_data", files_per_job = 50)
+			else:
+				RunBHistogramsEOS(args.analysis, sample, retar=(first and not args.noretar), data_source="collision_data")				
 			if first:
 				first=False
 
