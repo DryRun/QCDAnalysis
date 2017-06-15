@@ -12,7 +12,7 @@ sys.path.append('./')
 models = ['GluGluSpin0ToBBbar', 'RSGravitonToBBbar']
 #masses = [300, 600, 750, 900, 1200]
 #masses = [250, 400, 500]
-masses = [350]
+masses = [300,325]
 
 def get_dataset_name_pieces(model, mass, stage):
     if model == "GluGluSpin0ToBBbar":
@@ -75,9 +75,9 @@ def get_CFI_path(model, mass):
 
 def make_CFI(model, mass, width=0.01):
     if model == "GluGluSpin0ToBBbar":
-        template = open("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/python/GluGluSpin0ToBBbar_M_X_TuneCUEP8M1_8TeV_pythia8_cfi.py.template")
+        template = open("/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/python/GluGluSpin0ToBBbar_M_X_TuneCUEP8M1_8TeV_pythia8_cfi.py.template")
     elif model == "RSGravitonToBBbar":
-        template = open("/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/python/RSGravitonToBBbar_kMpl01_M_X_TuneCUEP8M1_8TeV_pythia8_cfi.py.template")
+        template = open("/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/python/RSGravitonToBBbar_kMpl01_M_X_TuneCUEP8M1_8TeV_pythia8_cfi.py.template")
     cfi = open(os.path.expandvars(get_CFI_path(model, mass)), 'w')
     for line in template:
         if 'm0' in line:

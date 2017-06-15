@@ -2,6 +2,8 @@ import os
 import sys
 
 nevents = {0.25:{}}
+nevents[0.25][300] = 64533
+nevents[0.25][325] = 64063
 nevents[0.25][350] = 65517
 nevents[0.25][400] = 67291
 nevents[0.25][500] = 65287
@@ -237,7 +239,7 @@ if __name__ == "__main__":
 	parser.add_argument('--DR2', action='store_true', help='')
 	parser.add_argument('--masses', type=str, default="350,400,500,600,750,900,1200", help='Signal masses')
 	parser.add_argument('--coupling', type=float, default=0.25, help='Coupling (0.25 or 0.5)')
-	parser.add_argument('--version', type=str, default="vTEST", help='Coupling (0.25 or 0.5)')
+	parser.add_argument('--version', type=str, default="vTEST", help='Version (default vTEST)')
 	args = parser.parse_args()
 	masses = [int(x) for x in args.masses.split(",")]
 	coupling = args.coupling

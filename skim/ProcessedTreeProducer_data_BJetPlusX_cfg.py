@@ -22,7 +22,8 @@ options.register('outputFile',
 )
 
 options.register('globalTag',
-	'FT_R_53_V18::All',
+	#'FT_R_53_V18::All',
+	'FT_53_V21_AN5:All',
 	VarParsing.VarParsing.multiplicity.singleton,
 	VarParsing.VarParsing.varType.string,
 	"Global Tag"
@@ -129,12 +130,15 @@ process.ak7 = cms.EDAnalyzer('ProcessedTreeProducer',
 		## database entry for the uncertainties ######
 		PFPayloadName   = cms.string('AK7PF'),
 		CaloPayloadName = cms.string('AK7Calo'),
-		jecUncSrc       = cms.string('Summer12_V2_DATA_AK7PF_UncertaintySources.txt'),
-		jecUncSrcNames  = cms.vstring('Absolute','HighPtExtra','SinglePion','Flavor','Time',
+		jecUncSrc       = cms.string('Summer13_V5_DATA_UncertaintySources_AK7PF.txt'),
+		jecUncSrcNames  = cms.vstring('Absolute','HighPtExtra','SinglePionECAL', 'SinglePionHCAL','FlavorQCD','Time',
 																	'RelativeJEREC1','RelativeJEREC2','RelativeJERHF',
+																	'RelativePtBB', 'RelativePtEC1', 'RelativePtEC2', 'RelativePtHF',
 																	'RelativeStatEC2','RelativeStatHF','RelativeFSR',
-																	'PileUpDataMC','PileUpOOT','PileUpPt','PileUpBias','PileUpJetRate',
-																	'SubTotalPileUp','SubTotalRelative','SubTotalPt','SubTotalDataMC','Total'),
+																	'PileUpDataMC',
+																	#'PileUpOOT','PileUpPt','PileUpBias','PileUpJetRate',
+																	'PileUpBB', 'PileUpEC', 'PileUpHF',
+																	'SubTotalPileUp','SubTotalRelative','SubTotalPt','SubTotalMC','TotalNoFlavor','Total'),
 		
 		## calojet ID and extender for the JTA #######
 		calojetID       = cms.InputTag('ak7JetID'),
@@ -172,7 +176,7 @@ process.ak5 = process.ak7.clone(
 		calojets         = 'ak5CaloJets',
 		PFPayloadName    = 'AK5PF',
 		CaloPayloadName  = 'AK5Calo',
-		jecUncSrc        = 'Summer12_V2_DATA_AK5PF_UncertaintySources.txt',
+		jecUncSrc        = 'Summer13_V5_DATA_UncertaintySources_AK5PF.txt',
 		calojetID        = 'ak5JetID',
 		calojetExtender  = 'ak5JetExtender',
 		pfjecService     = 'ak5PFL1FastL2L3Residual',

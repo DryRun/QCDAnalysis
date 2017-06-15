@@ -22,7 +22,8 @@ options.register('outputFile',
 )
 
 options.register('globalTag',
-    'START53_V7G::All',
+    #'START53_V7G::All',
+    'START53_V27::All',
     VarParsing.VarParsing.multiplicity.singleton,
     VarParsing.VarParsing.varType.string,
     "Global Tag"
@@ -226,8 +227,17 @@ process.ak7 = cms.EDAnalyzer('ProcessedTreeProducer',
     ## database entry for the uncertainties ######
     PFPayloadName   = cms.string(''),
     CaloPayloadName = cms.string(''),
-    jecUncSrc       = cms.string(''),
-    jecUncSrcNames  = cms.vstring(''),
+    jecUncSrc = cms.string(''),
+    jecUncSrcNames = cms.vstring(''),
+    #jecUncSrc       = cms.string('Summer13_V5_MC_Uncertainty_AK7PF'),
+    #jecUncSrcNames  = cms.vstring('Absolute','HighPtExtra','SinglePionECAL', 'SinglePionHCAL','FlavorQCD','Time',
+    #                                'RelativeJEREC1','RelativeJEREC2','RelativeJERHF',
+    #                                'RelativePtBB', 'RelativePtEC1', 'RelativePtEC2', 'RelativePtHF',
+    #                                'RelativeStatEC2','RelativeStatHF','RelativeFSR',
+    #                                'PileUpDataMC',
+    #                                #'PileUpOOT','PileUpPt','PileUpBias','PileUpJetRate',
+    #                                'PileUpBB', 'PileUpEC', 'PileUpHF',
+    #                                'SubTotalPileUp','SubTotalRelative','SubTotalPt','SubTotalMC','TotalNoFlavor','Total'),
     ## calojet ID and extender for the JTA #######
     calojetID       = cms.InputTag('ak7JetID'),
     calojetExtender = cms.InputTag('ak7JetExtender'),
@@ -261,7 +271,7 @@ process.ak7 = cms.EDAnalyzer('ProcessedTreeProducer',
     triggerEvent    = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
     ## jec services ##############################
     pfjecService    = cms.string('ak7PFL1FastL2L3'),
-    calojecService  = cms.string('ak7CaloL1L2L3'),
+    calojecService  = cms.string('ak7CaloL1FastL2L3'),
     ## Jet-Flavor Matching #######################
     jetFlavourMatching     = cms.untracked.string('AK7byValAlgo'),
     ## Cross section ############################
@@ -275,9 +285,10 @@ process.ak5 = process.ak7.clone(
     calojetID        = 'ak5JetID',
     calojetExtender  = 'ak5JetExtender',
     pfjecService     = 'ak5PFL1FastL2L3',
-    calojecService   = 'ak5CaloL1L2L3',
+    calojecService   = 'ak5CaloL1FastL2L3',
     jetFlavourMatching = 'AK5byValAlgo',
-    printTriggerMenu = False 
+    printTriggerMenu = False,
+    #jecUncSrc       = cms.string('Summer13_V5_MC_Uncertainty_AK5PF'),    
 )
 
 #process.path = cms.Path(process.ak7 * process.ak5)
