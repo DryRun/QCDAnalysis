@@ -14,6 +14,8 @@ nevents[0.25][1200] = 66924
 
 datasets = {
 		"GENSIM":{
+			300:'/ZPrimeToCCBB_M_300_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM_v2_0_2-09aa5bb01c248493e60679fcd1b56ec8/USER',
+			325:'/ZPrimeToCCBB_M_325_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM_v2_0_2-09aa5bb01c248493e60679fcd1b56ec8/USER',
 			350:"/ZPrimeToCCBB_M_350_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM_1_0_4-09aa5bb01c248493e60679fcd1b56ec8/USER",
 			400:"/ZPrimeToCCBB_M_400_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM_1_0_4-09aa5bb01c248493e60679fcd1b56ec8/USER",
 			500:"/ZPrimeToCCBB_M_500_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8/dryu-GEN-SIM_1_0_4-09aa5bb01c248493e60679fcd1b56ec8/USER",
