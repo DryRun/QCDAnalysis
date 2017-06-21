@@ -18,4 +18,4 @@ config.Data.publication = True
 config.Data.ignoreLocality = True
 config.Data.outputDatasetTag = '@OUTPUTDATASETTAG@'
 
-config.Site.storageSite = 'T3_US_FNALLPC'
+config.Site.storageSite = 'T2_US_MIT'

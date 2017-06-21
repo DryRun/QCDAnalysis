@@ -24,9 +24,9 @@ config.General.transferOutputs = True
 config.General.transferLogs = False
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/ProcessedTreeProducer_data_cfg.py'
+config.JobType.psetName = '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/ProcessedTreeProducer_data_cfg.py'
 config.JobType.pyCfgParams = ['outputFile=ProcessedTree_data.root']
-config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/Summer12_V2_DATA_AK5PF_UncertaintySources.txt', '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/test/Summer12_V2_DATA_AK7PF_UncertaintySources.txt']
+config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer12_V2_DATA_AK5PF_UncertaintySources.txt', '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer12_V2_DATA_AK7PF_UncertaintySources.txt']
 
 config.Data.inputDataset = dataset
 config.Data.inputDBS = 'global'

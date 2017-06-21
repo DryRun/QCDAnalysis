@@ -5,7 +5,7 @@
 #Configurables
 
 dataset = '__DATASET__'
-tag = "v2_0"
+tag = "v2_0_1"
 #tag = "vTEST"
 
 ##________________________________________________________________________________||
@@ -28,7 +28,7 @@ config.General.transferLogs = False
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/ProcessedTreeProducer_mc_BJetPlusX_cfg.py'
 config.JobType.pyCfgParams = ['outputFile=QCDBEventTree.root']
-config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer12_V2_DATA_AK5PF_UncertaintySources.txt', '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer12_V2_DATA_AK7PF_UncertaintySources.txt']
+config.JobType.inputFiles = ['/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer13_V5_DATA_UncertaintySources_AK5PF.txt', '/uscms/home/dryu/Dijets/CMSSW_5_3_32_patch3/src/CMSDIJET/QCDAnalysis/skim/Summer13_V5_DATA_UncertaintySources_AK7PF.txt']
 
 config.Data.inputDataset = dataset
 config.Data.inputDBS = 'global'

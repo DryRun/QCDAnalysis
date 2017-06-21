@@ -46,7 +46,13 @@ actual_gensim_names = {
     #'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0-5022fca4c09ec6a3250c982e6a691c94/USER',
     #'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0-2089507b266388415f62eef171c53b83/USER'
     'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0_3-5022fca4c09ec6a3250c982e6a691c94/USER',
-    'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0_3-2089507b266388415f62eef171c53b83/USER'
+    'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0_3-2089507b266388415f62eef171c53b83/USER',
+
+    'RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-702cf8f5416945aad225c9b352ea7fe8/USER',
+    'RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-adb5a1c3b39cccfdc3d2b96c002a2b3c/USER',
+    'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-367052a4dbf1b571ea0c4e8502f5f908/USER',
+    'GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-a4c0eb9f4e6ef9d045164ab0ab91f4e4/USER',
+
 }
 
 actual_dr1_names = {

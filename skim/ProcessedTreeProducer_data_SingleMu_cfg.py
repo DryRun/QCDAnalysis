@@ -31,7 +31,7 @@ options.register('outputFile',
 
 options.register('globalTag',
 	#'FT_R_53_V18::All',
-	'FT_53_V21_AN5:All',
+	'FT_53_V21_AN5::All',
 	VarParsing.VarParsing.multiplicity.singleton,
 	VarParsing.VarParsing.varType.string,
 	"Global Tag"

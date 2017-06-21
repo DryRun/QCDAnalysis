@@ -18,4 +18,5 @@ config.Data.outputPrimaryDataset = '@OUTPUTPRIMARYDATASET@'
 config.Data.outputDatasetTag = '@OUTPUTDATASETTAG@'
 
 #config.Site.storageSite = 'T3_US_FNALLPC'
-config.Site.storageSite = 'T3_US_Brown'
+#config.Site.storageSite = 'T3_US_Brown'
+config.Site.storageSite = 'T2_US_MIT'

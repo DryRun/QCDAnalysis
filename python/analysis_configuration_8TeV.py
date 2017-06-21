@@ -9,6 +9,7 @@ dijet_directory = os.path.expandvars("$DIJETHOME")
 data_samples = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D", "JetHT_2012B", "JetHT_2012C", "JetHT_2012D", "SingleMu_2012A", "SingleMu_2012B", "SingleMu_2012C", "SingleMu_2012D"]
 data_supersamples = {}
 data_supersamples["BJetPlusX_2012"] = ["MultiJet_2012A", "BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D"]
+data_supersamples["BJetPlusXJEC13_2012"] = ["MultiJetJEC13_2012A", "BJetPlusXJEC13_2012B", "BJetPlusXJEC13_2012C", "BJetPlusXJEC13_2012D"]
 data_supersamples["BJetPlusX_2012BCD"] = ["BJetPlusX_2012B", "BJetPlusX_2012C", "BJetPlusX_2012D"]
 data_supersamples["JetHT_2012BCD"] = ["JetHT_2012B", "JetHT_2012C", "JetHT_2012D"]
 data_supersamples["SingleMu_2012"] = ["SingleMu_2012A", "SingleMu_2012B", "SingleMu_2012C", "SingleMu_2012D"]
@@ -51,19 +52,19 @@ files_QCDBEventTree = {
 	#"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	#"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM.txt",
 	"RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSG_350.txt",
-	"RSGravitonToBBbar_kMpl01_M_400_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-400_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_kMpl01_M_500_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-500_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_kMpl01_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-600_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_kMpl01_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-750_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_kMpl01_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-900_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"RSGravitonToBBbar_kMpl01_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-1200_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"RSGravitonToBBbar_kMpl01_M_400_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-400_JEC13.txt",
+	"RSGravitonToBBbar_kMpl01_M_500_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-500_JEC13.txt",
+	"RSGravitonToBBbar_kMpl01_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-600_JEC13.txt",
+	"RSGravitonToBBbar_kMpl01_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-750_JEC13.txt",
+	"RSGravitonToBBbar_kMpl01_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-900_JEC13.txt",
+	"RSGravitonToBBbar_kMpl01_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-1200_JEC13.txt",
 	"GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_Hbb_350.txt",
-	"GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-400_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-500_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-600_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-750_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-900_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
-	"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-1200_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
+	"GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-400_JEC13.txt",
+	"GluGluSpin0ToBBbar_M_500_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-500_JEC13.txt",
+	"GluGluSpin0ToBBbar_M_600_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-600_JEC13.txt",
+	"GluGluSpin0ToBBbar_M_750_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-750_JEC13.txt",
+	"GluGluSpin0ToBBbar_M_900_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-900_JEC13.txt",
+	"GluGluSpin0ToBBbar_M_1200_TuneCUEP8M1_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_GluGluSpin0ToBBbar_M-1200_JEC13.txt",
 	"ZPrimeToCCBB_M_350_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_ZPrime_350.txt",
 	"ZPrimeToCCBB_M_400_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_ZPrime_400.txt",
 	"ZPrimeToCCBB_M_500_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_ZPrime_500.txt",
@@ -71,6 +72,7 @@ files_QCDBEventTree = {
 	"ZPrimeToCCBB_M_750_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_ZPrime_750.txt",
 	"ZPrimeToCCBB_M_900_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_ZPrime_900.txt",
 	"ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_ZPrime_1200.txt",
+
 
 	# Old RSG with incorrect PDF in name. 
 	"RSGravitonToBBbar_M_400_TuneZ2star_8TeV_pythia8_FULLSIM":dijet_directory + "/data/EightTeeEeVeeBee/BHistograms/condor/QCDBEventTree_RSGravToBBbar_M-400_TuneCUETP8M1_8TeV-pythia8_FULLSIM.txt",
