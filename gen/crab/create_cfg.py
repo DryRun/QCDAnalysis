@@ -48,11 +48,10 @@ actual_gensim_names = {
     'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0_3-5022fca4c09ec6a3250c982e6a691c94/USER',
     'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v1_0_3-2089507b266388415f62eef171c53b83/USER',
 
-    # 300/325 generation
-    'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_2-367052a4dbf1b571ea0c4e8502f5f908/USER',
-    'GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_2-a4c0eb9f4e6ef9d045164ab0ab91f4e4/USER',
-    'RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_2-adb5a1c3b39cccfdc3d2b96c002a2b3c/USER',
-    'RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_2-702cf8f5416945aad225c9b352ea7fe8/USER',
+    'RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-702cf8f5416945aad225c9b352ea7fe8/USER',
+    'RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-adb5a1c3b39cccfdc3d2b96c002a2b3c/USER',
+    'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-367052a4dbf1b571ea0c4e8502f5f908/USER',
+    'GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-GEN-SIM_v2_0_3-a4c0eb9f4e6ef9d045164ab0ab91f4e4/USER',
 
 }
 
@@ -75,7 +74,13 @@ actual_dr1_names = {
     'GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_400_v1_3-e55af98865f2d4f941410801f4f54826/USER',
     'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_350_v1_0_6-25f662c8c8577d562263f1e0c47637d7/USER',
     'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_350_v1_0_6-25f662c8c8577d562263f1e0c47637d7/USER',
-}
+    'RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_300_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',
+    'RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_325_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',
+    'GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_325_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',
+    'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_300_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',}
+
+
+
 
 def get_CFI_path(model, mass):
     return "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/" + get_dataset_name_pieces(model, mass, "NULL")[0] + "_cfi.py" 

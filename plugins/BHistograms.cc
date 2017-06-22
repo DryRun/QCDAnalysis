@@ -301,6 +301,8 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH1D("jet2_bstatus3", "jet2_bstatus3", "b status == 3?", 3, -0.5, 2.5);
 	pfjet_histograms_->AddTH1D("jet2_bstatus2", "jet2_bstatus2", "b status == 2?", 3, -0.5, 2.5);
 	pfjet_histograms_->AddTH1D("jet2_PartonId", "jet2_PartonId", "PartonId", 11, -0.5, 10.5);
+	pfjet_histograms_->AddTH1D("jet1_jec", "jet1_jec", "Correction factor", 200, 0., 2.);
+	pfjet_histograms_->AddTH1D("jet2_jec", "jet2_jec", "Correction factor", 200, 0., 2.);
 
 	// pT vs eta histograms for jets 0 and 1, passing various b-tag requirements
 	pfjet_histograms_->AddTH2F("jet0_pt_eta", "jet0_pt_eta", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
@@ -666,6 +668,8 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				pfjet_histograms_->GetTH1D("deltaeta")->Fill(pf_deltaeta, weight);
 				pfjet_histograms_->GetTH1D("pt1")->Fill(event_->pfjet(0).ptCor(), weight);
 				pfjet_histograms_->GetTH1D("pt2")->Fill(event_->pfjet(1).ptCor(), weight);
+				pfjet_histograms_->GetTH1D("jet1_jec")->Fill(event_->pfjet(0).cor(), weight);
+				pfjet_histograms_->GetTH1D("jet2_jec")->Fill(event_->pfjet(1).cor(), weight);
 				pfjet_histograms_->GetTH2D("pt1_vs_pt2")->Fill(event_->pfjet(0).ptCor(), event_->pfjet(1).ptCor(), weight);
 				pfjet_histograms_->GetTH1D("eta1")->Fill(event_->pfjet(0).eta(), weight);
 				pfjet_histograms_->GetTH1D("eta2")->Fill(event_->pfjet(1).eta(), weight);
@@ -843,15 +847,36 @@ double BHistograms::getEventBTagSF(int uncertainty) {
 		sf1 = btag_scale_factors_[btag_configuration_.first]->Eval(event_->pfjet(0).pt());
 		sf2 = btag_scale_factors_[btag_configuration_.second]->Eval(event_->pfjet(1).pt());
 		if (uncertainty) {
-			sf1 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
-			sf2 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
+			sf1 *= 1. + uncertainty * (
+				event_->pfjet(0).pt() < 800.? 
+					btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()))
+					:
+					2. * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(799.))
+				);
+			sf2 *= 1. + uncertainty * (
+				event_->pfjet(1).pt() < 800.? 
+					btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()))
+					:
+					2. * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(799.))
+				);
+
 		}
 	} else {
 		sf1 = btag_scale_factors_[btag_configuration_.first]->Eval(event_->pfjet(1).pt());
 		sf2 = btag_scale_factors_[btag_configuration_.second]->Eval(event_->pfjet(0).pt());
 		if (uncertainty) {
-			sf1 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()));
-			sf2 *= 1. + uncertainty * btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()));
+			sf1 *= 1. + uncertainty * (
+				event_->pfjet(1).pt() < 800. ? 
+				btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(1).pt()))
+				:
+				2. * btag_scale_factor_uncertainties_[btag_configuration_.first]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(799.))
+			);
+			sf2 *= 1. + uncertainty * (
+				event_->pfjet(0).pt() < 800. ? 
+				btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(event_->pfjet(0).pt()))
+				:
+				2. * btag_scale_factor_uncertainties_[btag_configuration_.second]->GetBinContent(btag_scale_factor_uncertainties_[btag_configuration_.first]->FindBin(799.))
+			);
 		}
 	}
 	return sf1 * sf2;
