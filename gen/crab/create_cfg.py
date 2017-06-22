@@ -74,7 +74,13 @@ actual_dr1_names = {
     'GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_400_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_400_v1_3-e55af98865f2d4f941410801f4f54826/USER',
     'GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_350_v1_0_6-25f662c8c8577d562263f1e0c47637d7/USER',
     'RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_350_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_350_v1_0_6-25f662c8c8577d562263f1e0c47637d7/USER',
-}
+    'RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_300_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',
+    'RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8':'/RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_325_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',
+    'GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_325_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',
+    'GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8':'/GluGluSpin0ToBBbar_M_300_TuneCUEP8M1_8TeV_pythia8/dryu-DIGI-RECO-1_M_300_v2_0_1-25f662c8c8577d562263f1e0c47637d7/USER',}
+
+
+
 
 def get_CFI_path(model, mass):
     return "$CMSSW_BASE/src/CMSDIJET/QCDAnalysis/python/" + get_dataset_name_pieces(model, mass, "NULL")[0] + "_cfi.py" 

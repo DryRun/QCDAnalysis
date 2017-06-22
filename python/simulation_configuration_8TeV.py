@@ -4,7 +4,7 @@ dijet_directory = os.path.expandvars("$DIJETHOME")
 # Signal samples
 signal_models = ["RSG", "Hbb", "ZPrime"] # Zprime
 #signal_masses = [250, 300, 400, 500, 600, 750, 900, 1200]
-signal_masses = [350, 400, 500, 600, 750, 900, 1200]
+signal_masses = [325, 350, 400, 500, 600, 750, 900, 1200]
 
 limit_signal_masses = {
 	"trigbbll_CSVTM":range(350, 950, 50),
@@ -12,7 +12,7 @@ limit_signal_masses = {
 	"trigbbh_CSVTM":range(600, 1250, 50)
 }
 
-simulated_masses = [350, 400, 500, 600, 750, 900, 1200]
+simulated_masses = [325, 350, 400, 500, 600, 750, 900, 1200]
 
 output_tags = {}
 #output_tags["Hbb"] = "HERWIGPP_POWHEG_GluonFusion_H@MASS@_bbbar_8TeV_@SIMTYPE@"
