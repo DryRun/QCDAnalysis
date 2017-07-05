@@ -7,8 +7,8 @@ signal_models = ["RSG", "Hbb", "ZPrime"] # Zprime
 signal_masses = [325, 350, 400, 500, 600, 750, 900, 1200]
 
 limit_signal_masses = {
-	"trigbbll_CSVTM":range(350, 950, 50),
-	"trigbbl_CSVTM":range(350, 850, 50),
+	"trigbbll_CSVTM":range(325, 950, 50),
+	"trigbbl_CSVTM":range(325, 850, 50),
 	"trigbbh_CSVTM":range(600, 1250, 50)
 }
 
@@ -86,6 +86,11 @@ private_mc_file_lists["ZPrimeToCCBB_M_600_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8
 private_mc_file_lists["ZPrimeToCCBB_M_750_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_750_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
 private_mc_file_lists["ZPrimeToCCBB_M_900_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_900_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
 private_mc_file_lists["ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_1200_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+
+private_mc_file_lists["GluGluSpin0ToBBbar_M_325_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/QCDBEventTree/condor/GluGluSpin0ToBBbar_325_v2_0_1.txt"
+private_mc_file_lists["RSGravitonToBBbar_kMpl01_M_325_TuneCUEP8M1_8TeV_pythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/QCDBEventTree/condor/RSGravitonToBBbar_325_v2_0_1.txt"
+private_mc_file_lists["ZPrimeToCCBB_M_325_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8_FULLSIM"] = dijet_directory + "/data/EightTeeEeVeeBee/PrivateProduction/files_ZPrimeToCCBB_M_325_g0p25_TuneCUEP8M1_8TeV_MadgraphPythia8.txt"
+
 
 # Fast sim configuration
 fastsim_models = ["RSG", "Zprime"]

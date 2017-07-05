@@ -303,6 +303,9 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH1D("jet2_PartonId", "jet2_PartonId", "PartonId", 11, -0.5, 10.5);
 	pfjet_histograms_->AddTH1D("jet1_jec", "jet1_jec", "Correction factor", 200, 0., 2.);
 	pfjet_histograms_->AddTH1D("jet2_jec", "jet2_jec", "Correction factor", 200, 0., 2.);
+	if (data_source_ == ObjectIdentifiers::kSimulation) {
+		pfjet_histograms_->AddTH1D("mjj_truthbb", "mjj_truthbb", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+	}
 
 	// pT vs eta histograms for jets 0 and 1, passing various b-tag requirements
 	pfjet_histograms_->AddTH2F("jet0_pt_eta", "jet0_pt_eta", "p_{T} [GeV]", 100, 0., 1000., "#eta", 100, -5., 5.);
@@ -614,6 +617,11 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				double pf_btag_csv1 = event_->pfjet(0).btag_csv();
 				double pf_btag_csv2 = event_->pfjet(1).btag_csv();
 				pfjet_histograms_->GetTH1D("mjj")->Fill(event_->pfmjjcor(0), weight);
+				if (data_source_ == ObjectIdentifiers::kSimulation) {
+					if (TMath::Abs(event_->pfjet(0).flavor()) == 5 && TMath::Abs(event_->pfjet(1).flavor()) == 5) {
+						pfjet_histograms_->GetTH1D("mjj_truthbb")->Fill(event_->pfmjjcor(0), weight);
+					}
+				}
 				if (TMath::Abs(event_->pfmjjcor(0) - 150.) < 1.) {
 					std::cout << "[BHistograms::ProcessEvent] DEBUG : Printing low mass event" << std::endl;
 					for (int i_jet = 0; i_jet <= 1; ++i_jet) {
