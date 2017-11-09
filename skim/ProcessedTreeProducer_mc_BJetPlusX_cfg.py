@@ -37,6 +37,13 @@ options.register('inputFiles',
     "Global Tag"
 )
 
+options.register('FilterBB',
+    False,
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.bool,
+    "Filter on BB events (Z' only)",
+    )
+
 options.parseArguments()
 
 # All 2012 triggers requiring 2 jets and a b tag.
@@ -179,6 +186,7 @@ process.ak7 = cms.EDAnalyzer('ProcessedTreeProducer',
     ## MC $ Generator flags ######################
     isMCarlo        = cms.untracked.bool(True),
     useGenInfo      = cms.untracked.bool(True),
+    FilterBB        = cms.untracked.bool(options.FilterBB),
     ## simulated PU ##############################
     srcPU           = cms.untracked.InputTag('addPileupInfo'),
     ## preselection cuts #########################

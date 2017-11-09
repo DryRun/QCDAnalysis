@@ -175,6 +175,8 @@ def RunBHistogramsSignal(analysis, sample, files_per_job=1, retar=False, data_so
 		command += " dataType=signal "
 		command += " signalMass=" + str(analysis_config.simulation.signal_sample_masses[sample]) + " "
 		#command += "inputFiles=" + os.path.basename(input_files[sample])
+		if "ZPrime" in sample:
+			command += " bottomOnly=true "
 		output_filename = os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
 		command += " outputFile=" + os.path.basename(analysis_config.get_b_histogram_filename(analysis, sample)).replace(".root", "_\$\(Cluster\)_\$\(Process\).root")
 		print command

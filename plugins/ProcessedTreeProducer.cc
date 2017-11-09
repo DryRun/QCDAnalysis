@@ -81,6 +81,7 @@ ProcessedTreeProducer::ProcessedTreeProducer(edm::ParameterSet const& cfg)
 	mGenJetsName       = cfg.getUntrackedParameter<edm::InputTag>    ("genjets",edm::InputTag(""));
 	mPrintTriggerMenu  = cfg.getUntrackedParameter<bool>             ("printTriggerMenu",false);
 	mIsMCarlo          = cfg.getUntrackedParameter<bool>             ("isMCarlo",false);
+	mFilterBB          = cfg.getUntrackedParameter<bool>             ("FilterBB",false);
 	mUseGenInfo        = cfg.getUntrackedParameter<bool>             ("useGenInfo",false);
 	mMinGenPt          = cfg.getUntrackedParameter<double>           ("minGenPt",30);
 	processName_       = cfg.getParameter<std::string>               ("processName");
@@ -447,6 +448,26 @@ void ProcessedTreeProducer::analyze(edm::Event const& event, edm::EventSetup con
 			}
 		}
 	}
+
+	// For Z' samples, filter on Z(bb)
+	if (mIsMCarlo && mFilterBB) {
+		for (reco::GenParticleCollection::const_iterator igen_par = genParticles->begin(); igen_par != genParticles->end(); igen_par++) {
+			int pdgid = igen_par->pdgId();
+			int status = igen_par->status();
+			if (pdgid == 10030 && status == 62) {
+				int daughter0_pdgid = igen_par->daughter(0)->pdgId();
+				int daughter1_pdgid = igen_par->daughter(1)->pdgId();
+				if (fabs(daughter0_pdgid) != 5 || fabs(daughter1_pdgid) != 5) {
+					//std::cerr << "[ProcessedTreeProducer::analyze] DEBUG : Skipping event with Z' daughters " << daughter0_pdgid << ", " << daughter1_pdgid << std::endl;
+					return;
+				} else {
+					break;
+					//std::cerr << "[ProcessedTreeProducer::analyze] DEBUG : Accepting event with Z' daughters " << daughter0_pdgid << ", " << daughter1_pdgid << std::endl;
+				}
+			}
+		}
+	}
+
 	int njets(0);
 	//----------- PFJets -------------------------
 	for(PFJetCollection::const_iterator i_pfjet = pfjets->begin(); i_pfjet != pfjets->end(); i_pfjet++) {

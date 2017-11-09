@@ -305,6 +305,15 @@ void BHistograms::beginJob()
 	pfjet_histograms_->AddTH1D("jet2_jec", "jet2_jec", "Correction factor", 200, 0., 2.);
 	if (data_source_ == ObjectIdentifiers::kSimulation) {
 		pfjet_histograms_->AddTH1D("mjj_truthbb", "mjj_truthbb", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthbc", "mjj_truthbc", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthbg", "mjj_truthbg", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthbl", "mjj_truthbl", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthcc", "mjj_truthcc", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthcg", "mjj_truthcg", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthcl", "mjj_truthcl", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthgg", "mjj_truthgg", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthgl", "mjj_truthgl", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
+		pfjet_histograms_->AddTH1D("mjj_truthll", "mjj_truthll", "m_{jj} [GeV]", 5000, 0., 5000.); // GeV
 	}
 
 	// pT vs eta histograms for jets 0 and 1, passing various b-tag requirements
@@ -618,8 +627,45 @@ void BHistograms::analyze(edm::Event const& evt, edm::EventSetup const& iSetup)
 				double pf_btag_csv2 = event_->pfjet(1).btag_csv();
 				pfjet_histograms_->GetTH1D("mjj")->Fill(event_->pfmjjcor(0), weight);
 				if (data_source_ == ObjectIdentifiers::kSimulation) {
-					if (TMath::Abs(event_->pfjet(0).flavor()) == 5 && TMath::Abs(event_->pfjet(1).flavor()) == 5) {
+					int n_truth_b = 0;
+					int n_truth_c = 0;
+					int n_truth_g = 0;
+					int n_truth_l = 0;
+					for (int i = 0; i <= 1; ++i) {
+						//std::cout << "Jet " << i << " flavor = " << event_->pfjet(i).flavor() << std::endl;
+						if (TMath::Abs(event_->pfjet(i).flavor()) == 5) {
+							++n_truth_b;
+						} else if (TMath::Abs(event_->pfjet(i).flavor()) == 4) {
+							++n_truth_c;
+						} else if (TMath::Abs(event_->pfjet(i).flavor()) == 21) {
+							++n_truth_g;
+						} else {
+							++n_truth_l;
+						}
+					}
+					if (n_truth_b == 2) {
 						pfjet_histograms_->GetTH1D("mjj_truthbb")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_b == 1 && n_truth_c == 1) {
+						pfjet_histograms_->GetTH1D("mjj_truthbc")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_b == 1 && n_truth_g == 1) {
+						pfjet_histograms_->GetTH1D("mjj_truthbg")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_b == 1 && n_truth_l == 1) {
+						pfjet_histograms_->GetTH1D("mjj_truthbl")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_c == 2) {
+						pfjet_histograms_->GetTH1D("mjj_truthcc")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_c == 1 && n_truth_g == 1) {
+						pfjet_histograms_->GetTH1D("mjj_truthcg")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_c == 1 && n_truth_l == 1) {
+						pfjet_histograms_->GetTH1D("mjj_truthcl")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_g == 2) {
+						pfjet_histograms_->GetTH1D("mjj_truthgg")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_g == 1 && n_truth_l == 1) {
+						pfjet_histograms_->GetTH1D("mjj_truthgl")->Fill(event_->pfmjjcor(0), weight);
+					} else if (n_truth_l == 2) {
+						pfjet_histograms_->GetTH1D("mjj_truthll")->Fill(event_->pfmjjcor(0), weight);
+					} else {
+						std::cerr << "[BHistograms::ProcessEvent] ERROR : Logic error in truth flavor!" << std::endl;
+						exit(1);
 					}
 				}
 				if (TMath::Abs(event_->pfmjjcor(0) - 150.) < 1.) {
